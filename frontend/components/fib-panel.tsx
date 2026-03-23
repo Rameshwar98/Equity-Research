@@ -7,14 +7,14 @@ function fmt(n?: number | null) {
 }
 
 export function FibPanel({ data }: { data: StockDetailsResponse }) {
-  const levels = [
+  const levels: { label: string; value: number | null | undefined; highlight?: string }[] = [
     { label: "52W High", value: data.fib.high_52week, highlight: "text-emerald-600 dark:text-emerald-400" },
     { label: "61.8%", value: data.fib.fib_61_8 },
     { label: "50.0%", value: data.fib.fib_50 },
     { label: "38.2%", value: data.fib.fib_38_2 },
     { label: "23.6%", value: data.fib.fib_23_6 },
     { label: "52W Low", value: data.fib.low_52week, highlight: "text-rose-600 dark:text-rose-400" },
-  ] as const;
+  ];
 
   return (
     <div className="space-y-1.5">
