@@ -150,30 +150,6 @@ export function StockDrawer({
 
             <Divider />
 
-            {/* ── Moving Averages ── */}
-            <SectionLabel>Moving Averages</SectionLabel>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-1.5 text-xs mb-1">
-              {([
-                ["EMA 10", data.emas.ema_10],
-                ["EMA 20", data.emas.ema_20],
-                ["EMA 30", data.emas.ema_30],
-                ["EMA 50", data.emas.ema_50],
-                ["EMA 100", data.emas.ema_100],
-                ["EMA 200", data.emas.ema_200],
-              ] as [string, number | null | undefined][]).map(([label, v]) => (
-                <div key={label} className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="tabular-nums font-medium">{v?.toFixed(2) ?? "—"}</span>
-                </div>
-              ))}
-            </div>
-            <div className="border-t pt-1.5 mt-1 flex items-center justify-between font-medium text-xs max-w-[48%]">
-              <span className="text-muted-foreground">Average</span>
-              <span className="tabular-nums">{data.emas.avg_all_emas?.toFixed(2) ?? "—"}</span>
-            </div>
-
-            <Divider />
-
             {/* ── Fibonacci Levels (52W + 30D) ── */}
             <div className="text-xs">
               <FibPanel data={data} />
