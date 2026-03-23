@@ -464,7 +464,13 @@ async def stock_details(
     closes = list(reversed(closes))
 
     close_latest = float(close.iloc[-1])
-    fib = fib_service.compute(ind.high_52w, ind.low_52w, close_latest)
+    fib_52w = fib_service.compute(ind.high_52w, ind.low_52w, close_latest)
+
+    # 30-day Fibonacci levels
+    close_30d = close.iloc[-30:] if len(close) >= 30 else close
+    high_30d = float(close_30d.max())
+    low_30d = float(close_30d.min())
+    fib_30d = fib_service.compute(high_30d, low_30d, close_latest)
 
     payload = {
         "symbol": symbol,
@@ -488,13 +494,22 @@ async def stock_details(
             "avg_all_emas": float(ind.avg_all_emas.iloc[-1]),
         },
         "fib": {
-            "high_52week": fib.high_52week,
-            "low_52week": fib.low_52week,
-            "px_last": fib.px_last,
-            "fib_61_8": fib.fib_61_8,
-            "fib_50": fib.fib_50,
-            "fib_38_2": fib.fib_38_2,
-            "fib_23_6": fib.fib_23_6,
+            "high_52week": fib_52w.high_52week,
+            "low_52week": fib_52w.low_52week,
+            "px_last": fib_52w.px_last,
+            "fib_61_8": fib_52w.fib_61_8,
+            "fib_50": fib_52w.fib_50,
+            "fib_38_2": fib_52w.fib_38_2,
+            "fib_23_6": fib_52w.fib_23_6,
+        },
+        "fib_30d": {
+            "high_30d": fib_30d.high_52week,
+            "low_30d": fib_30d.low_52week,
+            "px_last": fib_30d.px_last,
+            "fib_61_8": fib_30d.fib_61_8,
+            "fib_50": fib_30d.fib_50,
+            "fib_38_2": fib_30d.fib_38_2,
+            "fib_23_6": fib_30d.fib_23_6,
         },
     }
     return payload

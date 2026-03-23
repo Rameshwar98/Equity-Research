@@ -53,6 +53,15 @@ export type StockDetailsResponse = {
     fib_38_2?: number | null;
     fib_23_6?: number | null;
   };
+  fib_30d?: {
+    high_30d?: number | null;
+    low_30d?: number | null;
+    px_last?: number | null;
+    fib_61_8?: number | null;
+    fib_50?: number | null;
+    fib_38_2?: number | null;
+    fib_23_6?: number | null;
+  };
   history?: { date: string; close: number; ema_10?: number; ema_20?: number }[];
 };
 
