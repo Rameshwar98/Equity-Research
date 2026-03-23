@@ -62,6 +62,15 @@ export type StockDetailsResponse = {
     fib_38_2?: number | null;
     fib_23_6?: number | null;
   };
+  chart_data?: {
+    date: string;
+    close: number | null;
+    ema10?: number | null;
+    ema20?: number | null;
+    ema50?: number | null;
+    signal?: string | null;
+    volume?: number | null;
+  }[];
   history?: { date: string; close: number; ema_10?: number; ema_20?: number }[];
 };
 

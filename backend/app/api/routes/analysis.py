@@ -459,6 +459,35 @@ async def stock_details(
     close_for_dates = close.reindex(recent.index)
     closes = [round(float(c), 2) if pd.notna(c) else None for c in close_for_dates.to_list()]
 
+    # EMA history for the chart period
+    ema_10_series = ind.ema[10].reindex(recent.index)
+    ema_20_series = ind.ema[20].reindex(recent.index)
+    ema_50_series = ind.ema[50].reindex(recent.index)
+
+    # Volume data
+    vol_col = None
+    for col_name in ("Volume", "volume"):
+        if col_name in prices.columns:
+            vol_col = col_name
+            break
+    volume_series = prices[vol_col].reindex(recent.index) if vol_col else None
+
+    # Build chart_data array (chronological: oldest first)
+    chart_data = []
+    for idx_pos, dt_idx in enumerate(recent.index):
+        d = dates[idx_pos]
+        entry: Dict[str, Any] = {
+            "date": d,
+            "close": round(float(close_for_dates.iloc[idx_pos]), 2) if pd.notna(close_for_dates.iloc[idx_pos]) else None,
+            "ema10": round(float(ema_10_series.iloc[idx_pos]), 2) if pd.notna(ema_10_series.iloc[idx_pos]) else None,
+            "ema20": round(float(ema_20_series.iloc[idx_pos]), 2) if pd.notna(ema_20_series.iloc[idx_pos]) else None,
+            "ema50": round(float(ema_50_series.iloc[idx_pos]), 2) if pd.notna(ema_50_series.iloc[idx_pos]) else None,
+            "signal": signals[idx_pos] if idx_pos < len(signals) else None,
+        }
+        if volume_series is not None and pd.notna(volume_series.iloc[idx_pos]):
+            entry["volume"] = int(volume_series.iloc[idx_pos])
+        chart_data.append(entry)
+
     date_labels = list(reversed(dates))
     signals = list(reversed(signals))
     closes = list(reversed(closes))
@@ -479,6 +508,7 @@ async def stock_details(
         "signals": signals,
         "closes": closes,
         "close": close_latest,
+        "chart_data": chart_data,
         "scores": {
             "score_1": float(scores.score_1.iloc[-1]) if pd.notna(scores.score_1.iloc[-1]) else None,
             "score_2": float(scores.score_2.iloc[-1]) if pd.notna(scores.score_2.iloc[-1]) else None,

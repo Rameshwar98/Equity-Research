@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { FibPanel } from "@/components/fib-panel";
+import { PriceChart } from "@/components/price-chart";
 import { SignalHeatmap } from "@/components/signal-heatmap";
 import { SignalTimeline } from "@/components/signal-timeline";
 import { TrendBadge } from "@/components/trend-badge";
@@ -106,6 +107,15 @@ export function StockDrawer({
             </div>
 
             <Divider />
+
+            {/* ── Price Chart ── */}
+            {data.chart_data && data.chart_data.length > 0 && (
+              <>
+                <SectionLabel>Price Chart</SectionLabel>
+                <PriceChart data={data} />
+                <Divider />
+              </>
+            )}
 
             {/* ── Signal History ── */}
             <div className="flex items-center justify-between mb-3">
