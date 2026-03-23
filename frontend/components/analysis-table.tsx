@@ -15,6 +15,13 @@ import {
 import { TrendBadge } from "@/components/trend-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { AnalysisRow, RunAnalysisResponse, Signal } from "@/lib/types";
 
@@ -71,9 +78,23 @@ function download(filename: string, text: string) {
 export function AnalysisTable({
   data,
   onRowClick,
+  sectors = [],
+  subSectors = [],
+  sectorFilter,
+  subSectorFilter,
+  onSectorChange,
+  onSubSectorChange,
+  allValue = "__all__",
 }: {
   data: RunAnalysisResponse;
   onRowClick: (row: AnalysisRow) => void;
+  sectors?: string[];
+  subSectors?: string[];
+  sectorFilter?: string;
+  subSectorFilter?: string;
+  onSectorChange?: (v: string) => void;
+  onSubSectorChange?: (v: string) => void;
+  allValue?: string;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: data.metadata.selected_score, desc: true },
@@ -169,13 +190,48 @@ export function AnalysisTable({
   return (
     <div className="rounded-xl border bg-card">
       <div className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Input
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
             placeholder="Search symbol or name…"
-            className="w-[280px]"
+            className="w-[200px]"
           />
+          {sectors.length > 0 && onSectorChange && (
+            <Select value={sectorFilter ?? allValue} onValueChange={onSectorChange}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="All Sectors" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={allValue}>All Sectors</SelectItem>
+                {sectors.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {subSectors.length > 0 && onSubSectorChange && (
+            <Select value={subSectorFilter ?? allValue} onValueChange={onSubSectorChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All Sub-sectors" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={allValue}>All Sub-sectors</SelectItem>
+                {subSectors.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {(sectorFilter && sectorFilter !== allValue || subSectorFilter && subSectorFilter !== allValue) && onSectorChange && onSubSectorChange && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { onSectorChange(allValue); onSubSectorChange(allValue); }}
+            >
+              Clear
+            </Button>
+          )}
           <Button
             variant="outline"
             onClick={() => {

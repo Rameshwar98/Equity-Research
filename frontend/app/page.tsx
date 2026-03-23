@@ -322,60 +322,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Row 2: Sector + Sub-sector filters (visible when data is loaded) */}
-            {sectors.length > 0 && (
-              <div className="mt-3 grid gap-3 md:grid-cols-12">
-                <div className="md:col-span-3">
-                  <div className="mb-1 text-xs text-muted-foreground">Sector</div>
-                  <Select value={sectorFilter} onValueChange={setSectorFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All sectors" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={ALL_VALUE}>All Sectors</SelectItem>
-                      {sectors.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="md:col-span-3">
-                  <div className="mb-1 text-xs text-muted-foreground">Sub-sector</div>
-                  <Select value={subSectorFilter} onValueChange={setSubSectorFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All sub-sectors" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={ALL_VALUE}>All Sub-sectors</SelectItem>
-                      {subSectors.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {(sectorFilter !== ALL_VALUE || subSectorFilter !== ALL_VALUE) && (
-                  <div className="md:col-span-2 flex items-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSectorFilter(ALL_VALUE);
-                        setSubSectorFilter(ALL_VALUE);
-                      }}
-                    >
-                      Clear filters
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
-
             {error ? (
               <div className="mt-3 text-sm text-destructive">{error}</div>
             ) : null}
@@ -455,7 +401,17 @@ export default function Home() {
         ) : null}
 
         {filtered ? (
-          <AnalysisTable data={filtered} onRowClick={onRowClick} />
+          <AnalysisTable
+            data={filtered}
+            onRowClick={onRowClick}
+            sectors={sectors}
+            subSectors={subSectors}
+            sectorFilter={sectorFilter}
+            subSectorFilter={subSectorFilter}
+            onSectorChange={setSectorFilter}
+            onSubSectorChange={setSubSectorFilter}
+            allValue={ALL_VALUE}
+          />
         ) : (
           <div className="rounded-xl border bg-card p-8 text-sm text-muted-foreground">
             Select an index and score formula, then click <span className="font-medium">Run</span>.
