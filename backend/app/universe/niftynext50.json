@@ -1,0 +1,15 @@
+{
+  "constituents": [
+    { "symbol": "ADANIGREEN.NS", "name": "Adani Green Energy" },
+    { "symbol": "DMART.NS", "name": "Avenue Supermarts" },
+    { "symbol": "BAJFINANCE.NS", "name": "Bajaj Finance" },
+    { "symbol": "GODREJCP.NS", "name": "Godrej Consumer Products" },
+    { "symbol": "PIDILITIND.NS", "name": "Pidilite Industries" },
+    { "symbol": "HAVELLS.NS", "name": "Havells India" },
+    { "symbol": "BERGEPAINT.NS", "name": "Berger Paints" },
+    { "symbol": "MINDTREE.NS", "name": "Mindtree (legacy)" },
+    { "symbol": "LUPIN.NS", "name": "Lupin" },
+    { "symbol": "COLPAL.NS", "name": "Colgate-Palmolive India" }
+  ]
+}
+

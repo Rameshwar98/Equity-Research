@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Backend
+backend/cache/
+backend/*.db
+backend/.env
+backend/run_progress/
+backend/fetch_sp500_sectors.py
+
+# Frontend
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# Env files
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Assets/images saved by cursor
+assets/

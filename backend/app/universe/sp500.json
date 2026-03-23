@@ -1,0 +1,3010 @@
+{
+  "constituents": [
+    {
+      "symbol": "MMM",
+      "name": "3M Company",
+      "sector": "Industrials",
+      "sub_sector": "Conglomerates"
+    },
+    {
+      "symbol": "AOS",
+      "name": "A. O. Smith Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "ABT",
+      "name": "Abbott Laboratories",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "ABBV",
+      "name": "AbbVie Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "ACN",
+      "name": "Accenture plc",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "ADBE",
+      "name": "Adobe Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "AES",
+      "name": "The AES Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Diversified Utilities"
+    },
+    {
+      "symbol": "AFL",
+      "name": "Aflac Incorporated",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Life"
+    },
+    {
+      "symbol": "A",
+      "name": "Agilent Technologies, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "APD",
+      "name": "Air Products and Chemicals, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "ABNB",
+      "name": "Airbnb, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Services"
+    },
+    {
+      "symbol": "AKAM",
+      "name": "Akamai Technologies, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "ALB",
+      "name": "Albemarle Corporation",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "ARE",
+      "name": "Alexandria Real Estate Equities, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Office"
+    },
+    {
+      "symbol": "ALGN",
+      "name": "Align Technology, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "ALLE",
+      "name": "Allegion plc",
+      "sector": "Industrials",
+      "sub_sector": "Security & Protection Services"
+    },
+    {
+      "symbol": "LNT",
+      "name": "Alliant Energy Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "ALL",
+      "name": "The Allstate Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Internet Content & Information"
+    },
+    {
+      "symbol": "GOOG",
+      "name": "Alphabet Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Internet Content & Information"
+    },
+    {
+      "symbol": "MO",
+      "name": "Altria Group, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Tobacco"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon.com, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "AMCR",
+      "name": "Amcor plc",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Packaging & Containers"
+    },
+    {
+      "symbol": "AEE",
+      "name": "Ameren Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "AEP",
+      "name": "American Electric Power Company, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "AXP",
+      "name": "American Express Company",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "AIG",
+      "name": "American International Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Diversified"
+    },
+    {
+      "symbol": "AMT",
+      "name": "American Tower Corporation",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Specialty"
+    },
+    {
+      "symbol": "AWK",
+      "name": "American Water Works Company, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Water"
+    },
+    {
+      "symbol": "AMP",
+      "name": "Ameriprise Financial, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "AME",
+      "name": "AMETEK, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "AMGN",
+      "name": "Amgen Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "APH",
+      "name": "Amphenol Corporation",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "ADI",
+      "name": "Analog Devices, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "AON",
+      "name": "Aon plc",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Brokers"
+    },
+    {
+      "symbol": "APA",
+      "name": "APA Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "APO",
+      "name": "Apollo Global Management, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management - Global"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "sector": "Technology",
+      "sub_sector": "Consumer Electronics"
+    },
+    {
+      "symbol": "AMAT",
+      "name": "Applied Materials, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "APP",
+      "name": "AppLovin Corporation",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "APTV",
+      "name": "Aptiv PLC",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Parts"
+    },
+    {
+      "symbol": "ACGL",
+      "name": "Arch Capital Group Ltd.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Diversified"
+    },
+    {
+      "symbol": "ADM",
+      "name": "Archer-Daniels-Midland Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Agricultural Farm Products"
+    },
+    {
+      "symbol": "ARES",
+      "name": "Ares Management Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "ANET",
+      "name": "Arista Networks, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "AJG",
+      "name": "Arthur J. Gallagher & Co.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Brokers"
+    },
+    {
+      "symbol": "AIZ",
+      "name": "Assurant, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Specialty"
+    },
+    {
+      "symbol": "T",
+      "name": "AT&T Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Telecommunications Services"
+    },
+    {
+      "symbol": "ATO",
+      "name": "Atmos Energy Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Gas"
+    },
+    {
+      "symbol": "ADSK",
+      "name": "Autodesk, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "ADP",
+      "name": "Automatic Data Processing, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Staffing & Employment Services"
+    },
+    {
+      "symbol": "AZO",
+      "name": "AutoZone, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Parts"
+    },
+    {
+      "symbol": "AVB",
+      "name": "AvalonBay Communities, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "AVY",
+      "name": "Avery Dennison Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Business Equipment & Supplies"
+    },
+    {
+      "symbol": "AXON",
+      "name": "Axon Enterprise, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "BKR",
+      "name": "Baker Hughes Company",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Equipment & Services"
+    },
+    {
+      "symbol": "BALL",
+      "name": "Ball Corporation",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Packaging & Containers"
+    },
+    {
+      "symbol": "BAC",
+      "name": "Bank of America Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Diversified"
+    },
+    {
+      "symbol": "BAX",
+      "name": "Baxter International Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "BDX",
+      "name": "Becton, Dickinson and Company",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "BRK-B",
+      "name": "Berkshire Hathaway Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Diversified"
+    },
+    {
+      "symbol": "BBY",
+      "name": "Best Buy Co., Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "TECH",
+      "name": "Bio-Techne Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Biotechnology"
+    },
+    {
+      "symbol": "BIIB",
+      "name": "Biogen Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "BLK",
+      "name": "BlackRock, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "BX",
+      "name": "Blackstone Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "XYZ",
+      "name": "Block, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "BK",
+      "name": "The Bank of New York Mellon Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "BA",
+      "name": "The Boeing Company",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "BKNG",
+      "name": "Booking Holdings Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Services"
+    },
+    {
+      "symbol": "BSX",
+      "name": "Boston Scientific Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "BMY",
+      "name": "Bristol-Myers Squibb Company",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "AVGO",
+      "name": "Broadcom Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "BR",
+      "name": "Broadridge Financial Solutions, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "BRO",
+      "name": "Brown & Brown, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Brokers"
+    },
+    {
+      "symbol": "BF-B",
+      "name": "Brown-Forman Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Wineries & Distilleries"
+    },
+    {
+      "symbol": "BLDR",
+      "name": "Builders FirstSource, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Construction"
+    },
+    {
+      "symbol": "BG",
+      "name": "Bunge Global S.A.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Agricultural Farm Products"
+    },
+    {
+      "symbol": "BXP",
+      "name": "BXP, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Office"
+    },
+    {
+      "symbol": "CHRW",
+      "name": "C.H. Robinson Worldwide, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Integrated Freight & Logistics"
+    },
+    {
+      "symbol": "CDNS",
+      "name": "Cadence Design Systems, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "CPT",
+      "name": "Camden Property Trust",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "CPB",
+      "name": "Campbell Soup Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "COF",
+      "name": "Capital One Financial Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "CAH",
+      "name": "Cardinal Health, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Distribution"
+    },
+    {
+      "symbol": "CCL",
+      "name": "Carnival Corporation & plc",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Leisure"
+    },
+    {
+      "symbol": "CARR",
+      "name": "Carrier Global Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Construction"
+    },
+    {
+      "symbol": "CVNA",
+      "name": "Carvana Co.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Dealerships"
+    },
+    {
+      "symbol": "CAT",
+      "name": "Caterpillar Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Agricultural - Machinery"
+    },
+    {
+      "symbol": "CBOE",
+      "name": "Cboe Global Markets, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "CBRE",
+      "name": "CBRE Group, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "Real Estate - Services"
+    },
+    {
+      "symbol": "CDW",
+      "name": "CDW Corporation",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "COR",
+      "name": "Cencora, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Distribution"
+    },
+    {
+      "symbol": "CNC",
+      "name": "Centene Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "CNP",
+      "name": "CenterPoint Energy, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "CF",
+      "name": "CF Industries Holdings, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Agricultural Inputs"
+    },
+    {
+      "symbol": "CRL",
+      "name": "Charles River Laboratories International, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "SCHW",
+      "name": "The Charles Schwab Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Capital Markets"
+    },
+    {
+      "symbol": "CHTR",
+      "name": "Charter Communications, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Telecommunications Services"
+    },
+    {
+      "symbol": "CVX",
+      "name": "Chevron Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Integrated"
+    },
+    {
+      "symbol": "CMG",
+      "name": "Chipotle Mexican Grill, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "CB",
+      "name": "Chubb Limited",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "CHD",
+      "name": "Church & Dwight Co., Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "CIEN",
+      "name": "Ciena Corporation",
+      "sector": "Technology",
+      "sub_sector": "Communication Equipment"
+    },
+    {
+      "symbol": "CI",
+      "name": "Cigna Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "CINF",
+      "name": "Cincinnati Financial Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "CTAS",
+      "name": "Cintas Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Specialty Business Services"
+    },
+    {
+      "symbol": "CSCO",
+      "name": "Cisco Systems, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Communication Equipment"
+    },
+    {
+      "symbol": "C",
+      "name": "Citigroup Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Diversified"
+    },
+    {
+      "symbol": "CFG",
+      "name": "Citizens Financial Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "CLX",
+      "name": "The Clorox Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "CME",
+      "name": "CME Group Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "CMS",
+      "name": "CMS Energy Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "KO",
+      "name": "The Coca-Cola Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Non-Alcoholic"
+    },
+    {
+      "symbol": "CTSH",
+      "name": "Cognizant Technology Solutions Corporation",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "COIN",
+      "name": "Coinbase Global, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "CL",
+      "name": "Colgate-Palmolive Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "CMCSA",
+      "name": "Comcast Corporation",
+      "sector": "Communication Services",
+      "sub_sector": "Telecommunications Services"
+    },
+    {
+      "symbol": "FIX",
+      "name": "Comfort Systems USA, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Engineering & Construction"
+    },
+    {
+      "symbol": "CAG",
+      "name": "Conagra Brands, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "COP",
+      "name": "ConocoPhillips",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "ED",
+      "name": "Consolidated Edison, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "STZ",
+      "name": "Constellation Brands, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Wineries & Distilleries"
+    },
+    {
+      "symbol": "CEG",
+      "name": "Constellation Energy Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Renewable Utilities"
+    },
+    {
+      "symbol": "COO",
+      "name": "The Cooper Companies, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "CPRT",
+      "name": "Copart, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Specialty Business Services"
+    },
+    {
+      "symbol": "GLW",
+      "name": "Corning Incorporated",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "CPAY",
+      "name": "Corpay, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "CTVA",
+      "name": "Corteva, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Agricultural Inputs"
+    },
+    {
+      "symbol": "CSGP",
+      "name": "CoStar Group, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "Real Estate - Services"
+    },
+    {
+      "symbol": "COST",
+      "name": "Costco Wholesale Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Discount Stores"
+    },
+    {
+      "symbol": "CTRA",
+      "name": "Coterra Energy Inc.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "CRH",
+      "name": "CRH plc",
+      "sector": "Basic Materials",
+      "sub_sector": "Construction Materials"
+    },
+    {
+      "symbol": "CRWD",
+      "name": "CrowdStrike Holdings, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "CCI",
+      "name": "Crown Castle Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Specialty"
+    },
+    {
+      "symbol": "CSX",
+      "name": "CSX Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Railroads"
+    },
+    {
+      "symbol": "CMI",
+      "name": "Cummins Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "CVS",
+      "name": "CVS Health Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "DHR",
+      "name": "Danaher Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "DRI",
+      "name": "Darden Restaurants, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "DDOG",
+      "name": "Datadog, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "DVA",
+      "name": "DaVita Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Care Facilities"
+    },
+    {
+      "symbol": "DECK",
+      "name": "Deckers Outdoor Corporation",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Footwear & Accessories"
+    },
+    {
+      "symbol": "DE",
+      "name": "Deere & Company",
+      "sector": "Industrials",
+      "sub_sector": "Agricultural - Machinery"
+    },
+    {
+      "symbol": "DELL",
+      "name": "Dell Technologies Inc.",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "DAL",
+      "name": "Delta Air Lines, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Airlines, Airports & Air Services"
+    },
+    {
+      "symbol": "DVN",
+      "name": "Devon Energy Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "DXCM",
+      "name": "DexCom, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "FANG",
+      "name": "Diamondback Energy, Inc.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "DLR",
+      "name": "Digital Realty Trust, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Office"
+    },
+    {
+      "symbol": "DG",
+      "name": "Dollar General Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Discount Stores"
+    },
+    {
+      "symbol": "DLTR",
+      "name": "Dollar Tree, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Discount Stores"
+    },
+    {
+      "symbol": "D",
+      "name": "Dominion Energy, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "DPZ",
+      "name": "Domino's Pizza, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "DASH",
+      "name": "DoorDash, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Internet Content & Information"
+    },
+    {
+      "symbol": "DOV",
+      "name": "Dover Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "DOW",
+      "name": "Dow Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals"
+    },
+    {
+      "symbol": "DHI",
+      "name": "D.R. Horton, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Residential Construction"
+    },
+    {
+      "symbol": "DTE",
+      "name": "DTE Energy Company",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "DUK",
+      "name": "Duke Energy Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "DD",
+      "name": "DuPont de Nemours, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "ETN",
+      "name": "Eaton Corporation plc",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "EBAY",
+      "name": "eBay Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "ECL",
+      "name": "Ecolab Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "EIX",
+      "name": "Edison International",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "EW",
+      "name": "Edwards Lifesciences Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "EA",
+      "name": "Electronic Arts Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Electronic Gaming & Multimedia"
+    },
+    {
+      "symbol": "ELV",
+      "name": "Elevance Health Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "EME",
+      "name": "EMCOR Group, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Engineering & Construction"
+    },
+    {
+      "symbol": "EMR",
+      "name": "Emerson Electric Co.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "ETR",
+      "name": "Entergy Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "EOG",
+      "name": "EOG Resources, Inc.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "EPAM",
+      "name": "EPAM Systems, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "EQT",
+      "name": "EQT Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "EFX",
+      "name": "Equifax Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Consulting Services"
+    },
+    {
+      "symbol": "EQIX",
+      "name": "Equinix, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Specialty"
+    },
+    {
+      "symbol": "EQR",
+      "name": "Equity Residential",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "ERIE",
+      "name": "Erie Indemnity Company",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Brokers"
+    },
+    {
+      "symbol": "ESS",
+      "name": "Essex Property Trust, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "EL",
+      "name": "The Estée Lauder Companies Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "EG",
+      "name": "Everest Re Group, Ltd.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Reinsurance"
+    },
+    {
+      "symbol": "EVRG",
+      "name": "Evergy, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "ES",
+      "name": "Eversource Energy",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "EXC",
+      "name": "Exelon Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "EXE",
+      "name": "Expand Energy Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "EXPE",
+      "name": "Expedia Group, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Services"
+    },
+    {
+      "symbol": "EXPD",
+      "name": "Expeditors International of Washington, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Integrated Freight & Logistics"
+    },
+    {
+      "symbol": "EXR",
+      "name": "Extra Space Storage Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Industrial"
+    },
+    {
+      "symbol": "XOM",
+      "name": "Exxon Mobil Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Integrated"
+    },
+    {
+      "symbol": "FFIV",
+      "name": "F5, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "FDS",
+      "name": "FactSet Research Systems Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "FICO",
+      "name": "Fair Isaac Corporation",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "FAST",
+      "name": "Fastenal Company",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Distribution"
+    },
+    {
+      "symbol": "FRT",
+      "name": "Federal Realty Investment Trust",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Retail"
+    },
+    {
+      "symbol": "FDX",
+      "name": "FedEx Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Integrated Freight & Logistics"
+    },
+    {
+      "symbol": "FIS",
+      "name": "Fidelity National Information Services, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "FITB",
+      "name": "Fifth Third Bancorp",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "FSLR",
+      "name": "First Solar, Inc.",
+      "sector": "Energy",
+      "sub_sector": "Solar"
+    },
+    {
+      "symbol": "FE",
+      "name": "FirstEnergy Corp.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "FISV",
+      "name": "Fiserv, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "F",
+      "name": "Ford Motor Company",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Manufacturers"
+    },
+    {
+      "symbol": "FTNT",
+      "name": "Fortinet, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "FTV",
+      "name": "Fortive Corporation",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "FOXA",
+      "name": "Fox Corporation",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "FOX",
+      "name": "Fox Corporation",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "BEN",
+      "name": "Franklin Resources, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "FCX",
+      "name": "Freeport-McMoRan Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Copper"
+    },
+    {
+      "symbol": "GRMN",
+      "name": "Garmin Ltd.",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "IT",
+      "name": "Gartner, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "GE",
+      "name": "GE Aerospace",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "GEHC",
+      "name": "GE HealthCare Technologies Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Information Services"
+    },
+    {
+      "symbol": "GEV",
+      "name": "GE Vernova Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Renewable Utilities"
+    },
+    {
+      "symbol": "GEN",
+      "name": "Gen Digital Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "GNRC",
+      "name": "Generac Holdings Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "GD",
+      "name": "General Dynamics Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "GIS",
+      "name": "General Mills, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "GM",
+      "name": "General Motors Company",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Manufacturers"
+    },
+    {
+      "symbol": "GPC",
+      "name": "Genuine Parts Company",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "GILD",
+      "name": "Gilead Sciences, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "GPN",
+      "name": "Global Payments Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Specialty Business Services"
+    },
+    {
+      "symbol": "GL",
+      "name": "Globe Life Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Life"
+    },
+    {
+      "symbol": "GDDY",
+      "name": "GoDaddy Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "GS",
+      "name": "The Goldman Sachs Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Capital Markets"
+    },
+    {
+      "symbol": "HAL",
+      "name": "Halliburton Company",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Equipment & Services"
+    },
+    {
+      "symbol": "HIG",
+      "name": "The Hartford Financial Services Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Diversified"
+    },
+    {
+      "symbol": "HAS",
+      "name": "Hasbro, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Leisure"
+    },
+    {
+      "symbol": "HCA",
+      "name": "HCA Healthcare, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Care Facilities"
+    },
+    {
+      "symbol": "DOC",
+      "name": "Healthpeak Properties, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Healthcare Facilities"
+    },
+    {
+      "symbol": "HSIC",
+      "name": "Henry Schein, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Distribution"
+    },
+    {
+      "symbol": "HSY",
+      "name": "The Hershey Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Food Confectioners"
+    },
+    {
+      "symbol": "HPE",
+      "name": "Hewlett Packard Enterprise Company",
+      "sector": "Technology",
+      "sub_sector": "Communication Equipment"
+    },
+    {
+      "symbol": "HLT",
+      "name": "Hilton Worldwide Holdings Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Lodging"
+    },
+    {
+      "symbol": "HOLX",
+      "name": "Hologic, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "HD",
+      "name": "The Home Depot, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Home Improvement"
+    },
+    {
+      "symbol": "HON",
+      "name": "Honeywell International Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Conglomerates"
+    },
+    {
+      "symbol": "HRL",
+      "name": "Hormel Foods Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "HST",
+      "name": "Host Hotels & Resorts, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Hotel & Motel"
+    },
+    {
+      "symbol": "HWM",
+      "name": "Howmet Aerospace Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "HPQ",
+      "name": "HP Inc.",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "HUBB",
+      "name": "Hubbell Incorporated",
+      "sector": "Industrials",
+      "sub_sector": "Electrical Equipment & Parts"
+    },
+    {
+      "symbol": "HUM",
+      "name": "Humana Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "HBAN",
+      "name": "Huntington Bancshares Incorporated",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "HII",
+      "name": "Huntington Ingalls Industries, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "IBM",
+      "name": "International Business Machines Corporation",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "IEX",
+      "name": "IDEX Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "IDXX",
+      "name": "IDEXX Laboratories, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "ITW",
+      "name": "Illinois Tool Works Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "INCY",
+      "name": "Incyte Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Biotechnology"
+    },
+    {
+      "symbol": "IR",
+      "name": "Ingersoll Rand Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "PODD",
+      "name": "Insulet Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "INTC",
+      "name": "Intel Corporation",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "IBKR",
+      "name": "Interactive Brokers Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Investment - Banking & Investment Services"
+    },
+    {
+      "symbol": "ICE",
+      "name": "Intercontinental Exchange, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "IFF",
+      "name": "International Flavors & Fragrances Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "IP",
+      "name": "International Paper Company",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Packaging & Containers"
+    },
+    {
+      "symbol": "INTU",
+      "name": "Intuit Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "ISRG",
+      "name": "Intuitive Surgical, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "IVZ",
+      "name": "Invesco Ltd.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "INVH",
+      "name": "Invitation Homes Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "IQV",
+      "name": "IQVIA Holdings Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "IRM",
+      "name": "Iron Mountain Incorporated",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Specialty"
+    },
+    {
+      "symbol": "JBHT",
+      "name": "J.B. Hunt Transport Services, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Integrated Freight & Logistics"
+    },
+    {
+      "symbol": "JBL",
+      "name": "Jabil Inc.",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "JKHY",
+      "name": "Jack Henry & Associates, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "J",
+      "name": "Jacobs Solutions Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Engineering & Construction"
+    },
+    {
+      "symbol": "JNJ",
+      "name": "Johnson & Johnson",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "JCI",
+      "name": "Johnson Controls International plc",
+      "sector": "Industrials",
+      "sub_sector": "Construction"
+    },
+    {
+      "symbol": "JPM",
+      "name": "JPMorgan Chase & Co.",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Diversified"
+    },
+    {
+      "symbol": "KVUE",
+      "name": "Kenvue Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "KDP",
+      "name": "Keurig Dr Pepper Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Non-Alcoholic"
+    },
+    {
+      "symbol": "KEY",
+      "name": "KeyCorp",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "KEYS",
+      "name": "Keysight Technologies, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "KMB",
+      "name": "Kimberly-Clark Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "KIM",
+      "name": "Kimco Realty Corporation",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Retail"
+    },
+    {
+      "symbol": "KMI",
+      "name": "Kinder Morgan, Inc.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Midstream"
+    },
+    {
+      "symbol": "KKR",
+      "name": "KKR & Co. Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "KLAC",
+      "name": "KLA Corporation",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "KHC",
+      "name": "The Kraft Heinz Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "KR",
+      "name": "The Kroger Co.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Grocery Stores"
+    },
+    {
+      "symbol": "LHX",
+      "name": "L3Harris Technologies, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "LH",
+      "name": "Labcorp Holdings Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "LRCX",
+      "name": "Lam Research Corporation",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "LW",
+      "name": "Lamb Weston Holdings, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "LVS",
+      "name": "Las Vegas Sands Corp.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Gambling, Resorts & Casinos"
+    },
+    {
+      "symbol": "LDOS",
+      "name": "Leidos Holdings, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "LII",
+      "name": "Lennox International Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Construction"
+    },
+    {
+      "symbol": "LLY",
+      "name": "Eli Lilly and Company",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "LIN",
+      "name": "Linde plc",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "LYV",
+      "name": "Live Nation Entertainment, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "LMT",
+      "name": "Lockheed Martin Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "L",
+      "name": "Loews Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "LOW",
+      "name": "Lowe's Companies, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Home Improvement"
+    },
+    {
+      "symbol": "LULU",
+      "name": "Lululemon Athletica Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Retail"
+    },
+    {
+      "symbol": "LYB",
+      "name": "LyondellBasell Industries N.V.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "MTB",
+      "name": "M&T Bank Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "MPC",
+      "name": "Marathon Petroleum Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Refining & Marketing"
+    },
+    {
+      "symbol": "MAR",
+      "name": "Marriott International, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Lodging"
+    },
+    {
+      "symbol": "MRSH",
+      "name": "Marsh & McLennan Companies, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Brokers"
+    },
+    {
+      "symbol": "MLM",
+      "name": "Martin Marietta Materials, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Construction Materials"
+    },
+    {
+      "symbol": "MAS",
+      "name": "Masco Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Construction"
+    },
+    {
+      "symbol": "MA",
+      "name": "Mastercard Incorporated",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "MTCH",
+      "name": "Match Group, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Internet Content & Information"
+    },
+    {
+      "symbol": "MKC",
+      "name": "McCormick & Company, Incorporated",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "MCD",
+      "name": "McDonald's Corporation",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "MCK",
+      "name": "McKesson Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Distribution"
+    },
+    {
+      "symbol": "MDT",
+      "name": "Medtronic plc",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "MRK",
+      "name": "Merck & Co., Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Internet Content & Information"
+    },
+    {
+      "symbol": "MET",
+      "name": "MetLife, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Life"
+    },
+    {
+      "symbol": "MGM",
+      "name": "MGM Resorts International",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Gambling, Resorts & Casinos"
+    },
+    {
+      "symbol": "MCHP",
+      "name": "Microchip Technology Incorporated",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "MU",
+      "name": "Micron Technology, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft Corporation",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "MAA",
+      "name": "Mid-America Apartment Communities, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "MRNA",
+      "name": "Moderna, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Biotechnology"
+    },
+    {
+      "symbol": "MOH",
+      "name": "Molina Healthcare, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "TAP",
+      "name": "Molson Coors Beverage Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Alcoholic"
+    },
+    {
+      "symbol": "MDLZ",
+      "name": "Mondelez International, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Food Confectioners"
+    },
+    {
+      "symbol": "MPWR",
+      "name": "Monolithic Power Systems, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "MNST",
+      "name": "Monster Beverage Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Non-Alcoholic"
+    },
+    {
+      "symbol": "MCO",
+      "name": "Moody's Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "MS",
+      "name": "Morgan Stanley",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Capital Markets"
+    },
+    {
+      "symbol": "MOS",
+      "name": "The Mosaic Company",
+      "sector": "Basic Materials",
+      "sub_sector": "Agricultural Inputs"
+    },
+    {
+      "symbol": "MSI",
+      "name": "Motorola Solutions, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Communication Equipment"
+    },
+    {
+      "symbol": "MSCI",
+      "name": "MSCI Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "NDAQ",
+      "name": "Nasdaq, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "NTAP",
+      "name": "NetApp, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "NFLX",
+      "name": "Netflix, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "NEM",
+      "name": "Newmont Corporation",
+      "sector": "Basic Materials",
+      "sub_sector": "Gold"
+    },
+    {
+      "symbol": "NWSA",
+      "name": "News Corporation",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "NWS",
+      "name": "News Corporation",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "NEE",
+      "name": "NextEra Energy, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "NKE",
+      "name": "NIKE, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Footwear & Accessories"
+    },
+    {
+      "symbol": "NI",
+      "name": "NiSource Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Gas"
+    },
+    {
+      "symbol": "NDSN",
+      "name": "Nordson Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "NSC",
+      "name": "Norfolk Southern Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Railroads"
+    },
+    {
+      "symbol": "NTRS",
+      "name": "Northern Trust Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "NOC",
+      "name": "Northrop Grumman Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "NCLH",
+      "name": "Norwegian Cruise Line Holdings Ltd.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Services"
+    },
+    {
+      "symbol": "NRG",
+      "name": "NRG Energy, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Independent Power Producers"
+    },
+    {
+      "symbol": "NUE",
+      "name": "Nucor Corporation",
+      "sector": "Basic Materials",
+      "sub_sector": "Steel"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA Corporation",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "NVR",
+      "name": "NVR, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Residential Construction"
+    },
+    {
+      "symbol": "NXPI",
+      "name": "NXP Semiconductors N.V.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "ORLY",
+      "name": "O'Reilly Automotive, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Parts"
+    },
+    {
+      "symbol": "OXY",
+      "name": "Occidental Petroleum Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "ODFL",
+      "name": "Old Dominion Freight Line, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Trucking"
+    },
+    {
+      "symbol": "OMC",
+      "name": "Omnicom Group Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Advertising Agencies"
+    },
+    {
+      "symbol": "ON",
+      "name": "ON Semiconductor Corporation",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "OKE",
+      "name": "ONEOK, Inc.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Midstream"
+    },
+    {
+      "symbol": "ORCL",
+      "name": "Oracle Corporation",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "OTIS",
+      "name": "Otis Worldwide Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "PCAR",
+      "name": "PACCAR Inc",
+      "sector": "Industrials",
+      "sub_sector": "Agricultural - Machinery"
+    },
+    {
+      "symbol": "PKG",
+      "name": "Packaging Corporation of America",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Packaging & Containers"
+    },
+    {
+      "symbol": "PLTR",
+      "name": "Palantir Technologies Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "PANW",
+      "name": "Palo Alto Networks, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "PSKY",
+      "name": "Paramount Skydance Corporation Class B Common Stock",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "PH",
+      "name": "Parker-Hannifin Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "PAYX",
+      "name": "Paychex, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Staffing & Employment Services"
+    },
+    {
+      "symbol": "PAYC",
+      "name": "Paycom Software, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "PYPL",
+      "name": "PayPal Holdings, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "PNR",
+      "name": "Pentair plc",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "PEP",
+      "name": "PepsiCo, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Non-Alcoholic"
+    },
+    {
+      "symbol": "PFE",
+      "name": "Pfizer Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "PCG",
+      "name": "PG&E Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "PM",
+      "name": "Philip Morris International Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Tobacco"
+    },
+    {
+      "symbol": "PSX",
+      "name": "Phillips 66",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Refining & Marketing"
+    },
+    {
+      "symbol": "PNW",
+      "name": "Pinnacle West Capital Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "PNC",
+      "name": "The PNC Financial Services Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "POOL",
+      "name": "Pool Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Distribution"
+    },
+    {
+      "symbol": "PPG",
+      "name": "PPG Industries, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "PPL",
+      "name": "PPL Corporation",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "PFG",
+      "name": "Principal Financial Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Diversified"
+    },
+    {
+      "symbol": "PG",
+      "name": "The Procter & Gamble Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "PGR",
+      "name": "The Progressive Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "PLD",
+      "name": "Prologis, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Industrial"
+    },
+    {
+      "symbol": "PRU",
+      "name": "Prudential Financial, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Life"
+    },
+    {
+      "symbol": "PEG",
+      "name": "Public Service Enterprise Group Incorporated",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "PTC",
+      "name": "PTC Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "PSA",
+      "name": "Public Storage",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Industrial"
+    },
+    {
+      "symbol": "PHM",
+      "name": "PulteGroup, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Residential Construction"
+    },
+    {
+      "symbol": "PWR",
+      "name": "Quanta Services, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Engineering & Construction"
+    },
+    {
+      "symbol": "QCOM",
+      "name": "QUALCOMM Incorporated",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "DGX",
+      "name": "Quest Diagnostics Incorporated",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "Q",
+      "name": "Qnity Electronics, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "RL",
+      "name": "Ralph Lauren Corporation",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Manufacturers"
+    },
+    {
+      "symbol": "RJF",
+      "name": "Raymond James Financial, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Capital Markets"
+    },
+    {
+      "symbol": "RTX",
+      "name": "RTX Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "O",
+      "name": "Realty Income Corporation",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Retail"
+    },
+    {
+      "symbol": "REG",
+      "name": "Regency Centers Corporation",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Retail"
+    },
+    {
+      "symbol": "REGN",
+      "name": "Regeneron Pharmaceuticals, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Biotechnology"
+    },
+    {
+      "symbol": "RF",
+      "name": "Regions Financial Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "RSG",
+      "name": "Republic Services, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Waste Management"
+    },
+    {
+      "symbol": "RMD",
+      "name": "ResMed Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "RVTY",
+      "name": "Revvity, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "HOOD",
+      "name": "Robinhood Markets, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Capital Markets"
+    },
+    {
+      "symbol": "ROK",
+      "name": "Rockwell Automation, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "ROL",
+      "name": "Rollins, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Personal Products & Services"
+    },
+    {
+      "symbol": "ROP",
+      "name": "Roper Technologies, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "ROST",
+      "name": "Ross Stores, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Retail"
+    },
+    {
+      "symbol": "RCL",
+      "name": "Royal Caribbean Cruises Ltd.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Travel Services"
+    },
+    {
+      "symbol": "SPGI",
+      "name": "S&P Global Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Data & Stock Exchanges"
+    },
+    {
+      "symbol": "CRM",
+      "name": "Salesforce, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "SNDK",
+      "name": "Sandisk Corporation",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "SBAC",
+      "name": "SBA Communications Corporation",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Specialty"
+    },
+    {
+      "symbol": "SLB",
+      "name": "SLB N.V.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Equipment & Services"
+    },
+    {
+      "symbol": "STX",
+      "name": "Seagate Technology Holdings plc",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "SRE",
+      "name": "Sempra",
+      "sector": "Utilities",
+      "sub_sector": "Diversified Utilities"
+    },
+    {
+      "symbol": "NOW",
+      "name": "ServiceNow, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "SHW",
+      "name": "The Sherwin-Williams Company",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals - Specialty"
+    },
+    {
+      "symbol": "SPG",
+      "name": "Simon Property Group, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Retail"
+    },
+    {
+      "symbol": "SWKS",
+      "name": "Skyworks Solutions, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "SJM",
+      "name": "The J. M. Smucker Company",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Packaged Foods"
+    },
+    {
+      "symbol": "SW",
+      "name": "Smurfit Westrock Plc",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Packaging & Containers"
+    },
+    {
+      "symbol": "SNA",
+      "name": "Snap-on Incorporated",
+      "sector": "Industrials",
+      "sub_sector": "Manufacturing - Tools & Accessories"
+    },
+    {
+      "symbol": "SOLV",
+      "name": "Solventum Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Care Facilities"
+    },
+    {
+      "symbol": "SO",
+      "name": "The Southern Company",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "LUV",
+      "name": "Southwest Airlines Co.",
+      "sector": "Industrials",
+      "sub_sector": "Airlines, Airports & Air Services"
+    },
+    {
+      "symbol": "SWK",
+      "name": "Stanley Black & Decker, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Manufacturing - Tools & Accessories"
+    },
+    {
+      "symbol": "SBUX",
+      "name": "Starbucks Corporation",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "STT",
+      "name": "State Street Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "STLD",
+      "name": "Steel Dynamics, Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Steel"
+    },
+    {
+      "symbol": "STE",
+      "name": "STERIS plc",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "SYK",
+      "name": "Stryker Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "SMCI",
+      "name": "Super Micro Computer, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "SYF",
+      "name": "Synchrony Financial",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "SNPS",
+      "name": "Synopsys, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "SYY",
+      "name": "Sysco Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Food Distribution"
+    },
+    {
+      "symbol": "TMUS",
+      "name": "T-Mobile US, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Telecommunications Services"
+    },
+    {
+      "symbol": "TROW",
+      "name": "T. Rowe Price Group, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management"
+    },
+    {
+      "symbol": "TTWO",
+      "name": "Take-Two Interactive Software, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Electronic Gaming & Multimedia"
+    },
+    {
+      "symbol": "TPR",
+      "name": "Tapestry, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Luxury Goods"
+    },
+    {
+      "symbol": "TRGP",
+      "name": "Targa Resources Corp.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Midstream"
+    },
+    {
+      "symbol": "TGT",
+      "name": "Target Corporation",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Discount Stores"
+    },
+    {
+      "symbol": "TEL",
+      "name": "TE Connectivity Ltd.",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "TDY",
+      "name": "Teledyne Technologies Incorporated",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "TER",
+      "name": "Teradyne, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "Tesla, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Auto - Manufacturers"
+    },
+    {
+      "symbol": "TXN",
+      "name": "Texas Instruments Incorporated",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "TPL",
+      "name": "Texas Pacific Land Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Exploration & Production"
+    },
+    {
+      "symbol": "TXT",
+      "name": "Textron Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "TMO",
+      "name": "Thermo Fisher Scientific Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "TJX",
+      "name": "The TJX Companies, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Retail"
+    },
+    {
+      "symbol": "TKO",
+      "name": "TKO Group Holdings, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "TTD",
+      "name": "The Trade Desk, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "TSCO",
+      "name": "Tractor Supply Company",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "TT",
+      "name": "Trane Technologies plc",
+      "sector": "Industrials",
+      "sub_sector": "Construction"
+    },
+    {
+      "symbol": "TDG",
+      "name": "TransDigm Group Incorporated",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "TRV",
+      "name": "The Travelers Companies, Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "TRMB",
+      "name": "Trimble Inc.",
+      "sector": "Technology",
+      "sub_sector": "Hardware, Equipment & Parts"
+    },
+    {
+      "symbol": "TFC",
+      "name": "Truist Financial Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "TYL",
+      "name": "Tyler Technologies, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "TSN",
+      "name": "Tyson Foods, Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Agricultural Farm Products"
+    },
+    {
+      "symbol": "USB",
+      "name": "U.S. Bancorp",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Regional"
+    },
+    {
+      "symbol": "UBER",
+      "name": "Uber Technologies, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "UDR",
+      "name": "UDR, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Residential"
+    },
+    {
+      "symbol": "ULTA",
+      "name": "Ulta Beauty, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "UNP",
+      "name": "Union Pacific Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Railroads"
+    },
+    {
+      "symbol": "UAL",
+      "name": "United Airlines Holdings, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Airlines, Airports & Air Services"
+    },
+    {
+      "symbol": "UPS",
+      "name": "United Parcel Service, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Integrated Freight & Logistics"
+    },
+    {
+      "symbol": "URI",
+      "name": "United Rentals, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Rental & Leasing Services"
+    },
+    {
+      "symbol": "UNH",
+      "name": "UnitedHealth Group Incorporated",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "UHS",
+      "name": "Universal Health Services, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Care Facilities"
+    },
+    {
+      "symbol": "VLO",
+      "name": "Valero Energy Corporation",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Refining & Marketing"
+    },
+    {
+      "symbol": "VTR",
+      "name": "Ventas, Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Healthcare Facilities"
+    },
+    {
+      "symbol": "VLTO",
+      "name": "Veralto Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Pollution & Treatment Controls"
+    },
+    {
+      "symbol": "VRSN",
+      "name": "VeriSign, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "VRSK",
+      "name": "Verisk Analytics, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Consulting Services"
+    },
+    {
+      "symbol": "VZ",
+      "name": "Verizon Communications Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Telecommunications Services"
+    },
+    {
+      "symbol": "VRTX",
+      "name": "Vertex Pharmaceuticals Incorporated",
+      "sector": "Healthcare",
+      "sub_sector": "Biotechnology"
+    },
+    {
+      "symbol": "VTRS",
+      "name": "Viatris Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - Specialty & Generic"
+    },
+    {
+      "symbol": "VICI",
+      "name": "VICI Properties Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Diversified"
+    },
+    {
+      "symbol": "V",
+      "name": "Visa Inc.",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "VST",
+      "name": "Vistra Corp.",
+      "sector": "Utilities",
+      "sub_sector": "Independent Power Producers"
+    },
+    {
+      "symbol": "VMC",
+      "name": "Vulcan Materials Company",
+      "sector": "Basic Materials",
+      "sub_sector": "Construction Materials"
+    },
+    {
+      "symbol": "WRB",
+      "name": "W. R. Berkley Corporation",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "GWW",
+      "name": "W.W. Grainger, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Distribution"
+    },
+    {
+      "symbol": "WAB",
+      "name": "Westinghouse Air Brake Technologies Corporation",
+      "sector": "Industrials",
+      "sub_sector": "Railroads"
+    },
+    {
+      "symbol": "WMT",
+      "name": "Walmart Inc.",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Discount Stores"
+    },
+    {
+      "symbol": "DIS",
+      "name": "The Walt Disney Company",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "WBD",
+      "name": "Warner Bros. Discovery, Inc.",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "WM",
+      "name": "Waste Management, Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Waste Management"
+    },
+    {
+      "symbol": "WAT",
+      "name": "Waters Corporation",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Diagnostics & Research"
+    },
+    {
+      "symbol": "WEC",
+      "name": "WEC Energy Group, Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "WFC",
+      "name": "Wells Fargo & Company",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Diversified"
+    },
+    {
+      "symbol": "WELL",
+      "name": "Welltower Inc.",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Healthcare Facilities"
+    },
+    {
+      "symbol": "WST",
+      "name": "West Pharmaceutical Services, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Instruments & Supplies"
+    },
+    {
+      "symbol": "WDC",
+      "name": "Western Digital Corporation",
+      "sector": "Technology",
+      "sub_sector": "Computer Hardware"
+    },
+    {
+      "symbol": "WY",
+      "name": "Weyerhaeuser Company",
+      "sector": "Real Estate",
+      "sub_sector": "REIT - Specialty"
+    },
+    {
+      "symbol": "WSM",
+      "name": "Williams-Sonoma, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Specialty Retail"
+    },
+    {
+      "symbol": "WMB",
+      "name": "The Williams Companies, Inc.",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Midstream"
+    },
+    {
+      "symbol": "WTW",
+      "name": "Willis Towers Watson Public Limited Company",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Brokers"
+    },
+    {
+      "symbol": "WDAY",
+      "name": "Workday, Inc.",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "WYNN",
+      "name": "Wynn Resorts, Limited",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Gambling, Resorts & Casinos"
+    },
+    {
+      "symbol": "XEL",
+      "name": "Xcel Energy Inc.",
+      "sector": "Utilities",
+      "sub_sector": "Regulated Electric"
+    },
+    {
+      "symbol": "XYL",
+      "name": "Xylem Inc.",
+      "sector": "Industrials",
+      "sub_sector": "Industrial - Machinery"
+    },
+    {
+      "symbol": "YUM",
+      "name": "Yum! Brands, Inc.",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "ZBRA",
+      "name": "Zebra Technologies Corporation",
+      "sector": "Technology",
+      "sub_sector": "Communication Equipment"
+    },
+    {
+      "symbol": "ZBH",
+      "name": "Zimmer Biomet Holdings, Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Devices"
+    },
+    {
+      "symbol": "ZTS",
+      "name": "Zoetis Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - Specialty & Generic"
+    }
+  ]
+}

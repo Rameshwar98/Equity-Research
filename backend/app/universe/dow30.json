@@ -1,0 +1,15 @@
+{
+  "constituents": [
+    { "symbol": "AAPL", "name": "Apple Inc." },
+    { "symbol": "MSFT", "name": "Microsoft" },
+    { "symbol": "JNJ", "name": "Johnson & Johnson" },
+    { "symbol": "JPM", "name": "JPMorgan Chase" },
+    { "symbol": "V", "name": "Visa" },
+    { "symbol": "PG", "name": "Procter & Gamble" },
+    { "symbol": "KO", "name": "Coca-Cola" },
+    { "symbol": "DIS", "name": "Disney" },
+    { "symbol": "WMT", "name": "Walmart" },
+    { "symbol": "XOM", "name": "Exxon Mobil" }
+  ]
+}
+

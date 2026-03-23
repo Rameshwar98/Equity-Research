@@ -1,0 +1,15 @@
+{
+  "constituents": [
+    { "symbol": "AAPL", "name": "Apple Inc." },
+    { "symbol": "MSFT", "name": "Microsoft" },
+    { "symbol": "NVDA", "name": "NVIDIA" },
+    { "symbol": "AMZN", "name": "Amazon" },
+    { "symbol": "META", "name": "Meta Platforms" },
+    { "symbol": "AVGO", "name": "Broadcom" },
+    { "symbol": "COST", "name": "Costco" },
+    { "symbol": "ADBE", "name": "Adobe" },
+    { "symbol": "NFLX", "name": "Netflix" },
+    { "symbol": "TSLA", "name": "Tesla" }
+  ]
+}
+
