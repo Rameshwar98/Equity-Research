@@ -1,6 +1,7 @@
 import type {
   Constituent,
   IndexInfo,
+  PeersResponse,
   RunAnalysisResponse,
   ScoreKey,
   StockDetailsResponse,
@@ -85,7 +86,16 @@ export function getRunAnalysisPartial(runId: string) {
   );
 }
 
-export function getStockDetails(symbol: string) {
-  return http<StockDetailsResponse>(`/api/stock/${encodeURIComponent(symbol)}/details`);
+export function getStockDetails(symbol: string, selectedScore?: string) {
+  const params = selectedScore ? `?selected_score=${selectedScore}` : "";
+  return http<StockDetailsResponse>(`/api/stock/${encodeURIComponent(symbol)}/details${params}`);
+}
+
+export function getStockPeers(symbol: string, indexName: string, selectedScore: ScoreKey) {
+  const q = new URLSearchParams({
+    index_name: indexName,
+    selected_score: selectedScore,
+  });
+  return http<PeersResponse>(`/api/stock/${encodeURIComponent(symbol)}/peers?${q.toString()}`);
 }
 

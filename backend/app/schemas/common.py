@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ApiError(BaseModel):
@@ -49,7 +49,29 @@ class AnalysisRow(BaseModel):
     score_1: float | None = None
     score_2: float | None = None
     score_3: float | None = None
+    last_price: float | None = None
+    mkt_cap: float | None = None
+    high_52w: float | None = None
+    low_52w: float | None = None
+    return_1d: float | None = None
+    return_1w: float | None = None
+    return_1m: float | None = None
+    return_3m: float | None = None
+    return_ytd: float | None = None
     signals: List[str] = Field(default_factory=list)
+    # ~52 weeks (1y) Fri-week signals, oldest → newest (dashboard strip)
+    signals_1y: List[str] = Field(default_factory=list)
+    signals_1y_dates: List[str] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _migrate_legacy_heatmap(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        if not data.get("signals_1y") and data.get("signals_6m"):
+            data["signals_1y"] = list(data["signals_6m"])
+            data["signals_1y_dates"] = list(data.get("signals_6m_dates") or [])
+        return data
 
 
 class RunAnalysisRequest(BaseModel):
@@ -60,7 +82,7 @@ class RunAnalysisRequest(BaseModel):
 
 class RunAnalysisResponse(BaseModel):
     metadata: Metadata
-    date_labels: List[str]  # len=16 (most-recent first)
+    date_labels: List[str]  # up to 16 weeks (most-recent first)
     rows: List[AnalysisRow]
     summary: SummaryStats
     cached_at: datetime

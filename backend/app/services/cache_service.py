@@ -170,6 +170,134 @@ class CacheService:
         payload = json.loads(row["payload_json"])
         return CachedRun(run_id=row["run_id"], cached_at=cached_at, payload=payload)
 
+    async def get_peer_comparison_cache(
+        self, index_name: str, anchor_symbol: str, ttl_seconds: int
+    ) -> Optional[Dict[str, Any]]:
+        key_anchor = anchor_symbol.strip().upper()
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cur = await db.execute(
+                """
+                SELECT peer_source, symbols_json, meta_json, cached_at
+                FROM peer_comparison_cache
+                WHERE index_name = ? AND anchor_symbol = ?
+                """,
+                (index_name, key_anchor),
+            )
+            row = await cur.fetchone()
+        if not row:
+            return None
+        cached_at = _iso_to_dt(row["cached_at"])
+        if ttl_seconds > 0 and (utc_now() - cached_at).total_seconds() > ttl_seconds:
+            return None
+        return {
+            "peer_source": row["peer_source"],
+            "symbols": json.loads(row["symbols_json"]),
+            "meta": json.loads(row["meta_json"]),
+        }
+
+    async def put_peer_comparison_cache(
+        self,
+        index_name: str,
+        anchor_symbol: str,
+        peer_source: str,
+        symbols: list[str],
+        meta: Dict[str, Dict[str, Any]],
+    ) -> None:
+        key_anchor = anchor_symbol.strip().upper()
+        cached_at_iso = _dt_to_iso(utc_now())
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                """
+                INSERT INTO peer_comparison_cache(
+                  index_name, anchor_symbol, peer_source, symbols_json, meta_json, cached_at
+                )
+                VALUES(?,?,?,?,?,?)
+                ON CONFLICT(index_name, anchor_symbol) DO UPDATE SET
+                  peer_source=excluded.peer_source,
+                  symbols_json=excluded.symbols_json,
+                  meta_json=excluded.meta_json,
+                  cached_at=excluded.cached_at
+                """,
+                (
+                    index_name,
+                    key_anchor,
+                    peer_source,
+                    json.dumps(symbols, separators=(",", ":"), ensure_ascii=False),
+                    json.dumps(meta, separators=(",", ":"), ensure_ascii=False),
+                    cached_at_iso,
+                ),
+            )
+            await db.commit()
+
+    async def get_symbol_fmp_meta_batch(
+        self, symbols: Iterable[str], ttl_seconds: int
+    ) -> tuple[Dict[str, Dict[str, Any]], list[str]]:
+        unique = sorted({s for s in symbols if s})
+        if not unique:
+            return {}, []
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            ph = ",".join("?" * len(unique))
+            cur = await db.execute(
+                f"""
+                SELECT symbol, mkt_cap, name, announcement_date, updated_at
+                FROM symbol_fmp_meta WHERE symbol IN ({ph})
+                """,
+                unique,
+            )
+            rows = await cur.fetchall()
+        row_by = {r["symbol"]: r for r in rows}
+        now = utc_now()
+        fresh: Dict[str, Dict[str, Any]] = {}
+        stale: list[str] = []
+        for sym in unique:
+            r = row_by.get(sym)
+            if r is None:
+                stale.append(sym)
+                continue
+            if ttl_seconds > 0:
+                age = (now - _iso_to_dt(r["updated_at"])).total_seconds()
+                if age > ttl_seconds:
+                    stale.append(sym)
+                    continue
+            fresh[sym] = {
+                "mkt_cap": r["mkt_cap"],
+                "name": r["name"],
+                "announcement_date": r["announcement_date"],
+            }
+        return fresh, stale
+
+    async def put_symbol_fmp_meta_batch(self, meta_by_sym: Dict[str, Dict[str, Any]]) -> None:
+        if not meta_by_sym:
+            return
+        now_iso = _dt_to_iso(utc_now())
+        rows = []
+        for sym, m in meta_by_sym.items():
+            rows.append(
+                (
+                    sym,
+                    m.get("mkt_cap"),
+                    m.get("name"),
+                    m.get("announcement_date"),
+                    now_iso,
+                )
+            )
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.executemany(
+                """
+                INSERT INTO symbol_fmp_meta(symbol, mkt_cap, name, announcement_date, updated_at)
+                VALUES(?,?,?,?,?)
+                ON CONFLICT(symbol) DO UPDATE SET
+                  mkt_cap=excluded.mkt_cap,
+                  name=excluded.name,
+                  announcement_date=excluded.announcement_date,
+                  updated_at=excluded.updated_at
+                """,
+                rows,
+            )
+            await db.commit()
+
 
 class EphemeralCacheService:
     """
@@ -192,6 +320,30 @@ class EphemeralCacheService:
     async def get_recent_run_for_key(self, run_key: str, ttl_seconds: int) -> Optional[CachedRun]:
         return None
 
+    async def get_peer_comparison_cache(
+        self, index_name: str, anchor_symbol: str, ttl_seconds: int
+    ) -> Optional[Dict[str, Any]]:
+        return None
+
+    async def put_peer_comparison_cache(
+        self,
+        index_name: str,
+        anchor_symbol: str,
+        peer_source: str,
+        symbols: list[str],
+        meta: Dict[str, Dict[str, Any]],
+    ) -> None:
+        return None
+
+    async def get_symbol_fmp_meta_batch(
+        self, symbols: Iterable[str], ttl_seconds: int
+    ) -> tuple[Dict[str, Dict[str, Any]], list[str]]:
+        syms = sorted({s for s in symbols if s})
+        return {}, syms
+
+    async def put_symbol_fmp_meta_batch(self, meta_by_sym: Dict[str, Dict[str, Any]]) -> None:
+        return None
+
 
 class MemoryCacheService:
     """
@@ -205,6 +357,8 @@ class MemoryCacheService:
         self._price_history_by_symbol: Dict[str, pd.DataFrame] = {}
         self._analysis_runs_by_run_id: Dict[str, CachedRun] = {}
         self._latest_run: Optional[CachedRun] = None
+        self._peer_comparison_cache: Dict[tuple[str, str], tuple[datetime, Dict[str, Any]]] = {}
+        self._symbol_fmp_meta: Dict[str, tuple[datetime, Dict[str, Any]]] = {}
         self._lock = asyncio.Lock()
 
     async def upsert_price_history(self, symbol: str, prices: pd.DataFrame) -> None:
@@ -259,4 +413,67 @@ class MemoryCacheService:
                 return None
 
             return cached
+
+    async def get_peer_comparison_cache(
+        self, index_name: str, anchor_symbol: str, ttl_seconds: int
+    ) -> Optional[Dict[str, Any]]:
+        key = (index_name, anchor_symbol.strip().upper())
+        async with self._lock:
+            hit = self._peer_comparison_cache.get(key)
+            if not hit:
+                return None
+            cached_at, payload = hit
+            if ttl_seconds > 0 and (utc_now() - cached_at).total_seconds() > ttl_seconds:
+                return None
+            return payload
+
+    async def put_peer_comparison_cache(
+        self,
+        index_name: str,
+        anchor_symbol: str,
+        peer_source: str,
+        symbols: list[str],
+        meta: Dict[str, Dict[str, Any]],
+    ) -> None:
+        key = (index_name, anchor_symbol.strip().upper())
+        payload = {"peer_source": peer_source, "symbols": symbols, "meta": meta}
+        async with self._lock:
+            self._peer_comparison_cache[key] = (utc_now(), payload)
+
+    async def get_symbol_fmp_meta_batch(
+        self, symbols: Iterable[str], ttl_seconds: int
+    ) -> tuple[Dict[str, Dict[str, Any]], list[str]]:
+        unique = sorted({s for s in symbols if s})
+        if not unique:
+            return {}, []
+        now = utc_now()
+        fresh: Dict[str, Dict[str, Any]] = {}
+        stale: list[str] = []
+        async with self._lock:
+            for sym in unique:
+                hit = self._symbol_fmp_meta.get(sym)
+                if not hit:
+                    stale.append(sym)
+                    continue
+                cached_at, meta = hit
+                if ttl_seconds > 0 and (now - cached_at).total_seconds() > ttl_seconds:
+                    stale.append(sym)
+                    continue
+                fresh[sym] = dict(meta)
+        return fresh, stale
+
+    async def put_symbol_fmp_meta_batch(self, meta_by_sym: Dict[str, Dict[str, Any]]) -> None:
+        if not meta_by_sym:
+            return
+        now = utc_now()
+        async with self._lock:
+            for sym, m in meta_by_sym.items():
+                self._symbol_fmp_meta[sym] = (
+                    now,
+                    {
+                        "mkt_cap": m.get("mkt_cap"),
+                        "name": m.get("name"),
+                        "announcement_date": m.get("announcement_date"),
+                    },
+                )
 

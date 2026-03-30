@@ -54,6 +54,30 @@ async def ensure_db(db_path: str) -> None:
             );
             """
         )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS peer_comparison_cache (
+              index_name TEXT NOT NULL,
+              anchor_symbol TEXT NOT NULL,
+              peer_source TEXT NOT NULL,
+              symbols_json TEXT NOT NULL,
+              meta_json TEXT NOT NULL,
+              cached_at TEXT NOT NULL,
+              PRIMARY KEY(index_name, anchor_symbol)
+            );
+            """
+        )
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS symbol_fmp_meta (
+              symbol TEXT PRIMARY KEY,
+              mkt_cap REAL,
+              name TEXT,
+              announcement_date TEXT,
+              updated_at TEXT NOT NULL
+            );
+            """
+        )
         await db.commit()
 
 

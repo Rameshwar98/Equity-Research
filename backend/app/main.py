@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     persist_cache: bool = False
     allowed_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
     analysis_ttl_seconds: int = 1800
+    # Peer drawer: cache FMP peer list + metadata in SQLite (when persist_cache=True) or memory.
+    peer_cache_ttl_seconds: int = 86400
+    # Reuse profile/news fields across symbols longer than full peer rows.
+    peer_fmp_meta_ttl_seconds: int = 172800
     fmp_period: str = "2y"
     fmp_interval: str = "1d"
     fmp_api_key: str

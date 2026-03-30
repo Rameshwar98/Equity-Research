@@ -12,7 +12,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { DashboardSignalHeatmap } from "@/components/dashboard-signal-heatmap";
 import { TrendBadge } from "@/components/trend-badge";
+import { Week52RangeBar } from "@/components/week-52-range-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,28 +25,93 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { AnalysisRow, RunAnalysisResponse, Signal } from "@/lib/types";
+import type { AnalysisRow, RunAnalysisResponse, ScoreKey, Signal } from "@/lib/types";
 
 function fmtScore(v?: number | null) {
   if (v === null || v === undefined || Number.isNaN(v)) return "—";
   return v.toFixed(4);
 }
 
-function headerForIdx(dateLabels: string[], i: number) {
-  // Use the actual date label for every column (so T-2/T-3/etc become real dates).
-  return dateLabels[i] ?? `T-${i}`;
+function fmtPrice(v?: number | null) {
+  if (v === null || v === undefined || Number.isNaN(v)) return "—";
+  return v.toFixed(2);
 }
+
+function fmtPct(v?: number | null) {
+  if (v === null || v === undefined || Number.isNaN(v)) return "—";
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${v.toFixed(1)}%`;
+}
+
+function fmtCap(v?: number | null) {
+  if (v === null || v === undefined || Number.isNaN(v)) return "—";
+  if (v >= 1e12) return `${(v / 1e12).toFixed(1)}T`;
+  if (v >= 1e9) return `${(v / 1e9).toFixed(1)}B`;
+  if (v >= 1e6) return `${(v / 1e6).toFixed(0)}M`;
+  return v.toFixed(0);
+}
+
+function pctColor(v?: number | null) {
+  if (v === null || v === undefined || Number.isNaN(v)) return "";
+  if (v > 0) return "text-emerald-600 dark:text-emerald-400";
+  if (v < 0) return "text-rose-600 dark:text-rose-400";
+  return "";
+}
+
+/** Calendar Y-M-D only (avoids TZ / SSR–client hydration drift vs local midnight). */
+function headerForIdx(dateLabels: string[], i: number) {
+  const iso = dateLabels[i];
+  if (!iso) return `W-${i}`;
+  const parts = iso.split("-");
+  if (parts.length !== 3) return iso;
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!y || !m || !d) return iso;
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+  const wd = DAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+  return `${wd}, ${MONTHS[m - 1]} ${d}`;
+}
+
+function heatmapFromRow(row: AnalysisRow, dateLabels: string[]): { signals: Signal[]; dates: string[] } {
+  const y1 = row.signals_1y?.length ? row.signals_1y : row.signals_6m;
+  const y1d = row.signals_1y_dates?.length ? row.signals_1y_dates : row.signals_6m_dates;
+  if (y1 && y1.length > 0) {
+    return { signals: y1, dates: y1d ?? [] };
+  }
+  const sig = row.signals ?? [];
+  const dl = dateLabels ?? [];
+  if (sig.length === 0) return { signals: [], dates: [] };
+  return {
+    signals: [...sig].reverse(),
+    dates: [...dl].reverse(),
+  };
+}
+
+const SCORE_LABELS: Record<ScoreKey, string> = {
+  score_1: "Score 1",
+  score_2: "Score 2",
+  score_3: "Score 3",
+};
+
+const ALL = "__all__";
+const SIGNAL_OPTIONS = [
+  { value: ALL, label: "All Signals" },
+  { value: "BUY", label: "BUY" },
+  { value: "HOLD", label: "HOLD" },
+  { value: "SELL", label: "SELL" },
+];
 
 function toCsv(resp: RunAnalysisResponse) {
   const headers = [
-    "name",
-    "symbol",
-    "sector",
-    "sub_sector",
-    "score_1",
-    "score_2",
-    "score_3",
-    ...resp.date_labels.map((_, i) => headerForIdx(resp.date_labels, i)),
+    "name", "symbol", "sector", "sub_sector",
+    "score_1", "score_2", "score_3",
+    "last_price", "mkt_cap", "52w_low", "52w_high",
+    "return_1d", "return_1w", "return_1m", "return_3m", "return_ytd",
+    `latest_${headerForIdx(resp.date_labels, 0)}`,
+    "1y_weekly_heatmap",
+    ...resp.date_labels.slice(1).map((_, i) => `W-${i + 1}_${headerForIdx(resp.date_labels, i + 1)}`),
   ];
   const lines = [headers.join(",")];
   for (const r of resp.rows) {
@@ -53,10 +120,18 @@ function toCsv(resp: RunAnalysisResponse) {
       JSON.stringify(r.symbol),
       JSON.stringify(r.sector ?? ""),
       JSON.stringify(r.sub_sector ?? ""),
-      r.score_1 ?? "",
-      r.score_2 ?? "",
-      r.score_3 ?? "",
-      ...r.signals,
+      r.score_1 ?? "", r.score_2 ?? "", r.score_3 ?? "",
+      r.last_price ?? "", r.mkt_cap ?? "", r.low_52w ?? "", r.high_52w ?? "",
+      r.return_1d ?? "", r.return_1w ?? "", r.return_1m ?? "", r.return_3m ?? "", r.return_ytd ?? "",
+      r.signals[0] ?? "",
+      (
+        r.signals_1y?.length
+          ? r.signals_1y
+          : r.signals_6m?.length
+            ? r.signals_6m
+            : [...(r.signals ?? [])].reverse()
+      ).join("|"),
+      ...r.signals.slice(1),
     ];
     lines.push(row.join(","));
   }
@@ -84,6 +159,8 @@ export function AnalysisTable({
   subSectorFilter,
   onSectorChange,
   onSubSectorChange,
+  signalFilter,
+  onSignalChange,
   allValue = "__all__",
 }: {
   data: RunAnalysisResponse;
@@ -94,35 +171,71 @@ export function AnalysisTable({
   subSectorFilter?: string;
   onSectorChange?: (v: string) => void;
   onSubSectorChange?: (v: string) => void;
+  signalFilter?: string;
+  onSignalChange?: (v: string) => void;
   allValue?: string;
 }) {
+  const selectedScore = data.metadata.selected_score as ScoreKey;
+
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: data.metadata.selected_score, desc: true },
+    { id: selectedScore, desc: true },
   ]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const columns = React.useMemo<ColumnDef<AnalysisRow>[]>(() => {
-    const signalCols: ColumnDef<AnalysisRow>[] = Array.from({ length: 16 }).map(
-      (_, i) => ({
+    const latestCol: ColumnDef<AnalysisRow> = {
+      id: "sig_0",
+      header: () => (
+        <div className="whitespace-nowrap text-xs leading-snug text-center">
+          <div className="font-semibold text-foreground">Latest</div>
+          <div className="text-muted-foreground font-normal">{headerForIdx(data.date_labels, 0)}</div>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const sig = row.original.signals[0] as Signal | undefined;
+        return sig ? <TrendBadge signal={sig} /> : <TrendBadge signal="N/A" />;
+      },
+    };
+
+    const heatmapCol: ColumnDef<AnalysisRow> = {
+      id: "sig_1y",
+      header: () => (
+        <div className="whitespace-nowrap text-xs leading-snug text-center min-w-[7rem]">
+          <div className="font-semibold text-foreground">1Y</div>
+          <div className="text-muted-foreground font-normal">heatmap</div>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const { signals: hs, dates: hd } = heatmapFromRow(row.original, data.date_labels);
+        return <DashboardSignalHeatmap signals={hs} dates={hd} />;
+      },
+    };
+
+    const tailSignalCols: ColumnDef<AnalysisRow>[] = data.date_labels.slice(1).map((_, j) => {
+      const i = j + 1;
+      return {
         id: `sig_${i}`,
         header: () => (
-          <div className="whitespace-nowrap">
-            {headerForIdx(data.date_labels, i)}
+          <div className="whitespace-nowrap text-xs leading-snug text-center">
+            <div className="font-semibold text-foreground">{`W-${i}`}</div>
+            <div className="text-muted-foreground font-normal">{headerForIdx(data.date_labels, i)}</div>
           </div>
         ),
         cell: ({ row }) => {
           const sig = row.original.signals[i] as Signal | undefined;
           return sig ? <TrendBadge signal={sig} /> : <TrendBadge signal="N/A" />;
         },
-      })
-    );
+      };
+    });
+
+    const signalCols = [latestCol, heatmapCol, ...tailSignalCols];
 
     return [
       {
         accessorKey: "name",
         header: "Stock Name",
         cell: ({ row }) => (
-          <div className="max-w-[220px] truncate">
+          <div className="max-w-[9rem] sm:max-w-[10.5rem] truncate text-sm font-medium" title={row.original.name ?? ""}>
             {row.original.name ?? "—"}
           </div>
         ),
@@ -131,42 +244,130 @@ export function AnalysisTable({
         accessorKey: "symbol",
         header: "Symbol",
         cell: ({ row }) => (
-          <div className="font-mono text-xs">{row.original.symbol}</div>
+          <div className="font-mono text-sm font-semibold">{row.original.symbol}</div>
         ),
       },
       {
         accessorKey: "sector",
         header: "Sector",
         cell: ({ row }) => (
-          <div className="max-w-[140px] truncate text-xs text-muted-foreground">
+          <div className="max-w-[140px] truncate text-sm text-muted-foreground">
             {row.original.sector ?? "—"}
           </div>
         ),
       },
       {
-        accessorKey: "score_1",
-        header: "Score 1",
+        accessorKey: "sub_sector",
+        header: "Sub-sector",
         cell: ({ row }) => (
-          <div className="tabular-nums">{fmtScore(row.original.score_1)}</div>
+          <div
+            className="max-w-[5.5rem] sm:max-w-[6.5rem] truncate text-sm text-muted-foreground"
+            title={row.original.sub_sector ?? ""}
+          >
+            {row.original.sub_sector ?? "—"}
+          </div>
         ),
       },
       {
-        accessorKey: "score_2",
-        header: "Score 2",
+        accessorKey: selectedScore,
+        header: SCORE_LABELS[selectedScore],
         cell: ({ row }) => (
-          <div className="tabular-nums">{fmtScore(row.original.score_2)}</div>
+          <div className="tabular-nums text-sm">{fmtScore(row.original[selectedScore])}</div>
         ),
       },
       {
-        accessorKey: "score_3",
-        header: "Score 3",
+        accessorKey: "last_price",
+        header: "Last Price",
+        sortingFn: "basic",
         cell: ({ row }) => (
-          <div className="tabular-nums">{fmtScore(row.original.score_3)}</div>
+          <div className="tabular-nums text-sm font-semibold">{fmtPrice(row.original.last_price)}</div>
+        ),
+      },
+      {
+        accessorKey: "mkt_cap",
+        header: "Mkt Cap",
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className="tabular-nums text-sm">{fmtCap(row.original.mkt_cap)}</div>
+        ),
+      },
+      {
+        id: "range_52w",
+        accessorFn: (row) => {
+          const l = row.low_52w;
+          const h = row.high_52w;
+          const p = row.last_price;
+          if (l == null || h == null || p == null || h <= l) return null;
+          return (p - l) / (h - l);
+        },
+        sortingFn: "basic",
+        header: () => (
+          <div className="whitespace-nowrap text-xs leading-snug text-center min-w-[7.5rem]">
+            <div className="font-semibold text-foreground">52W</div>
+            <div className="text-muted-foreground font-normal">range</div>
+          </div>
+        ),
+        cell: ({ row }) => (
+          <Week52RangeBar
+            low={row.original.low_52w}
+            high={row.original.high_52w}
+            last={row.original.last_price}
+          />
+        ),
+      },
+      {
+        accessorKey: "return_1d",
+        header: "1D %",
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_1d))}>
+            {fmtPct(row.original.return_1d)}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "return_1w",
+        header: "1W %",
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_1w))}>
+            {fmtPct(row.original.return_1w)}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "return_1m",
+        header: "1M %",
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_1m))}>
+            {fmtPct(row.original.return_1m)}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "return_3m",
+        header: "3M %",
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_3m))}>
+            {fmtPct(row.original.return_3m)}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "return_ytd",
+        header: "YTD %",
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_ytd))}>
+            {fmtPct(row.original.return_ytd)}
+          </div>
         ),
       },
       ...signalCols,
     ];
-  }, [data.date_labels, data.metadata.selected_score]);
+  }, [data.date_labels, selectedScore]);
 
   const table = useReactTable({
     data: data.rows,
@@ -187,19 +388,24 @@ export function AnalysisTable({
     },
   });
 
+  const hasActiveFilter =
+    (sectorFilter && sectorFilter !== allValue) ||
+    (subSectorFilter && subSectorFilter !== allValue) ||
+    (signalFilter && signalFilter !== allValue);
+
   return (
-    <div className="rounded-xl border bg-card">
-      <div className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="rounded-xl border bg-card shadow-sm">
+      <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center gap-3">
           <Input
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
             placeholder="Search symbol or name…"
-            className="w-[200px]"
+            className="w-[min(100%,220px)] min-h-10 text-sm"
           />
           {sectors.length > 0 && onSectorChange && (
             <Select value={sectorFilter ?? allValue} onValueChange={onSectorChange}>
-              <SelectTrigger className="w-[160px]">
+              <SelectTrigger className="w-[min(100%,170px)] min-h-10 text-sm">
                 <SelectValue placeholder="All Sectors" />
               </SelectTrigger>
               <SelectContent>
@@ -212,7 +418,7 @@ export function AnalysisTable({
           )}
           {subSectors.length > 0 && onSubSectorChange && (
             <Select value={subSectorFilter ?? allValue} onValueChange={onSubSectorChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[min(100%,190px)] min-h-10 text-sm">
                 <SelectValue placeholder="All Sub-sectors" />
               </SelectTrigger>
               <SelectContent>
@@ -223,11 +429,23 @@ export function AnalysisTable({
               </SelectContent>
             </Select>
           )}
-          {(sectorFilter && sectorFilter !== allValue || subSectorFilter && subSectorFilter !== allValue) && onSectorChange && onSubSectorChange && (
+          {onSignalChange && (
+            <Select value={signalFilter ?? allValue} onValueChange={onSignalChange}>
+              <SelectTrigger className="w-[min(100%,150px)] min-h-10 text-sm">
+                <SelectValue placeholder="All Signals" />
+              </SelectTrigger>
+              <SelectContent>
+                {SIGNAL_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {hasActiveFilter && onSectorChange && onSubSectorChange && onSignalChange && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => { onSectorChange(allValue); onSubSectorChange(allValue); }}
+              onClick={() => { onSectorChange(allValue); onSubSectorChange(allValue); onSignalChange(allValue); }}
             >
               Clear
             </Button>
@@ -242,22 +460,22 @@ export function AnalysisTable({
             Export CSV
           </Button>
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm font-medium text-muted-foreground tabular-nums">
           Showing {table.getRowModel().rows.length} of {data.rows.length}
         </div>
       </div>
 
-      <div className="max-h-[68vh] overflow-auto">
+      <div className="max-h-[min(68vh,720px)] overflow-auto">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 z-10 bg-card">
+          <thead className="sticky top-0 z-10 bg-card shadow-[0_1px_0_0_hsl(var(--border))]">
             {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id} className="border-b">
+              <tr key={hg.id} className="border-b border-border/80">
                 {hg.headers.map((h) => (
                   <th
                     key={h.id}
                     className={cn(
-                      "px-3 py-2 text-left font-medium text-muted-foreground",
-                      h.column.getCanSort() ? "cursor-pointer select-none" : ""
+                      "px-3 py-2.5 text-left text-sm font-semibold text-muted-foreground whitespace-nowrap",
+                      h.column.getCanSort() ? "cursor-pointer select-none hover:text-foreground" : ""
                     )}
                     onClick={h.column.getToggleSortingHandler()}
                   >
@@ -295,8 +513,8 @@ export function AnalysisTable({
         </table>
       </div>
 
-      <div className="flex items-center justify-between gap-3 p-4">
-        <div className="text-sm text-muted-foreground">
+      <div className="flex items-center justify-between gap-3 border-t bg-muted/20 px-5 py-4">
+        <div className="text-sm font-medium text-muted-foreground">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>
@@ -322,4 +540,3 @@ export function AnalysisTable({
     </div>
   );
 }
-

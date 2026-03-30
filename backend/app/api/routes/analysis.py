@@ -5,7 +5,7 @@ import json
 import logging
 import time
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -384,10 +384,379 @@ async def run_analysis(req: RunAnalysisRequest) -> RunAnalysisResponse:
     return resp
 
 
+def _qf_income(x: Any) -> float | None:
+    try:
+        if x is None:
+            return None
+        v = float(x)
+        return v if v == v else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _q_row_date(r: dict[str, Any]) -> str:
+    return str(r.get("date") or r.get("endDate") or "")[:10]
+
+
+def _index_quarterly_by_date(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    m: dict[str, dict[str, Any]] = {}
+    for r in rows:
+        d = _q_row_date(r)
+        if len(d) >= 10:
+            m[d] = r
+    return m
+
+
+def _align_quarter_row(
+    inc_row: dict[str, Any],
+    by_date: dict[str, dict[str, Any]],
+    all_rows: list[dict[str, Any]],
+) -> dict[str, Any]:
+    d = _q_row_date(inc_row)
+    if d and d in by_date:
+        return by_date[d]
+    p, cy = inc_row.get("period"), inc_row.get("calendarYear")
+    if p is not None and cy is not None:
+        for r in all_rows:
+            if r.get("period") == p and r.get("calendarYear") == cy:
+                return r
+    return {}
+
+
+def _income_yoy_index(rows: list[dict[str, Any]]) -> dict[tuple[str, int], dict[str, Any]]:
+    m: dict[tuple[str, int], dict[str, Any]] = {}
+    for r in rows:
+        p = str(r.get("period") or "").strip().upper()
+        cy = r.get("calendarYear")
+        if not p.startswith("Q") or cy is None:
+            continue
+        try:
+            m[(p, int(cy))] = r
+        except (TypeError, ValueError):
+            continue
+    return m
+
+
+def _pick_float(row: dict[str, Any], *keys: str) -> float | None:
+    for k in keys:
+        if k in row and row[k] is not None:
+            return _qf_income(row[k])
+    return None
+
+
+def _as_display_percent(row: dict[str, Any], *keys: str) -> float | None:
+    v = _pick_float(row, *keys)
+    if v is None:
+        return None
+    if -1.0 < v < 1.0 and v != 0.0:
+        return round(v * 100.0, 2)
+    return round(v, 2)
+
+
+def build_quarterly_financials_payload(
+    income: list[dict[str, Any]],
+    balance: list[dict[str, Any]],
+    ratios: list[dict[str, Any]],
+    cashflow: list[dict[str, Any]],
+    key_metrics: list[dict[str, Any]],
+    last_close: float | None,
+    n: int = 3,
+) -> dict[str, Any] | None:
+    """
+    Last n quarters (income-statement dates), oldest → newest columns.
+    Merges FMP quarterly income, balance sheet, ratios, cash flow, key metrics.
+    """
+    if not income:
+        return None
+
+    sorted_inc = sorted(
+        [r for r in income if isinstance(r, dict) and _q_row_date(r)],
+        key=_q_row_date,
+        reverse=True,
+    )
+    if not sorted_inc:
+        return None
+    picked_inc = list(reversed(sorted_inc[:n]))
+    nc = len(picked_inc)
+
+    bal_by = _index_quarterly_by_date(balance)
+    ratio_by = _index_quarterly_by_date(ratios)
+    cf_by = _index_quarterly_by_date(cashflow)
+    km_by = _index_quarterly_by_date(key_metrics)
+    yoy_ix = _income_yoy_index(income)
+
+    columns: list[str] = []
+    period_end_dates: list[str] = []
+    for r in picked_inc:
+        period = str(r.get("period") or "").strip()
+        cy = r.get("calendarYear")
+        if cy is not None and period.upper().startswith("Q"):
+            columns.append(f"{period} {cy}")
+        else:
+            columns.append(_q_row_date(r) or "—")
+        period_end_dates.append(_q_row_date(r))
+
+    def bal_i(i: int) -> dict[str, Any]:
+        return _align_quarter_row(picked_inc[i], bal_by, balance)
+
+    def ratio_i(i: int) -> dict[str, Any]:
+        return _align_quarter_row(picked_inc[i], ratio_by, ratios)
+
+    def cf_i(i: int) -> dict[str, Any]:
+        return _align_quarter_row(picked_inc[i], cf_by, cashflow)
+
+    def km_i(i: int) -> dict[str, Any]:
+        return _align_quarter_row(picked_inc[i], km_by, key_metrics)
+
+    def col_inc(*keys: str) -> list[float | None]:
+        return [_pick_float(picked_inc[i], *keys) for i in range(nc)]
+
+    rows_out: list[dict[str, Any]] = []
+
+    def push(
+        label: str,
+        vals: list[float | None],
+        fmt: str,
+        *,
+        spacer: bool = False,
+    ) -> None:
+        row: dict[str, Any] = {"label": label, "values": vals, "format": fmt}
+        if spacer:
+            row["spacer"] = True
+        rows_out.append(row)
+
+    lp = [None] * nc
+    if last_close is not None and nc:
+        lp[-1] = round(float(last_close), 4)
+    push("Last price (live)", lp, "price")
+    push("", [None] * nc, "price", spacer=True)
+
+    push(
+        "Total equity",
+        [
+            _pick_float(
+                bal_i(i),
+                "totalStockholdersEquity",
+                "totalEquity",
+                "totalShareholdersEquity",
+            )
+            for i in range(nc)
+        ],
+        "compact_currency",
+    )
+    push("Preferred stock", [_pick_float(bal_i(i), "preferredStock") for i in range(nc)], "compact_currency")
+    td_vals: list[float | None] = []
+    for i in range(nc):
+        b = bal_i(i)
+        t = _pick_float(b, "totalDebt")
+        if t is None:
+            st = _pick_float(b, "shortTermDebt") or 0.0
+            lt = _pick_float(b, "longTermDebt") or 0.0
+            if st or lt:
+                t = float(st + lt)
+            else:
+                t = None
+        td_vals.append(t)
+    push("Total debt", td_vals, "compact_currency")
+    push(
+        "Cash & equivalents",
+        [
+            _pick_float(
+                bal_i(i),
+                "cashAndCashEquivalents",
+                "cashAndShortTermInvestments",
+            )
+            for i in range(nc)
+        ],
+        "compact_currency",
+    )
+    net_d: list[float | None] = []
+    for i in range(nc):
+        b = bal_i(i)
+        debt = td_vals[i]
+        cash = _pick_float(b, "cashAndCashEquivalents", "cashAndShortTermInvestments")
+        if debt is not None and cash is not None:
+            net_d.append(round(debt - cash, 2))
+        else:
+            net_d.append(_pick_float(b, "netDebt"))
+    push("Net debt", net_d, "compact_currency")
+
+    push("", [None] * nc, "price", spacer=True)
+
+    rev_yoy: list[float | None] = []
+    for i in range(nc):
+        ir = picked_inc[i]
+        rev = _pick_float(ir, "revenue")
+        p = str(ir.get("period") or "").strip().upper()
+        cy = ir.get("calendarYear")
+        if rev is None or not p.startswith("Q") or cy is None:
+            rev_yoy.append(None)
+            continue
+        try:
+            prior = yoy_ix.get((p, int(cy) - 1))
+        except (TypeError, ValueError):
+            rev_yoy.append(None)
+            continue
+        if not prior:
+            rev_yoy.append(None)
+            continue
+        pr = _pick_float(prior, "revenue")
+        if pr and pr != 0:
+            rev_yoy.append(round(100.0 * (rev - pr) / abs(pr), 2))
+        else:
+            rev_yoy.append(None)
+
+    push("Revenue", col_inc("revenue"), "compact_currency")
+    push("Revenue growth (YoY %)", rev_yoy, "percent")
+    push("Cost of revenue", col_inc("costOfRevenue"), "compact_currency")
+    gp = col_inc("grossProfit")
+    push("Gross profit", gp, "compact_currency")
+    gm_pct: list[float | None] = []
+    for i in range(nc):
+        rv = _as_display_percent(ratio_i(i), "grossProfitMargin")
+        if rv is not None:
+            gm_pct.append(rv)
+        else:
+            rev = _pick_float(picked_inc[i], "revenue")
+            g = gp[i]
+            if rev and rev != 0 and g is not None:
+                gm_pct.append(round(100.0 * g / rev, 2))
+            else:
+                gm_pct.append(None)
+    push("Gross margin %", gm_pct, "percent")
+
+    push(
+        "Operating expenses",
+        col_inc("operatingExpenses", "totalOperatingExpenses"),
+        "compact_currency",
+    )
+    push("Operating income", col_inc("operatingIncome"), "compact_currency")
+    om: list[float | None] = []
+    for i in range(nc):
+        ov = _as_display_percent(ratio_i(i), "operatingProfitMargin")
+        if ov is not None:
+            om.append(ov)
+        else:
+            rev = _pick_float(picked_inc[i], "revenue")
+            oi = _pick_float(picked_inc[i], "operatingIncome")
+            if rev and rev != 0 and oi is not None:
+                om.append(round(100.0 * oi / rev, 2))
+            else:
+                om.append(None)
+    push("Operating margin %", om, "percent")
+
+    ebitda_v = col_inc("ebitda")
+    push("EBITDA", ebitda_v, "compact_currency")
+    em: list[float | None] = []
+    for i in range(nc):
+        ev = _as_display_percent(ratio_i(i), "ebitdaMargin", "ebitMargin")
+        if ev is not None:
+            em.append(ev)
+        else:
+            rev = _pick_float(picked_inc[i], "revenue")
+            e = ebitda_v[i]
+            if rev and rev != 0 and e is not None:
+                em.append(round(100.0 * e / rev, 2))
+            else:
+                em.append(None)
+    push("EBITDA margin %", em, "percent")
+
+    ni = col_inc("netIncome")
+    push("Net income", ni, "compact_currency")
+    nm: list[float | None] = []
+    for i in range(nc):
+        nv = _as_display_percent(ratio_i(i), "netProfitMargin")
+        if nv is not None:
+            nm.append(nv)
+        else:
+            rev = _pick_float(picked_inc[i], "revenue")
+            nn = ni[i]
+            if rev and rev != 0 and nn is not None:
+                nm.append(round(100.0 * nn / rev, 2))
+            else:
+                nm.append(None)
+    push("Net margin %", nm, "percent")
+
+    eps_dil = col_inc("epsdiluted")
+    eps_bas = col_inc("eps")
+    eps_use = eps_dil if any(v is not None for v in eps_dil) else eps_bas
+    eps_lbl = "EPS (diluted)" if any(v is not None for v in eps_dil) else "EPS"
+    push(eps_lbl, eps_use, "per_share")
+    push("Interest expense", col_inc("interestExpense"), "compact_currency")
+    push("Income tax expense", col_inc("incomeTaxExpense"), "compact_currency")
+
+    push("", [None] * nc, "price", spacer=True)
+
+    ocf: list[float | None] = []
+    capex: list[float | None] = []
+    fcf: list[float | None] = []
+    for i in range(nc):
+        c = cf_i(i)
+        oc = _pick_float(
+            c,
+            "operatingCashFlow",
+            "netCashProvidedByOperatingActivities",
+        )
+        cx = _pick_float(
+            c,
+            "capitalExpenditure",
+            "investmentsInPropertyPlantAndEquipment",
+        )
+        ocf.append(oc)
+        capex.append(cx)
+        if oc is not None:
+            if cx is not None:
+                fcf.append(round(oc - abs(cx), 2))
+            else:
+                fcf.append(oc)
+        else:
+            fcf.append(_pick_float(c, "freeCashFlow"))
+    push("Operating cash flow", ocf, "compact_currency")
+    push("Capital expenditure", capex, "compact_currency")
+    push("Free cash flow", fcf, "compact_currency")
+
+    push("", [None] * nc, "price", spacer=True)
+
+    push(
+        "ROE %",
+        [
+            _as_display_percent(ratio_i(i), "returnOnEquity", "roe")
+            or _as_display_percent(km_i(i), "returnOnEquity", "roe")
+            for i in range(nc)
+        ],
+        "percent",
+    )
+    push(
+        "Debt to equity",
+        [
+            _pick_float(ratio_i(i), "debtToEquity")
+            or _pick_float(km_i(i), "debtToEquity")
+            for i in range(nc)
+        ],
+        "ratio",
+    )
+    push(
+        "Current ratio",
+        [
+            _pick_float(ratio_i(i), "currentRatio")
+            or _pick_float(km_i(i), "currentRatio")
+            for i in range(nc)
+        ],
+        "ratio",
+    )
+
+    return {
+        "columns": columns,
+        "period_end_dates": period_end_dates,
+        "rows": rows_out,
+    }
+
+
 @router.get("/stock/{symbol}/details")
 async def stock_details(
     symbol: str,
     history_months: int = Query(12, ge=1, le=18, description="How many months of trend history to return"),
+    selected_score: str = Query("score_3", description="Which score to use for signal classification"),
 ) -> Dict[str, Any]:
     # Compute details from cached price history if available.
     # If not available, fetch from the external provider and (optionally) cache it.
@@ -429,8 +798,7 @@ async def stock_details(
     prev_close = indicator_service.prev_close(close)
     scores = scoring_service.compute_scores(close, avg_last5, prev_close, ind.avg_all_emas)
 
-    # Default selected score for details: score_1
-    selected: ScoreKey = "score_1"
+    selected: ScoreKey = selected_score if selected_score in ("score_1", "score_2", "score_3") else "score_3"  # type: ignore[assignment]
     selected_series = scores.get(selected)
 
     # Return every trading day for the requested window (no sampling).
@@ -460,11 +828,27 @@ async def stock_details(
     closes = [round(float(c), 2) if pd.notna(c) else None for c in close_for_dates.to_list()]
 
     # EMA history for the chart period
-    ema_10_series = ind.ema[10].reindex(recent.index)
-    ema_20_series = ind.ema[20].reindex(recent.index)
-    ema_50_series = ind.ema[50].reindex(recent.index)
+    ema_series = {p: ind.ema[p].reindex(recent.index) for p in [10, 20, 30, 50, 100, 200]}
 
-    # Volume data
+    # RSI 14
+    delta = close.diff()
+    gain = delta.where(delta > 0, 0.0).ewm(span=14, adjust=False).mean()
+    loss = (-delta.where(delta < 0, 0.0)).ewm(span=14, adjust=False).mean()
+    rs = gain / loss.replace(0, float("nan"))
+    rsi_full = 100 - (100 / (1 + rs))
+    rsi_series = rsi_full.reindex(recent.index)
+
+    # MACD (12, 26, 9)
+    ema12 = close.ewm(span=12, adjust=False).mean()
+    ema26 = close.ewm(span=26, adjust=False).mean()
+    macd_line_full = ema12 - ema26
+    macd_signal_full = macd_line_full.ewm(span=9, adjust=False).mean()
+    macd_hist_full = macd_line_full - macd_signal_full
+    macd_line_s = macd_line_full.reindex(recent.index)
+    macd_signal_s = macd_signal_full.reindex(recent.index)
+    macd_hist_s = macd_hist_full.reindex(recent.index)
+
+    # Volume data + EMA5 volume + volume ratio for heatmap
     vol_col = None
     for col_name in ("Volume", "volume"):
         if col_name in prices.columns:
@@ -472,20 +856,48 @@ async def stock_details(
             break
     volume_series = prices[vol_col].reindex(recent.index) if vol_col else None
 
+    vol_ema5_series = None
+    vol_ratio_series = None
+    if volume_series is not None:
+        vol_full = prices[vol_col].astype(float)
+        vol_ema5_full = vol_full.ewm(span=5, adjust=False).mean()
+        vol_avg20_full = vol_full.rolling(window=20, min_periods=1).mean()
+        vol_ema5_series = vol_ema5_full.reindex(recent.index)
+        vol_ratio_series = (vol_full / vol_avg20_full.replace(0, float("nan"))).reindex(recent.index)
+
+    close_change_series = close.diff().reindex(recent.index)
+
+    def _r2(s: pd.Series, i: int) -> float | None:
+        v = s.iloc[i]
+        return round(float(v), 2) if pd.notna(v) else None
+
     # Build chart_data array (chronological: oldest first)
     chart_data = []
     for idx_pos, dt_idx in enumerate(recent.index):
         d = dates[idx_pos]
         entry: Dict[str, Any] = {
             "date": d,
-            "close": round(float(close_for_dates.iloc[idx_pos]), 2) if pd.notna(close_for_dates.iloc[idx_pos]) else None,
-            "ema10": round(float(ema_10_series.iloc[idx_pos]), 2) if pd.notna(ema_10_series.iloc[idx_pos]) else None,
-            "ema20": round(float(ema_20_series.iloc[idx_pos]), 2) if pd.notna(ema_20_series.iloc[idx_pos]) else None,
-            "ema50": round(float(ema_50_series.iloc[idx_pos]), 2) if pd.notna(ema_50_series.iloc[idx_pos]) else None,
+            "close": _r2(close_for_dates, idx_pos),
+            "ema10": _r2(ema_series[10], idx_pos),
+            "ema20": _r2(ema_series[20], idx_pos),
+            "ema30": _r2(ema_series[30], idx_pos),
+            "ema50": _r2(ema_series[50], idx_pos),
+            "ema100": _r2(ema_series[100], idx_pos),
+            "ema200": _r2(ema_series[200], idx_pos),
+            "rsi": _r2(rsi_series, idx_pos),
+            "macd": _r2(macd_line_s, idx_pos),
+            "macdSignal": _r2(macd_signal_s, idx_pos),
+            "macdHist": _r2(macd_hist_s, idx_pos),
             "signal": signals[idx_pos] if idx_pos < len(signals) else None,
         }
         if volume_series is not None and pd.notna(volume_series.iloc[idx_pos]):
             entry["volume"] = int(volume_series.iloc[idx_pos])
+        if vol_ema5_series is not None and pd.notna(vol_ema5_series.iloc[idx_pos]):
+            entry["volEma5"] = int(vol_ema5_series.iloc[idx_pos])
+        if vol_ratio_series is not None and pd.notna(vol_ratio_series.iloc[idx_pos]):
+            entry["volRatio"] = round(float(vol_ratio_series.iloc[idx_pos]), 2)
+        if pd.notna(close_change_series.iloc[idx_pos]):
+            entry["priceUp"] = float(close_change_series.iloc[idx_pos]) >= 0
         chart_data.append(entry)
 
     date_labels = list(reversed(dates))
@@ -542,5 +954,335 @@ async def stock_details(
             "fib_23_6": fib_30d.fib_23_6,
         },
     }
+    def _qf_list(res: Any) -> list[dict[str, Any]]:
+        if isinstance(res, Exception):
+            logger.debug("quarterly fetch: %s", res)
+            return []
+        return [r for r in res if isinstance(r, dict)] if isinstance(res, list) else []
+
+    try:
+        inc_t, bal_t, rat_t, cf_t, km_t = await asyncio.gather(
+            provider.fetch_fmp_quarterly_series(symbol, "income-statement", 24, 20.0, True),
+            provider.fetch_fmp_quarterly_series(
+                symbol, "balance-sheet-statement", 24, 20.0, True
+            ),
+            provider.fetch_fmp_quarterly_series(symbol, "ratios", 24, 20.0, True),
+            provider.fetch_fmp_quarterly_series(
+                symbol, "cash-flow-statement", 24, 20.0, True
+            ),
+            provider.fetch_fmp_quarterly_series(symbol, "key-metrics", 24, 20.0, True),
+            return_exceptions=True,
+        )
+        payload["quarterly_financials"] = build_quarterly_financials_payload(
+            _qf_list(inc_t),
+            _qf_list(bal_t),
+            _qf_list(rat_t),
+            _qf_list(cf_t),
+            _qf_list(km_t),
+            close_latest,
+            n=3,
+        )
+    except Exception as e:
+        logger.warning("quarterly financials %s: %s", symbol, e)
+        payload["quarterly_financials"] = None
+
     return payload
+
+
+def _peer_sig_classify(v: Any) -> str:
+    try:
+        if v is None or (hasattr(v, "__float__") and (v != v)):
+            return "N/A"
+        f = float(v)
+    except Exception:
+        return "N/A"
+    if f > 1.08:
+        return "BUY"
+    if f < 0.95:
+        return "SELL"
+    return "HOLD"
+
+
+def _peer_pct_return(close: pd.Series, days: int) -> float | None:
+    s = close.dropna()
+    if len(s) <= days:
+        return None
+    try:
+        latest = float(s.iloc[-1])
+        old = float(s.iloc[-(days + 1)])
+        if old == 0:
+            return None
+        return round((latest - old) / old * 100, 2)
+    except Exception:
+        return None
+
+
+def _peer_ytd(close: pd.Series) -> float | None:
+    s = close.dropna()
+    if s.empty:
+        return None
+    try:
+        latest = float(s.iloc[-1])
+        y = s.index[-1].year
+        prev = s[s.index.year < y]
+        if prev.empty:
+            return None
+        base = float(prev.iloc[-1])
+        if base == 0:
+            return None
+        return round((latest - base) / base * 100, 2)
+    except Exception:
+        return None
+
+
+def _norm_peer_symbol(s: str) -> str:
+    """Match universe tickers to FMP (BRK-B vs BRK.B)."""
+    return s.upper().replace("-", ".").strip()
+
+
+# Max tickers in the peer table (subject + peers).
+PEER_TABLE_MAX = 10
+# Max FMP peer names to consider before ranking by market cap.
+_FMP_PEER_CANDIDATE_CAP = 55
+
+
+async def _peer_merge_fmp_meta(
+    cache: Any,
+    provider: Any,
+    symbols: List[str],
+    meta_ttl: int,
+    timeout_seconds: float,
+) -> Dict[str, Dict[str, Any]]:
+    fresh, stale = await cache.get_symbol_fmp_meta_batch(symbols, meta_ttl)
+    if not stale:
+        return fresh
+    fetched = await provider.fetch_peer_metadata(stale, timeout_seconds=timeout_seconds)
+    await cache.put_symbol_fmp_meta_batch(fetched)
+    out = dict(fresh)
+    empty = {"mkt_cap": None, "name": None, "announcement_date": None}
+    for s in stale:
+        out[s] = fetched.get(s) or dict(empty)
+    return out
+
+
+@router.get("/stock/{symbol}/peers")
+async def stock_peers(
+    symbol: str,
+    index_name: str = Query(..., description="Universe index (e.g. sp500)"),
+    selected_score: str = Query("score_3"),
+    limit: int = Query(10, ge=2, le=10),
+) -> Dict[str, Any]:
+    """
+    Peers: FMP stock-peers (index-filtered) or sector fallback; ranked by market cap; up to 10 names.
+    Peer list + FMP metadata are cached (SQLite when persist_cache=True, else in-memory).
+    """
+    from app.main import analysis_service, indicator_service, provider, scoring_service, universe_service, settings
+
+    if selected_score not in ("score_1", "score_2", "score_3"):
+        selected_score = "score_3"
+    sk: ScoreKey = selected_score  # type: ignore[assignment]
+
+    cap_limit = min(limit, PEER_TABLE_MAX)
+    cache = analysis_service.cache
+    peer_ttl = settings.peer_cache_ttl_seconds
+    meta_ttl = settings.peer_fmp_meta_ttl_seconds
+
+    try:
+        universe = universe_service.get_universe(index_name)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+    constituents = universe.constituents
+    if not constituents:
+        return {"subject_symbol": symbol.upper(), "sector": None, "peer_source": None, "peers": []}
+
+    sym_u = symbol.upper()
+    anchor = next((c for c in constituents if c.symbol.upper() == sym_u), None)
+    if anchor is None:
+        raise HTTPException(status_code=404, detail=f"Symbol {symbol} not in index {index_name}")
+
+    sector = (anchor.sector or "").strip()
+    sym_to_c = {c.symbol: c for c in constituents}
+
+    chosen: List[Any] = []
+    meta: Dict[str, Dict[str, Any]] = {}
+    peer_source = "fmp"
+
+    pc = await cache.get_peer_comparison_cache(index_name, sym_u, peer_ttl)
+    if pc:
+        ok = True
+        resolved: List[Any] = []
+        for s in pc["symbols"]:
+            c = sym_to_c.get(s)
+            if c is None:
+                ok = False
+                break
+            resolved.append(c)
+        if ok and len(resolved) >= 2:
+            chosen = resolved[:cap_limit]
+            meta = {c.symbol: pc["meta"].get(c.symbol, {}) for c in chosen}
+            peer_source = pc["peer_source"]
+
+    if not chosen:
+        by_norm: Dict[str, Any] = {_norm_peer_symbol(c.symbol): c for c in constituents}
+        peer_source = "fmp"
+        seen_norm = {_norm_peer_symbol(anchor.symbol)}
+        fmp_candidates: List[Any] = []
+
+        fmp_raw = await provider.fetch_stock_peers_symbols(symbol, timeout_seconds=22.0)
+        for raw in fmp_raw:
+            c = by_norm.get(_norm_peer_symbol(raw))
+            if c is None:
+                continue
+            nn = _norm_peer_symbol(c.symbol)
+            if nn in seen_norm:
+                continue
+            seen_norm.add(nn)
+            fmp_candidates.append(c)
+            if len(fmp_candidates) >= _FMP_PEER_CANDIDATE_CAP:
+                break
+
+        if not fmp_candidates:
+            peer_source = "sector"
+            if sector:
+                pool = [c for c in constituents if (c.sector or "").strip() == sector]
+            else:
+                pool = list(constituents)
+            seen: Dict[str, Any] = {}
+            for c in pool:
+                seen[c.symbol] = c
+            pool_list = sorted(seen.values(), key=lambda x: x.symbol)
+            if len(pool_list) > 45:
+                pool_list = pool_list[:45]
+
+            meta_all = await _peer_merge_fmp_meta(
+                cache,
+                provider,
+                [c.symbol for c in pool_list],
+                meta_ttl,
+                35.0,
+            )
+
+            def cap_val(c: Any) -> float:
+                m = meta_all.get(c.symbol, {}).get("mkt_cap")
+                return float(m) if m is not None else -1.0
+
+            pool_sorted_cap = sorted(pool_list, key=cap_val, reverse=True)
+            others = [c for c in pool_sorted_cap if c.symbol.upper() != sym_u][: max(1, cap_limit - 1)]
+            chosen = [anchor] + others
+            meta = {
+                c.symbol: meta_all.get(
+                    c.symbol, {"mkt_cap": None, "name": None, "announcement_date": None}
+                )
+                for c in chosen
+            }
+        else:
+            sym_meta = list({anchor.symbol, *[c.symbol for c in fmp_candidates]})
+            meta_all = await _peer_merge_fmp_meta(cache, provider, sym_meta, meta_ttl, 35.0)
+            others_sorted = sorted(
+                fmp_candidates,
+                key=lambda c: float(meta_all.get(c.symbol, {}).get("mkt_cap") or -1),
+                reverse=True,
+            )
+            others = others_sorted[: max(1, cap_limit - 1)]
+            chosen = [anchor] + others
+            meta = {
+                c.symbol: meta_all.get(
+                    c.symbol, {"mkt_cap": None, "name": None, "announcement_date": None}
+                )
+                for c in chosen
+            }
+
+        try:
+            await cache.put_peer_comparison_cache(
+                index_name,
+                sym_u,
+                peer_source,
+                [c.symbol for c in chosen],
+                meta,
+            )
+        except Exception as e:
+            logger.debug("peer_comparison_cache put: %s", e)
+
+    sym_load = [c.symbol for c in chosen]
+    try:
+        prices_by = await analysis_service._load_prices(
+            sym_load, refresh=False, timeout_seconds=45.0
+        )
+    except Exception as e:
+        logger.warning("peer prices load: %s", e)
+        prices_by = {}
+
+    peers_out: list[Dict[str, Any]] = []
+    for c in chosen:
+        df = prices_by.get(c.symbol)
+        if df is None or df.empty or "Close" not in df.columns:
+            peers_out.append(
+                {
+                    "symbol": c.symbol,
+                    "name": meta.get(c.symbol, {}).get("name") or c.name,
+                    "mkt_cap": meta.get(c.symbol, {}).get("mkt_cap"),
+                    "signal": "N/A",
+                    "return_1d": None,
+                    "return_1w": None,
+                    "return_1m": None,
+                    "return_3m": None,
+                    "return_ytd": None,
+                    "announcement_date": meta.get(c.symbol, {}).get("announcement_date"),
+                    "is_subject": c.symbol.upper() == sym_u,
+                }
+            )
+            continue
+
+        prices = df.dropna(subset=["Close"]).sort_index()
+        close = prices["Close"].astype(float)
+        if len(close) < 65:
+            peers_out.append(
+                {
+                    "symbol": c.symbol,
+                    "name": meta.get(c.symbol, {}).get("name") or c.name,
+                    "mkt_cap": meta.get(c.symbol, {}).get("mkt_cap"),
+                    "signal": "N/A",
+                    "return_1d": None,
+                    "return_1w": None,
+                    "return_1m": None,
+                    "return_3m": None,
+                    "return_ytd": None,
+                    "announcement_date": meta.get(c.symbol, {}).get("announcement_date"),
+                    "is_subject": c.symbol.upper() == sym_u,
+                }
+            )
+            continue
+
+        ind = indicator_service.compute_indicators(prices)
+        avg_last5 = indicator_service.avg_last_5_close(close)
+        prev_close = indicator_service.prev_close(close)
+        scores = scoring_service.compute_scores(close, avg_last5, prev_close, ind.avg_all_emas)
+        series = scores.get(sk)
+        sig = _peer_sig_classify(series.iloc[-1]) if series is not None and len(series) else "N/A"
+
+        peers_out.append(
+            {
+                "symbol": c.symbol,
+                "name": meta.get(c.symbol, {}).get("name") or c.name,
+                "mkt_cap": meta.get(c.symbol, {}).get("mkt_cap"),
+                "signal": sig,
+                "return_1d": _peer_pct_return(close, 1),
+                "return_1w": _peer_pct_return(close, 5),
+                "return_1m": _peer_pct_return(close, 21),
+                "return_3m": _peer_pct_return(close, 63),
+                "return_ytd": _peer_ytd(close),
+                "announcement_date": meta.get(c.symbol, {}).get("announcement_date"),
+                "is_subject": c.symbol.upper() == sym_u,
+            }
+        )
+
+    peers_out.sort(key=lambda r: (not r.get("is_subject"), -(r.get("mkt_cap") or -1)))
+
+    return {
+        "subject_symbol": symbol.upper(),
+        "sector": sector or None,
+        "peer_source": peer_source,
+        "peers": peers_out,
+    }
 

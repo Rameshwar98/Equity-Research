@@ -12,7 +12,22 @@ export type AnalysisRow = {
   score_1?: number | null;
   score_2?: number | null;
   score_3?: number | null;
+  last_price?: number | null;
+  mkt_cap?: number | null;
+  high_52w?: number | null;
+  low_52w?: number | null;
+  return_1d?: number | null;
+  return_1w?: number | null;
+  return_1m?: number | null;
+  return_3m?: number | null;
+  return_ytd?: number | null;
   signals: Signal[];
+  /** ~52 weekly signals (1y), oldest → newest (Fri weeks) */
+  signals_1y?: Signal[];
+  signals_1y_dates?: string[];
+  /** Legacy cached payloads (~26w) */
+  signals_6m?: Signal[];
+  signals_6m_dates?: string[];
 };
 
 export type RunAnalysisResponse = {
@@ -21,10 +36,24 @@ export type RunAnalysisResponse = {
     selected_score: ScoreKey;
     refresh_data: boolean;
   };
-  date_labels: string[]; // len=16, most-recent first
+  date_labels: string[]; // up to 16 weeks, most-recent first
   rows: AnalysisRow[];
   summary: { total: number; buy: number; hold: number; sell: number };
   cached_at: string;
+};
+
+export type QuarterlyFinancialRow = {
+  label: string;
+  values: (number | null)[];
+  format: "price" | "compact_currency" | "per_share" | "percent" | "ratio";
+  /** Visual separator between metric groups */
+  spacer?: boolean;
+};
+
+export type QuarterlyFinancials = {
+  columns: string[];
+  period_end_dates: string[];
+  rows: QuarterlyFinancialRow[];
 };
 
 export type StockDetailsResponse = {
@@ -67,10 +96,44 @@ export type StockDetailsResponse = {
     close: number | null;
     ema10?: number | null;
     ema20?: number | null;
+    ema30?: number | null;
     ema50?: number | null;
+    ema100?: number | null;
+    ema200?: number | null;
+    rsi?: number | null;
+    macd?: number | null;
+    macdSignal?: number | null;
+    macdHist?: number | null;
     signal?: string | null;
     volume?: number | null;
+    volEma5?: number | null;
+    volRatio?: number | null;
+    priceUp?: boolean | null;
   }[];
   history?: { date: string; close: number; ema_10?: number; ema_20?: number }[];
+  /** Last 3 reported quarters from FMP income statement + live last price */
+  quarterly_financials?: QuarterlyFinancials | null;
+};
+
+export type PeerRow = {
+  symbol: string;
+  name?: string | null;
+  mkt_cap?: number | null;
+  signal: Signal;
+  return_1d?: number | null;
+  return_1w?: number | null;
+  return_1m?: number | null;
+  return_3m?: number | null;
+  return_ytd?: number | null;
+  announcement_date?: string | null;
+  is_subject?: boolean;
+};
+
+export type PeersResponse = {
+  subject_symbol: string;
+  sector?: string | null;
+  /** "fmp" = FMP stock-peers API (filtered to index); "sector" = same-sector fallback */
+  peer_source?: string | null;
+  peers: PeerRow[];
 };
 

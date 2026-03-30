@@ -41,31 +41,31 @@ function buildRows(
 function FibTable({ title, rows }: { title: string; rows: Row[] }) {
   return (
     <div>
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+      <div className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2.5">
         {title}
       </div>
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         {rows.map((lv, i) =>
           lv.isPrice ? (
             <div
               key={`price-${i}`}
-              className="flex items-center justify-between rounded-md px-2 py-1.5 -mx-2 bg-gradient-to-r from-amber-50 to-amber-100/80 dark:from-amber-950/40 dark:to-amber-900/30 border border-amber-300/60 dark:border-amber-700/50"
+              className="flex items-center justify-between rounded-md px-3 py-2 -mx-1 bg-gradient-to-r from-amber-50 to-amber-100/80 dark:from-amber-950/40 dark:to-amber-900/30 border border-amber-300/60 dark:border-amber-700/50"
             >
-              <span className="text-amber-800 dark:text-amber-300 font-semibold text-[11px] flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="text-amber-800 dark:text-amber-300 font-semibold text-sm flex items-center gap-1.5">
+                <span className="inline-block w-2 h-2 rounded-full bg-amber-500" />
                 Last Price
               </span>
-              <span className="tabular-nums font-bold text-amber-900 dark:text-amber-200">
+              <span className="tabular-nums font-bold text-base text-amber-900 dark:text-amber-200">
                 {fmt(lv.value)}
               </span>
             </div>
           ) : (
             <div
               key={lv.label}
-              className="flex items-center justify-between py-0.5"
+              className="flex items-center justify-between py-1 text-sm"
             >
               <span className="text-muted-foreground">{lv.label}</span>
-              <span className={cn("tabular-nums font-medium", lv.color)}>
+              <span className={cn("tabular-nums font-semibold", lv.color)}>
                 {fmt(lv.value)}
               </span>
             </div>
@@ -104,7 +104,7 @@ export function FibPanel({ data }: { data: StockDetailsResponse }) {
   const rows30d = fib30 ? buildRows(levels30d, price) : [];
 
   return (
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
       <FibTable title="Fibonacci (52W)" rows={rows52w} />
       {rows30d.length > 0 && <FibTable title="Fibonacci (30D)" rows={rows30d} />}
     </div>

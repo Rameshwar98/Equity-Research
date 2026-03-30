@@ -16,6 +16,27 @@ from app.utils.errors import ProviderRateLimitError
 logger = logging.getLogger(__name__)
 
 
+def _profile_first_row(data: Any) -> dict[str, Any]:
+    if isinstance(data, list) and data:
+        row = data[0]
+        return row if isinstance(row, dict) else {}
+    if isinstance(data, dict):
+        return data
+    return {}
+
+
+def _coerce_mkt_cap(row: dict[str, Any]) -> float | None:
+    for key in ("mktCap", "marketCap", "marketcap", "market_cap", "mkt_cap"):
+        raw = row.get(key)
+        if raw is None:
+            continue
+        try:
+            return float(raw)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
 def _to_fmp_symbol(symbol: str) -> str:
     # FMP uses '-' for tickers like BRK.B -> BRK-B
     return symbol.replace(".", "-")
@@ -298,4 +319,208 @@ class FMPProvider(DataProvider):
         except Exception as e:
             logger.warning("Failed fetching sector data for %s: %s", index_name, e)
             return {}
+
+    async def fetch_peer_metadata(
+        self,
+        symbols: list[str],
+        timeout_seconds: float = 30.0,
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Per symbol: mkt_cap, display name (company), latest stock_news published date (ISO date).
+        """
+        result: Dict[str, Dict[str, Any]] = {
+            s: {"mkt_cap": None, "name": None, "announcement_date": None} for s in symbols
+        }
+        if not symbols:
+            return result
+
+        sem = asyncio.Semaphore(2)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        timeout = httpx.Timeout(timeout_seconds)
+
+        async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
+
+            async def one(sym: str) -> None:
+                async with sem:
+                    if self.config.symbol_delay_seconds > 0:
+                        await asyncio.sleep(self.config.symbol_delay_seconds)
+                    fmp = _to_fmp_symbol(sym)
+                    # Profile: market cap + company name (v3, then stable if gaps)
+                    try:
+                        purl = f"{self.config.base_url}/api/v3/profile/{fmp}"
+                        pdata = await self._fetch_json(
+                            client, purl, params={"apikey": self.config.api_key}, timeout_seconds=timeout_seconds
+                        )
+                        row = _profile_first_row(pdata)
+                        mc = _coerce_mkt_cap(row)
+                        if mc is not None:
+                            result[sym]["mkt_cap"] = mc
+                        nm = row.get("companyName") or row.get("name")
+                        if nm:
+                            result[sym]["name"] = str(nm)
+                    except Exception as e:
+                        logger.debug("profile v3 %s: %s", sym, e)
+
+                    if result[sym]["mkt_cap"] is None or result[sym]["name"] is None:
+                        try:
+                            surl = f"{self.config.base_url}/stable/profile"
+                            sdata = await self._fetch_json(
+                                client,
+                                surl,
+                                params={"symbol": fmp, "apikey": self.config.api_key},
+                                timeout_seconds=timeout_seconds,
+                            )
+                            srow = _profile_first_row(sdata)
+                            if result[sym]["mkt_cap"] is None:
+                                mc2 = _coerce_mkt_cap(srow)
+                                if mc2 is not None:
+                                    result[sym]["mkt_cap"] = mc2
+                            if result[sym]["name"] is None:
+                                nm2 = srow.get("companyName") or srow.get("name")
+                                if nm2:
+                                    result[sym]["name"] = str(nm2)
+                        except Exception as e:
+                            logger.debug("profile stable %s: %s", sym, e)
+
+                    try:
+                        nurl = f"{self.config.base_url}/api/v3/stock_news"
+                        ndata = await self._fetch_json(
+                            client,
+                            nurl,
+                            params={
+                                "tickers": sym,
+                                "limit": 5,
+                                "apikey": self.config.api_key,
+                            },
+                            timeout_seconds=timeout_seconds,
+                        )
+                        if isinstance(ndata, list) and ndata:
+                            first = ndata[0]
+                            if isinstance(first, dict):
+                                pd = (
+                                    first.get("publishedDate")
+                                    or first.get("date")
+                                    or first.get("published_date")
+                                    or first.get("publishedAt")
+                                )
+                                if pd:
+                                    sdt = str(pd).strip()
+                                    if " " in sdt:
+                                        sdt = sdt.split(" ")[0]
+                                    result[sym]["announcement_date"] = sdt
+                    except Exception as e:
+                        logger.debug("stock_news %s: %s", sym, e)
+
+            await asyncio.gather(*(one(s) for s in symbols))
+
+        return result
+
+    async def fetch_stock_peers_symbols(self, symbol: str, timeout_seconds: float = 20.0) -> list[str]:
+        """
+        FMP curated peers: /stable/stock-peers?symbol=...
+        Returns ticker strings in API order (may use '-' e.g. BRK-B).
+        """
+        fmp = _to_fmp_symbol(symbol)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        url = f"{self.config.base_url}/stable/stock-peers"
+        params = {"symbol": fmp, "apikey": self.config.api_key}
+        try:
+            async with httpx.AsyncClient(
+                timeout=httpx.Timeout(timeout_seconds), headers=headers
+            ) as client:
+                data = await self._fetch_json(client, url, params=params, timeout_seconds=timeout_seconds)
+        except Exception as e:
+            logger.warning("stock-peers %s: %s", symbol, e)
+            return []
+
+        out: list[str] = []
+
+        def _push(s: Any) -> None:
+            if s is None:
+                return
+            t = str(s).strip()
+            if t and t not in out:
+                out.append(t)
+
+        if isinstance(data, list):
+            for row in data:
+                if isinstance(row, dict):
+                    _push(row.get("symbol") or row.get("ticker") or row.get("stockSymbol"))
+                elif isinstance(row, str):
+                    _push(row)
+        elif isinstance(data, dict):
+            for key in ("symbolPeerList", "peers", "peerList", "data", "symbols"):
+                chunk = data.get(key)
+                if isinstance(chunk, list):
+                    for row in chunk:
+                        if isinstance(row, dict):
+                            _push(row.get("symbol") or row.get("ticker"))
+                        elif isinstance(row, str):
+                            _push(row)
+                    break
+
+        return out
+
+    async def fetch_fmp_quarterly_series(
+        self,
+        symbol: str,
+        resource: str,
+        limit: int = 20,
+        timeout_seconds: float = 22.0,
+        require_quarter_period: bool = True,
+    ) -> list[dict[str, Any]]:
+        """
+        Generic quarterly series: resource is v3 path segment, e.g.
+        income-statement, balance-sheet-statement, cash-flow-statement, ratios, key-metrics.
+        """
+        fmp = _to_fmp_symbol(symbol)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        stable_resource = resource
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(timeout_seconds), headers=headers
+        ) as client:
+            for url, params in (
+                (
+                    f"{self.config.base_url}/api/v3/{resource}/{fmp}",
+                    {"period": "quarter", "limit": limit, "apikey": self.config.api_key},
+                ),
+                (
+                    f"{self.config.base_url}/stable/{stable_resource}",
+                    {
+                        "symbol": fmp,
+                        "period": "quarter",
+                        "limit": limit,
+                        "apikey": self.config.api_key,
+                    },
+                ),
+            ):
+                try:
+                    data = await self._fetch_json(
+                        client, url, params=params, timeout_seconds=timeout_seconds
+                    )
+                    if isinstance(data, list) and data:
+                        rows = [r for r in data if isinstance(r, dict)]
+                        if not require_quarter_period:
+                            return rows
+                        q_only = [
+                            r
+                            for r in rows
+                            if str(r.get("period", "")).strip().upper().startswith("Q")
+                        ]
+                        return q_only if q_only else rows
+                except Exception as e:
+                    logger.debug("fmp quarterly %s %s %s: %s", resource, symbol, url, e)
+                    continue
+        return []
+
+    async def fetch_income_statement_quarterly(
+        self,
+        symbol: str,
+        limit: int = 12,
+        timeout_seconds: float = 25.0,
+    ) -> list[dict[str, Any]]:
+        """Quarterly income-statement lines."""
+        return await self.fetch_fmp_quarterly_series(
+            symbol, "income-statement", limit, timeout_seconds, True
+        )
 

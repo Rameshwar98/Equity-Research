@@ -19,6 +19,9 @@ from app.utils.types import ScoreKey, Signal
 
 logger = logging.getLogger(__name__)
 
+# Same table as peer drawer: reuse SQLite / memory cache for FMP profile fields.
+_FMP_SYMBOL_META_TTL_SECONDS = 172800
+
 
 def _classify(v: float | None) -> Signal:
     if v is None:
@@ -51,6 +54,15 @@ class StockComputed:
     close_latest: float | None
     ema_latest: Dict[str, float | None]
     fib: Dict[str, float | None]
+    high_52w: float | None = None
+    low_52w: float | None = None
+    return_1d: float | None = None
+    return_1w: float | None = None
+    return_1m: float | None = None
+    return_3m: float | None = None
+    return_ytd: float | None = None
+    signals_1y: tuple[str, ...] = ()
+    signals_1y_dates: tuple[str, ...] = ()
 
 
 class AnalysisService:
@@ -135,6 +147,34 @@ class AnalysisService:
 
         return prices_by_symbol
 
+    async def _merge_fmp_meta_batch(
+        self,
+        symbols: List[str],
+        ttl_seconds: int = _FMP_SYMBOL_META_TTL_SECONDS,
+        timeout_seconds: float = 90.0,
+    ) -> Dict[str, Dict[str, Any]]:
+        """mkt_cap / name / announcement_date from cache + FMP profile (when provider supports it)."""
+        if not symbols:
+            return {}
+        fresh, stale = await self.cache.get_symbol_fmp_meta_batch(symbols, ttl_seconds)
+        out: Dict[str, Dict[str, Any]] = dict(fresh)
+        empty: Dict[str, Any] = {"mkt_cap": None, "name": None, "announcement_date": None}
+        fetch_fn = getattr(self.provider, "fetch_peer_metadata", None)
+        if stale and callable(fetch_fn):
+            try:
+                fetched = await fetch_fn(stale, timeout_seconds=timeout_seconds)
+                await self.cache.put_symbol_fmp_meta_batch(fetched)
+                for sym in stale:
+                    out[sym] = fetched.get(sym) or dict(empty)
+            except Exception as e:
+                logger.warning("FMP symbol metadata batch failed: %s", e)
+                for sym in stale:
+                    out.setdefault(sym, dict(empty))
+        else:
+            for sym in stale:
+                out.setdefault(sym, dict(empty))
+        return out
+
     def _compute_for_symbol(
         self,
         symbol: str,
@@ -152,7 +192,7 @@ class AnalysisService:
         prices = prices.dropna(subset=["Close"]).copy()
         prices = prices.sort_index()
 
-        # Need at least 200 EMA and 52-week and 16 sessions of signals.
+        # Need at least 200 EMA, 52-week window, and enough history for 16 weekly signals.
         if len(prices) < 260:
             return None
 
@@ -162,17 +202,37 @@ class AnalysisService:
         prev_close = self.indicator_svc.prev_close(close)
         scores = self.scoring_svc.compute_scores(close, avg_last5, prev_close, ind.avg_all_emas)
 
-        # Historical signals for last 16 sessions, computed per day using that day's scores.
+        # Weekly signals: weeks ending Friday (W-FRI). Last trading day in each bucket
+        # is Friday, or Thu/Wed/… if Friday is closed — not daily columns.
         selected_series = scores.get(selected_score)
-        tail = selected_series.tail(16)
-        # Align date labels with the tail index
-        dates = [d.date().isoformat() for d in tail.index.to_list()]
-        vals = tail.to_list()
-        signals = [_classify(_safe_float(v)) for v in vals]
+        ser = selected_series.sort_index()
+        if not isinstance(ser.index, pd.DatetimeIndex):
+            ser = ser.copy()
+            ser.index = pd.to_datetime(ser.index)
 
-        # Reverse to most-recent first for frontend
-        date_labels = list(reversed(dates))
-        signals = list(reversed(signals))
+        weekly_dates: list[str] = []
+        weekly_signals: list[str] = []
+        fri_grouper = pd.Grouper(freq="W-FRI", label="right", closed="right")
+        for _week_end, grp in ser.groupby(fri_grouper):
+            if grp.empty:
+                continue
+            last_dt = grp.index[-1]
+            weekly_dates.append(last_dt.date().isoformat())
+            weekly_signals.append(_classify(_safe_float(grp.iloc[-1])))
+
+        # ~1 year of weekly signals for dashboard heatmap (chronological: oldest first)
+        n_1y = 52
+        tail_d = weekly_dates[-n_1y:] if weekly_dates else []
+        tail_s = weekly_signals[-n_1y:] if weekly_signals else []
+        signals_1y_tuple = tuple(tail_s)
+        signals_1y_dates_tuple = tuple(tail_d)
+
+        # Most recent 16 weeks, most-recent first for the table columns
+        n_table = 16
+        last_dates = weekly_dates[-n_table:] if weekly_dates else []
+        last_sigs = weekly_signals[-n_table:] if weekly_signals else []
+        date_labels = list(reversed(last_dates))
+        signals = list(reversed(last_sigs))
 
         # Latest values
         score_latest = self.scoring_svc.latest_scores(scores)
@@ -199,7 +259,31 @@ class AnalysisService:
             "fib_23_6": fib.fib_23_6,
         }
 
-        if len(signals) < 16:
+        # Period returns
+        def _pct_return(days: int) -> float | None:
+            if close_latest is None or len(close) <= days:
+                return None
+            old = _safe_float(close.iloc[-(days + 1)])
+            if old is None or old == 0:
+                return None
+            return round((close_latest - old) / old * 100, 2)
+
+        return_1d = _pct_return(1)
+        return_1w = _pct_return(5)
+        return_1m = _pct_return(21)
+        return_3m = _pct_return(63)
+
+        # YTD return: from last trading day of previous year
+        return_ytd: float | None = None
+        if close_latest is not None:
+            current_year = close.index[-1].year
+            prev_year_prices = close[close.index.year < current_year]
+            if len(prev_year_prices) > 0:
+                ytd_base = _safe_float(prev_year_prices.iloc[-1])
+                if ytd_base and ytd_base != 0:
+                    return_ytd = round((close_latest - ytd_base) / ytd_base * 100, 2)
+
+        if len(signals) < 4:
             return None
 
         return StockComputed(
@@ -209,10 +293,19 @@ class AnalysisService:
             sub_sector=sub_sector,
             date_labels=date_labels,
             signals=signals,
+            signals_1y=signals_1y_tuple,
+            signals_1y_dates=signals_1y_dates_tuple,
             score_latest=score_latest,
             close_latest=close_latest,
             ema_latest=ema_latest,
             fib=fib_dict,
+            high_52w=ind.high_52w,
+            low_52w=ind.low_52w,
+            return_1d=return_1d,
+            return_1w=return_1w,
+            return_1m=return_1m,
+            return_3m=return_3m,
+            return_ytd=return_ytd,
         )
 
     async def run_analysis(
@@ -263,6 +356,12 @@ class AnalysisService:
                 batch, refresh=refresh_data, timeout_seconds=timeout_seconds
             )
 
+            meta_by_sym = await self._merge_fmp_meta_batch(
+                batch,
+                ttl_seconds=_FMP_SYMBOL_META_TTL_SECONDS,
+                timeout_seconds=max(45.0, min(120.0, 3.0 * len(batch))),
+            )
+
             for s in batch:
                 try:
                     sec_info = sector_map.get(s, {})
@@ -292,15 +391,29 @@ class AnalysisService:
                     elif sig0 == "HOLD":
                         hold += 1
 
+                    fmp_meta = meta_by_sym.get(s) or {}
+                    display_name = c.name or fmp_meta.get("name")
+
                     row = AnalysisRow(
                         symbol=s,
-                        name=c.name,
+                        name=display_name,
                         sector=c.sector,
                         sub_sector=c.sub_sector,
                         score_1=c.score_latest.get("score_1"),
                         score_2=c.score_latest.get("score_2"),
                         score_3=c.score_latest.get("score_3"),
+                        last_price=c.close_latest,
+                        mkt_cap=fmp_meta.get("mkt_cap"),
+                        high_52w=c.high_52w,
+                        low_52w=c.low_52w,
+                        return_1d=c.return_1d,
+                        return_1w=c.return_1w,
+                        return_1m=c.return_1m,
+                        return_3m=c.return_3m,
+                        return_ytd=c.return_ytd,
                         signals=list(c.signals),
+                        signals_1y=list(c.signals_1y),
+                        signals_1y_dates=list(c.signals_1y_dates),
                     )
                     rows.append(row)
 
