@@ -6,7 +6,7 @@ import { AnalysisTable } from "@/components/analysis-table";
 import { ModeToggle } from "@/components/mode-toggle";
 import { StockDrawer } from "@/components/stock-drawer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -46,30 +46,22 @@ const FALLBACK_INDICES: IndexInfo[] = [
 
 const ALL_VALUE = "__all__";
 
-/** Placeholder matching control row layout — avoids SSR/client hydration fights (Radix IDs, extension-injected attrs). */
+/** Placeholder matching compact toolbar — avoids SSR/client hydration fights (Radix IDs, extension-injected attrs). */
 function ControlsSkeleton() {
   return (
     <div
-      className="grid gap-3 md:grid-cols-12"
+      className="flex flex-nowrap items-center gap-2 overflow-x-auto py-0.5"
       aria-busy="true"
       aria-label="Loading controls"
     >
-      <div className="md:col-span-3 space-y-1">
-        <div className="h-3 w-10 rounded bg-muted" />
-        <div className="h-9 w-full rounded-md bg-muted/50" />
-      </div>
-      <div className="md:col-span-5 space-y-1">
-        <div className="h-3 w-32 rounded bg-muted" />
-        <div className="h-9 w-full rounded-md bg-muted/50" />
-      </div>
-      <div className="md:col-span-2 space-y-1">
-        <div className="h-3 w-14 rounded bg-muted" />
-        <div className="h-9 w-full rounded-md bg-muted/50" />
-      </div>
-      <div className="md:col-span-2 flex items-end gap-2">
-        <div className="h-9 flex-1 rounded-md bg-muted/50" />
-        <div className="h-9 flex-1 rounded-md bg-muted/50" />
-      </div>
+      <div className="h-3 w-9 shrink-0 rounded bg-muted" />
+      <div className="h-9 w-[132px] shrink-0 rounded-md bg-muted/50" />
+      <div className="h-3 w-10 shrink-0 rounded bg-muted" />
+      <div className="h-9 w-[200px] shrink-0 rounded-md bg-muted/50" />
+      <div className="h-3 w-12 shrink-0 rounded bg-muted" />
+      <div className="h-9 w-[128px] shrink-0 rounded-md bg-muted/50" />
+      <div className="h-9 w-16 shrink-0 rounded-md bg-muted/50" />
+      <div className="h-9 w-20 shrink-0 rounded-md bg-muted/50" />
     </div>
   );
 }
@@ -275,8 +267,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto max-w-[1480px] px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
+        <div className="mb-4 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="space-y-1">
             <div className="text-3xl font-semibold tracking-tight text-foreground">
               Equity Analysis Dashboard
@@ -290,70 +282,73 @@ export default function Home() {
           </div>
         </div>
 
-        <Card className="mb-8 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Controls</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1">
+        <Card className="mb-4 shadow-sm">
+          <CardContent className="p-3">
             {!controlsMounted ? (
               <ControlsSkeleton />
             ) : (
-              <div className="grid gap-4 md:grid-cols-12 md:gap-x-4 md:gap-y-4">
-                <div className="md:col-span-3">
-                  <div className="mb-1.5 text-sm font-medium text-muted-foreground">Index</div>
-                  <Select
-                    value={indexName}
-                    onValueChange={setIndexName}
-                    disabled={!indices.length}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select index" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {indices.map((i) => (
-                        <SelectItem key={i.name} value={i.name}>
-                          {i.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="md:col-span-5">
-                  <div className="mb-1.5 text-sm font-medium text-muted-foreground leading-snug">
-                    Score formula <span className="font-normal text-muted-foreground/80">(drives signals)</span>
+              <div
+                className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+                role="toolbar"
+                aria-label="Analysis controls and summary"
+              >
+                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:flex-nowrap sm:overflow-x-auto sm:py-0.5 [scrollbar-width:thin]">
+                  <span className="shrink-0 text-xs font-medium text-muted-foreground">Index</span>
+                  <div className="w-[min(152px,42vw)] shrink-0">
+                    <Select
+                      value={indexName}
+                      onValueChange={setIndexName}
+                      disabled={!indices.length}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Select index" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {indices.map((i) => (
+                          <SelectItem key={i.name} value={i.name}>
+                            {i.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Select
-                    value={selectedScore}
-                    onValueChange={(v) => setSelectedScore(v as ScoreKey)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select score" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SCORE_OPTIONS.map((s) => (
-                        <SelectItem key={s.key} value={s.key}>
-                          {s.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
 
-                <div className="md:col-span-2">
-                  <div className="mb-1.5 text-sm font-medium text-muted-foreground">Search</div>
+                  <span className="shrink-0 text-xs font-medium text-muted-foreground">Score</span>
+                  <div className="min-w-[min(220px,55vw)] max-w-[min(320px,70vw)] shrink-0">
+                    <Select
+                      value={selectedScore}
+                      onValueChange={(v) => setSelectedScore(v as ScoreKey)}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SCORE_OPTIONS.map((s) => (
+                          <SelectItem key={s.key} value={s.key}>
+                            {s.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <Input
+                    className="h-8 w-[min(140px,28vw)] shrink-0 text-xs"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="AAPL / Reliance…"
+                    placeholder="Search…"
+                    aria-label="Search symbol or name"
                   />
-                </div>
 
-                <div className="md:col-span-2 flex items-end gap-2">
-                  <Button onClick={() => onRun(false)} disabled={loading}>
+                  <Button
+                    className="h-8 shrink-0 px-3 text-xs"
+                    onClick={() => onRun(false)}
+                    disabled={loading}
+                  >
                     {loading ? "Running…" : "Run"}
                   </Button>
                   <Button
+                    className="h-8 shrink-0 px-3 text-xs"
                     variant="outline"
                     onClick={() => onRun(true)}
                     disabled={loading}
@@ -361,91 +356,117 @@ export default function Home() {
                     Refresh
                   </Button>
                 </div>
+
+                {runProgress && runProgress.status === "running" ? (
+                  <div className="flex min-w-0 max-w-full items-center gap-2 border-t border-border pt-2 sm:min-w-[12rem] sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0">
+                    <div className="hidden h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-muted sm:block sm:w-20">
+                      <div
+                        className="h-full rounded-full bg-primary transition-[width] duration-300"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            Math.max(0, runProgress.progressPercent ?? 0)
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                    <span
+                      className="min-w-0 truncate text-xs text-muted-foreground tabular-nums"
+                      title={
+                        [
+                          runProgress.message ?? "Processing",
+                          runProgress.total > 0
+                            ? `${runProgress.processed}/${runProgress.total}`
+                            : null,
+                          runProgress.progressPercent !== null
+                            ? `${runProgress.progressPercent.toFixed(1)}%`
+                            : null,
+                          runProgress.etaSeconds !== null
+                            ? `~${Math.max(0, Math.round(runProgress.etaSeconds))}s`
+                            : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")
+                      }
+                    >
+                      <span className="font-medium text-foreground">
+                        {runProgress.message ?? "Processing"}
+                      </span>
+                      {runProgress.total > 0
+                        ? ` (${runProgress.processed}/${runProgress.total})`
+                        : null}
+                      {runProgress.progressPercent === null
+                        ? ""
+                        : ` · ${runProgress.progressPercent.toFixed(1)}%`}
+                      {runProgress.etaSeconds === null
+                        ? ""
+                        : ` · ~${Math.max(0, Math.round(runProgress.etaSeconds))}s`}
+                    </span>
+                  </div>
+                ) : null}
+
+                {resp && !(runProgress && runProgress.status === "running") ? (
+                  <div className="flex min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2 text-xs tabular-nums sm:flex-nowrap sm:overflow-x-auto sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0 [scrollbar-width:thin]">
+                    <span className="shrink-0 text-muted-foreground">
+                      Total{" "}
+                      <span className="font-semibold text-foreground">{resp.summary.total}</span>
+                    </span>
+                    <span className="text-muted-foreground/50" aria-hidden>
+                      ·
+                    </span>
+                    <span className="shrink-0 text-emerald-700 dark:text-emerald-400">
+                      BUY <span className="font-semibold">{resp.summary.buy}</span>
+                    </span>
+                    <span className="text-muted-foreground/50" aria-hidden>
+                      ·
+                    </span>
+                    <span className="shrink-0 text-amber-700 dark:text-amber-400">
+                      HOLD <span className="font-semibold">{resp.summary.hold}</span>
+                    </span>
+                    <span className="text-muted-foreground/50" aria-hidden>
+                      ·
+                    </span>
+                    <span className="shrink-0 text-rose-700 dark:text-rose-400">
+                      SELL <span className="font-semibold">{resp.summary.sell}</span>
+                    </span>
+                    <span className="text-muted-foreground/50" aria-hidden>
+                      ·
+                    </span>
+                    <span
+                      className="min-w-0 shrink text-muted-foreground sm:shrink-0"
+                      title={`${new Date(resp.cached_at).toLocaleString("en-US", {
+                        timeZone: "UTC",
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })} UTC · ${resp.metadata.index_name} · ${resp.metadata.selected_score}`}
+                    >
+                      <span className="hidden lg:inline">Updated </span>
+                      <span className="sm:whitespace-nowrap">
+                        {new Date(resp.cached_at).toLocaleString("en-US", {
+                          timeZone: "UTC",
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}{" "}
+                        UTC · {resp.metadata.index_name} · {resp.metadata.selected_score}
+                      </span>
+                    </span>
+                  </div>
+                ) : null}
               </div>
             )}
 
             {error ? (
-              <div className="mt-4 text-sm font-medium text-destructive">{error}</div>
-            ) : null}
-
-            {runProgress && runProgress.status === "running" ? (
-              <div className="mt-5 rounded-xl border bg-card p-5">
-                <div className="text-base font-semibold">Processing…</div>
-                <div className="mt-2 text-sm text-muted-foreground">
-                  {runProgress.message ?? "Working"}{" "}
-                  {runProgress.total > 0 ? (
-                    <>
-                      ({runProgress.processed}/{runProgress.total})
-                    </>
-                  ) : null}
-                </div>
-                <div className="mt-2 text-base tabular-nums">
-                  {runProgress.progressPercent === null
-                    ? "Progress: —"
-                    : `Progress: ${runProgress.progressPercent.toFixed(1)}%`}
-                </div>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  {runProgress.etaSeconds === null
-                    ? "ETA: —"
-                    : `ETA: ~${Math.max(0, Math.round(runProgress.etaSeconds))}s`}
-                </div>
+              <div
+                className="mt-2 truncate text-xs font-medium text-destructive"
+                title={error}
+              >
+                {error}
               </div>
             ) : null}
           </CardContent>
         </Card>
-
-        {resp ? (
-          <div className="mb-8 grid gap-4 sm:grid-cols-2 md:grid-cols-6">
-            <Card>
-              <CardContent className="p-5">
-                <div className="text-sm font-medium text-muted-foreground">Total scanned</div>
-                <div className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight">
-                  {resp.summary.total}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <div className="text-sm font-medium text-muted-foreground">BUY</div>
-                <div className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-emerald-700 dark:text-emerald-400">
-                  {resp.summary.buy}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <div className="text-sm font-medium text-muted-foreground">HOLD</div>
-                <div className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-amber-700 dark:text-amber-400">
-                  {resp.summary.hold}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <div className="text-sm font-medium text-muted-foreground">SELL</div>
-                <div className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-rose-700 dark:text-rose-400">
-                  {resp.summary.sell}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="md:col-span-2">
-              <CardContent className="p-5">
-                <div className="text-sm font-medium text-muted-foreground">Last updated</div>
-                <div className="mt-1.5 text-base tabular-nums">
-                  {new Date(resp.cached_at).toLocaleString("en-US", {
-                    timeZone: "UTC",
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}{" "}
-                  UTC
-                </div>
-                <div className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Index: {resp.metadata.index_name} · Score: {resp.metadata.selected_score}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        ) : null}
 
         {resp && resp.rows.length === 0 ? (
           <div

@@ -513,6 +513,46 @@ class FMPProvider(DataProvider):
                     continue
         return []
 
+    async def fetch_fmp_annual_series(
+        self,
+        symbol: str,
+        resource: str,
+        limit: int = 6,
+        timeout_seconds: float = 22.0,
+    ) -> list[dict[str, Any]]:
+        """Fiscal-year statements (same resources as quarterly, period=annual)."""
+        fmp = _to_fmp_symbol(symbol)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        stable_resource = resource
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(timeout_seconds), headers=headers
+        ) as client:
+            for url, params in (
+                (
+                    f"{self.config.base_url}/api/v3/{resource}/{fmp}",
+                    {"period": "annual", "limit": limit, "apikey": self.config.api_key},
+                ),
+                (
+                    f"{self.config.base_url}/stable/{stable_resource}",
+                    {
+                        "symbol": fmp,
+                        "period": "annual",
+                        "limit": limit,
+                        "apikey": self.config.api_key,
+                    },
+                ),
+            ):
+                try:
+                    data = await self._fetch_json(
+                        client, url, params=params, timeout_seconds=timeout_seconds
+                    )
+                    if isinstance(data, list) and data:
+                        return [r for r in data if isinstance(r, dict)]
+                except Exception as e:
+                    logger.debug("fmp annual %s %s %s: %s", resource, symbol, url, e)
+                    continue
+        return []
+
     async def fetch_income_statement_quarterly(
         self,
         symbol: str,

@@ -39,7 +39,7 @@ export function DashboardSignalHeatmap({
 
   return (
     <div
-      className="flex h-5 w-[min(100%,14rem)] min-w-[8rem] max-w-[14rem] shrink-0 overflow-hidden rounded-sm border border-border/70"
+      className="flex h-4 w-[min(100%,12rem)] min-w-[7rem] max-w-[12rem] shrink-0 overflow-hidden rounded-sm border border-border/70"
       title="Weekly signals (~1 year, oldest → newest)"
     >
       {s.map((sig, i) => (

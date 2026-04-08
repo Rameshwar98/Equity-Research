@@ -13,8 +13,10 @@ import {
 } from "@tanstack/react-table";
 
 import { DashboardSignalHeatmap } from "@/components/dashboard-signal-heatmap";
+import { SectorAggregateTable } from "@/components/sector-aggregate-table";
 import { TrendBadge } from "@/components/trend-badge";
 import { Week52RangeBar } from "@/components/week-52-range-bar";
+import { computeSectorAggregates } from "@/lib/sector-aggregates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -181,26 +183,29 @@ export function AnalysisTable({
     { id: selectedScore, desc: true },
   ]);
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [tableView, setTableView] = React.useState<"stocks" | "sectors">("stocks");
 
   const columns = React.useMemo<ColumnDef<AnalysisRow>[]>(() => {
+    const badgeSm = "px-1.5 py-0 text-[10px] leading-tight h-5 font-semibold";
+
     const latestCol: ColumnDef<AnalysisRow> = {
       id: "sig_0",
       header: () => (
-        <div className="whitespace-nowrap text-xs leading-snug text-center">
+        <div className="whitespace-nowrap text-[11px] leading-snug text-center">
           <div className="font-semibold text-foreground">Latest</div>
           <div className="text-muted-foreground font-normal">{headerForIdx(data.date_labels, 0)}</div>
         </div>
       ),
       cell: ({ row }) => {
         const sig = row.original.signals[0] as Signal | undefined;
-        return sig ? <TrendBadge signal={sig} /> : <TrendBadge signal="N/A" />;
+        return sig ? <TrendBadge signal={sig} className={badgeSm} /> : <TrendBadge signal="N/A" className={badgeSm} />;
       },
     };
 
     const heatmapCol: ColumnDef<AnalysisRow> = {
       id: "sig_1y",
       header: () => (
-        <div className="whitespace-nowrap text-xs leading-snug text-center min-w-[7rem]">
+        <div className="whitespace-nowrap text-[11px] leading-snug text-center min-w-[6rem]">
           <div className="font-semibold text-foreground">1Y</div>
           <div className="text-muted-foreground font-normal">heatmap</div>
         </div>
@@ -216,14 +221,14 @@ export function AnalysisTable({
       return {
         id: `sig_${i}`,
         header: () => (
-          <div className="whitespace-nowrap text-xs leading-snug text-center">
+          <div className="whitespace-nowrap text-[11px] leading-snug text-center">
             <div className="font-semibold text-foreground">{`W-${i}`}</div>
             <div className="text-muted-foreground font-normal">{headerForIdx(data.date_labels, i)}</div>
           </div>
         ),
         cell: ({ row }) => {
           const sig = row.original.signals[i] as Signal | undefined;
-          return sig ? <TrendBadge signal={sig} /> : <TrendBadge signal="N/A" />;
+          return sig ? <TrendBadge signal={sig} className={badgeSm} /> : <TrendBadge signal="N/A" className={badgeSm} />;
         },
       };
     });
@@ -235,7 +240,10 @@ export function AnalysisTable({
         accessorKey: "name",
         header: "Stock Name",
         cell: ({ row }) => (
-          <div className="max-w-[9rem] sm:max-w-[10.5rem] truncate text-sm font-medium" title={row.original.name ?? ""}>
+          <div
+            className="max-w-[7.75rem] sm:max-w-[9rem] truncate text-[13px] font-medium leading-snug"
+            title={row.original.name ?? ""}
+          >
             {row.original.name ?? "—"}
           </div>
         ),
@@ -244,14 +252,14 @@ export function AnalysisTable({
         accessorKey: "symbol",
         header: "Symbol",
         cell: ({ row }) => (
-          <div className="font-mono text-sm font-semibold">{row.original.symbol}</div>
+          <div className="font-mono text-xs font-semibold">{row.original.symbol}</div>
         ),
       },
       {
         accessorKey: "sector",
         header: "Sector",
         cell: ({ row }) => (
-          <div className="max-w-[140px] truncate text-sm text-muted-foreground">
+          <div className="max-w-[120px] truncate text-xs text-muted-foreground" title={row.original.sector ?? ""}>
             {row.original.sector ?? "—"}
           </div>
         ),
@@ -261,7 +269,7 @@ export function AnalysisTable({
         header: "Sub-sector",
         cell: ({ row }) => (
           <div
-            className="max-w-[5.5rem] sm:max-w-[6.5rem] truncate text-sm text-muted-foreground"
+            className="max-w-[5rem] sm:max-w-[5.75rem] truncate text-xs text-muted-foreground"
             title={row.original.sub_sector ?? ""}
           >
             {row.original.sub_sector ?? "—"}
@@ -272,7 +280,7 @@ export function AnalysisTable({
         accessorKey: selectedScore,
         header: SCORE_LABELS[selectedScore],
         cell: ({ row }) => (
-          <div className="tabular-nums text-sm">{fmtScore(row.original[selectedScore])}</div>
+          <div className="tabular-nums text-xs">{fmtScore(row.original[selectedScore])}</div>
         ),
       },
       {
@@ -280,7 +288,7 @@ export function AnalysisTable({
         header: "Last Price",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className="tabular-nums text-sm font-semibold">{fmtPrice(row.original.last_price)}</div>
+          <div className="tabular-nums text-xs font-semibold">{fmtPrice(row.original.last_price)}</div>
         ),
       },
       {
@@ -288,7 +296,7 @@ export function AnalysisTable({
         header: "Mkt Cap",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className="tabular-nums text-sm">{fmtCap(row.original.mkt_cap)}</div>
+          <div className="tabular-nums text-xs">{fmtCap(row.original.mkt_cap)}</div>
         ),
       },
       {
@@ -302,7 +310,7 @@ export function AnalysisTable({
         },
         sortingFn: "basic",
         header: () => (
-          <div className="whitespace-nowrap text-xs leading-snug text-center min-w-[7.5rem]">
+          <div className="whitespace-nowrap text-[11px] leading-snug text-center min-w-[6.5rem]">
             <div className="font-semibold text-foreground">52W</div>
             <div className="text-muted-foreground font-normal">range</div>
           </div>
@@ -320,7 +328,7 @@ export function AnalysisTable({
         header: "1D %",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_1d))}>
+          <div className={cn("tabular-nums text-xs font-medium", pctColor(row.original.return_1d))}>
             {fmtPct(row.original.return_1d)}
           </div>
         ),
@@ -330,7 +338,7 @@ export function AnalysisTable({
         header: "1W %",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_1w))}>
+          <div className={cn("tabular-nums text-xs font-medium", pctColor(row.original.return_1w))}>
             {fmtPct(row.original.return_1w)}
           </div>
         ),
@@ -340,7 +348,7 @@ export function AnalysisTable({
         header: "1M %",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_1m))}>
+          <div className={cn("tabular-nums text-xs font-medium", pctColor(row.original.return_1m))}>
             {fmtPct(row.original.return_1m)}
           </div>
         ),
@@ -350,7 +358,7 @@ export function AnalysisTable({
         header: "3M %",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_3m))}>
+          <div className={cn("tabular-nums text-xs font-medium", pctColor(row.original.return_3m))}>
             {fmtPct(row.original.return_3m)}
           </div>
         ),
@@ -360,7 +368,7 @@ export function AnalysisTable({
         header: "YTD %",
         sortingFn: "basic",
         cell: ({ row }) => (
-          <div className={cn("tabular-nums text-sm font-medium", pctColor(row.original.return_ytd))}>
+          <div className={cn("tabular-nums text-xs font-medium", pctColor(row.original.return_ytd))}>
             {fmtPct(row.original.return_ytd)}
           </div>
         ),
@@ -393,19 +401,28 @@ export function AnalysisTable({
     (subSectorFilter && subSectorFilter !== allValue) ||
     (signalFilter && signalFilter !== allValue);
 
+  const sectorAggregates = React.useMemo(
+    () => computeSectorAggregates(data.rows),
+    [data.rows]
+  );
+
   return (
     <div className="rounded-xl border bg-card shadow-sm">
-      <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <Input
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Search symbol or name…"
-            className="w-[min(100%,220px)] min-h-10 text-sm"
-          />
-          {sectors.length > 0 && onSectorChange && (
+      <div
+        className="flex min-w-0 flex-nowrap items-center gap-2 overflow-x-auto p-3 [scrollbar-width:thin]"
+        role="toolbar"
+        aria-label="Table filters and export"
+      >
+        <Input
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          placeholder="Search symbol or name…"
+          className="h-8 w-[200px] shrink-0 text-xs"
+        />
+        {sectors.length > 0 && onSectorChange && (
+          <div className="w-[152px] shrink-0">
             <Select value={sectorFilter ?? allValue} onValueChange={onSectorChange}>
-              <SelectTrigger className="w-[min(100%,170px)] min-h-10 text-sm">
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="All Sectors" />
               </SelectTrigger>
               <SelectContent>
@@ -415,10 +432,12 @@ export function AnalysisTable({
                 ))}
               </SelectContent>
             </Select>
-          )}
-          {subSectors.length > 0 && onSubSectorChange && (
+          </div>
+        )}
+        {subSectors.length > 0 && onSubSectorChange && (
+          <div className="w-[168px] shrink-0">
             <Select value={subSectorFilter ?? allValue} onValueChange={onSubSectorChange}>
-              <SelectTrigger className="w-[min(100%,190px)] min-h-10 text-sm">
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="All Sub-sectors" />
               </SelectTrigger>
               <SelectContent>
@@ -428,10 +447,12 @@ export function AnalysisTable({
                 ))}
               </SelectContent>
             </Select>
-          )}
-          {onSignalChange && (
+          </div>
+        )}
+        {onSignalChange && (
+          <div className="w-[136px] shrink-0">
             <Select value={signalFilter ?? allValue} onValueChange={onSignalChange}>
-              <SelectTrigger className="w-[min(100%,150px)] min-h-10 text-sm">
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="All Signals" />
               </SelectTrigger>
               <SelectContent>
@@ -440,33 +461,77 @@ export function AnalysisTable({
                 ))}
               </SelectContent>
             </Select>
-          )}
-          {hasActiveFilter && onSectorChange && onSubSectorChange && onSignalChange && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => { onSectorChange(allValue); onSubSectorChange(allValue); onSignalChange(allValue); }}
-            >
-              Clear
-            </Button>
-          )}
+          </div>
+        )}
+        {hasActiveFilter && onSectorChange && onSubSectorChange && onSignalChange && (
           <Button
-            variant="outline"
-            onClick={() => {
-              const csv = toCsv(data);
-              download(`analysis-${data.metadata.index_name}.csv`, csv);
-            }}
+            variant="ghost"
+            className="h-8 shrink-0 px-2 text-xs"
+            onClick={() => { onSectorChange(allValue); onSubSectorChange(allValue); onSignalChange(allValue); }}
           >
-            Export CSV
+            Clear
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          className="h-8 shrink-0 px-3 text-xs"
+          onClick={() => {
+            const csv = toCsv(data);
+            download(`analysis-${data.metadata.index_name}.csv`, csv);
+          }}
+        >
+          Export CSV
+        </Button>
+        <div
+          className="ml-1 flex shrink-0 items-center rounded-md border border-border bg-muted/40 p-0.5"
+          role="tablist"
+          aria-label="Table view"
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            className={cn(
+              "h-7 shrink-0 rounded-sm px-2.5 text-xs",
+              tableView === "stocks" && "bg-background text-foreground shadow-sm"
+            )}
+            onClick={() => setTableView("stocks")}
+            role="tab"
+            aria-selected={tableView === "stocks"}
+          >
+            Stock based
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className={cn(
+              "h-7 shrink-0 rounded-sm px-2.5 text-xs",
+              tableView === "sectors" && "bg-background text-foreground shadow-sm"
+            )}
+            onClick={() => setTableView("sectors")}
+            role="tab"
+            aria-selected={tableView === "sectors"}
+          >
+            Sector based
           </Button>
         </div>
-        <div className="text-sm font-medium text-muted-foreground tabular-nums">
-          Showing {table.getRowModel().rows.length} of {data.rows.length}
-        </div>
+        <span className="ml-auto shrink-0 whitespace-nowrap pl-2 text-xs font-medium text-muted-foreground tabular-nums">
+          {tableView === "stocks" ? (
+            <>
+              Showing {table.getRowModel().rows.length} of {data.rows.length}
+            </>
+          ) : (
+            <>{sectorAggregates.length} sectors</>
+          )}
+        </span>
       </div>
 
+      {tableView === "sectors" ? (
+        <SectorAggregateTable aggregates={sectorAggregates} />
+      ) : null}
+
+      {tableView === "stocks" ? (
       <div className="max-h-[min(68vh,720px)] overflow-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead className="sticky top-0 z-10 bg-card shadow-[0_1px_0_0_hsl(var(--border))]">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id} className="border-b border-border/80">
@@ -474,7 +539,7 @@ export function AnalysisTable({
                   <th
                     key={h.id}
                     className={cn(
-                      "px-3 py-2.5 text-left text-sm font-semibold text-muted-foreground whitespace-nowrap",
+                      "px-2 py-2 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap",
                       h.column.getCanSort() ? "cursor-pointer select-none hover:text-foreground" : ""
                     )}
                     onClick={h.column.getToggleSortingHandler()}
@@ -502,7 +567,7 @@ export function AnalysisTable({
                   role="button"
                 >
                   {r.getVisibleCells().map((c) => (
-                    <td key={c.id} className="px-3 py-2 align-middle">
+                    <td key={c.id} className="px-2 py-1.5 align-middle">
                       {flexRender(c.column.columnDef.cell, c.getContext())}
                     </td>
                   ))}
@@ -512,30 +577,38 @@ export function AnalysisTable({
           </tbody>
         </table>
       </div>
+      ) : null}
 
-      <div className="flex items-center justify-between gap-3 border-t bg-muted/20 px-5 py-4">
-        <div className="text-sm font-medium text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Prev
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+      <div className="flex items-center justify-between gap-3 border-t bg-muted/20 px-4 py-3">
+        {tableView === "stocks" ? (
+          <>
+            <div className="text-xs font-medium text-muted-foreground">
+              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className="text-xs font-medium text-muted-foreground">
+            Averages use only rows with non-null returns; Σ mkt cap sums reported market caps in this set.
+          </div>
+        )}
       </div>
     </div>
   );

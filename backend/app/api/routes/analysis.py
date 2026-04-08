@@ -5,7 +5,7 @@ import json
 import logging
 import time
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -437,6 +437,43 @@ def _income_yoy_index(rows: list[dict[str, Any]]) -> dict[tuple[str, int], dict[
     return m
 
 
+def _row_fiscal_year(r: dict[str, Any]) -> int | None:
+    """FMP uses calendarYear on many payloads; stable/legacy may omit it — fall back to statement date."""
+    for key in ("calendarYear", "calendar_year", "fiscalYear", "year"):
+        if key not in r or r[key] is None:
+            continue
+        try:
+            return int(r[key])
+        except (TypeError, ValueError):
+            continue
+    d = _q_row_date(r)
+    if len(d) >= 4:
+        try:
+            return int(d[:4])
+        except ValueError:
+            pass
+    return None
+
+
+def _is_quarter_period_only_row(r: dict[str, Any]) -> bool:
+    """True for quarterly rows (Q1–Q4), not FY/annual."""
+    p = str(r.get("period") or "").strip().upper()
+    return p in ("Q1", "Q2", "Q3", "Q4")
+
+
+def _income_yoy_by_year(rows: list[dict[str, Any]]) -> dict[int, dict[str, Any]]:
+    """Map fiscal year → income row (annual statements)."""
+    m: dict[int, dict[str, Any]] = {}
+    for r in rows:
+        if _is_quarter_period_only_row(r):
+            continue
+        fy = _row_fiscal_year(r)
+        if fy is None:
+            continue
+        m[fy] = r
+    return m
+
+
 def _pick_float(row: dict[str, Any], *keys: str) -> float | None:
     for k in keys:
         if k in row and row[k] is not None:
@@ -453,47 +490,77 @@ def _as_display_percent(row: dict[str, Any], *keys: str) -> float | None:
     return round(v, 2)
 
 
-def build_quarterly_financials_payload(
+def build_financials_payload(
     income: list[dict[str, Any]],
     balance: list[dict[str, Any]],
     ratios: list[dict[str, Any]],
     cashflow: list[dict[str, Any]],
     key_metrics: list[dict[str, Any]],
     last_close: float | None,
-    n: int = 3,
+    n: int,
+    period_kind: Literal["quarterly", "annual"],
 ) -> dict[str, Any] | None:
     """
-    Last n quarters (income-statement dates), oldest → newest columns.
-    Merges FMP quarterly income, balance sheet, ratios, cash flow, key metrics.
+    Oldest → newest columns. Merges FMP income + balance + ratios + cash flow + key metrics.
+    Quarterly: last n quarters. Annual: last n fiscal years (non-quarter rows).
     """
     if not income:
         return None
 
-    sorted_inc = sorted(
-        [r for r in income if isinstance(r, dict) and _q_row_date(r)],
-        key=_q_row_date,
-        reverse=True,
-    )
-    if not sorted_inc:
-        return None
-    picked_inc = list(reversed(sorted_inc[:n]))
+    year_ix: dict[int, dict[str, Any]] | None = None
+    yoy_ix_q: dict[tuple[str, int], dict[str, Any]] | None = None
+    picked_inc: list[dict[str, Any]]
+
+    if period_kind == "quarterly":
+        sorted_inc = sorted(
+            [r for r in income if isinstance(r, dict) and _q_row_date(r)],
+            key=_q_row_date,
+            reverse=True,
+        )
+        if not sorted_inc:
+            return None
+        picked_inc = list(reversed(sorted_inc[:n]))
+        yoy_ix_q = _income_yoy_index(income)
+    else:
+        annual_cand: list[dict[str, Any]] = []
+        for r in income:
+            if not isinstance(r, dict) or not _q_row_date(r):
+                continue
+            if _is_quarter_period_only_row(r):
+                continue
+            if _row_fiscal_year(r) is None:
+                continue
+            annual_cand.append(r)
+        if not annual_cand:
+            return None
+        sorted_inc = sorted(
+            annual_cand,
+            key=lambda r: (_row_fiscal_year(r) or 0),
+            reverse=True,
+        )
+        picked_inc = list(reversed(sorted_inc[:n]))
+        year_ix = _income_yoy_by_year(income)
+
     nc = len(picked_inc)
 
     bal_by = _index_quarterly_by_date(balance)
     ratio_by = _index_quarterly_by_date(ratios)
     cf_by = _index_quarterly_by_date(cashflow)
     km_by = _index_quarterly_by_date(key_metrics)
-    yoy_ix = _income_yoy_index(income)
 
     columns: list[str] = []
     period_end_dates: list[str] = []
     for r in picked_inc:
-        period = str(r.get("period") or "").strip()
-        cy = r.get("calendarYear")
-        if cy is not None and period.upper().startswith("Q"):
-            columns.append(f"{period} {cy}")
+        if period_kind == "quarterly":
+            period = str(r.get("period") or "").strip()
+            cy = r.get("calendarYear")
+            if cy is not None and period.upper().startswith("Q"):
+                columns.append(f"{period} {cy}")
+            else:
+                columns.append(_q_row_date(r) or "—")
         else:
-            columns.append(_q_row_date(r) or "—")
+            fy = _row_fiscal_year(r)
+            columns.append(f"FY {fy}" if fy is not None else (_q_row_date(r) or "—"))
         period_end_dates.append(_q_row_date(r))
 
     def bal_i(i: int) -> dict[str, Any]:
@@ -587,16 +654,26 @@ def build_quarterly_financials_payload(
     for i in range(nc):
         ir = picked_inc[i]
         rev = _pick_float(ir, "revenue")
-        p = str(ir.get("period") or "").strip().upper()
-        cy = ir.get("calendarYear")
-        if rev is None or not p.startswith("Q") or cy is None:
-            rev_yoy.append(None)
-            continue
-        try:
-            prior = yoy_ix.get((p, int(cy) - 1))
-        except (TypeError, ValueError):
-            rev_yoy.append(None)
-            continue
+        if period_kind == "quarterly":
+            p = str(ir.get("period") or "").strip().upper()
+            cy = ir.get("calendarYear")
+            if rev is None or not p.startswith("Q") or cy is None or not yoy_ix_q:
+                rev_yoy.append(None)
+                continue
+            try:
+                prior = yoy_ix_q.get((p, int(cy) - 1))
+            except (TypeError, ValueError):
+                rev_yoy.append(None)
+                continue
+        else:
+            if rev is None or not year_ix:
+                rev_yoy.append(None)
+                continue
+            icy = _row_fiscal_year(ir)
+            if icy is None:
+                rev_yoy.append(None)
+                continue
+            prior = year_ix.get(icy - 1)
         if not prior:
             rev_yoy.append(None)
             continue
@@ -750,6 +827,34 @@ def build_quarterly_financials_payload(
         "period_end_dates": period_end_dates,
         "rows": rows_out,
     }
+
+
+def build_quarterly_financials_payload(
+    income: list[dict[str, Any]],
+    balance: list[dict[str, Any]],
+    ratios: list[dict[str, Any]],
+    cashflow: list[dict[str, Any]],
+    key_metrics: list[dict[str, Any]],
+    last_close: float | None,
+    n: int = 8,
+) -> dict[str, Any] | None:
+    return build_financials_payload(
+        income, balance, ratios, cashflow, key_metrics, last_close, n, "quarterly"
+    )
+
+
+def build_annual_financials_payload(
+    income: list[dict[str, Any]],
+    balance: list[dict[str, Any]],
+    ratios: list[dict[str, Any]],
+    cashflow: list[dict[str, Any]],
+    key_metrics: list[dict[str, Any]],
+    last_close: float | None,
+    n: int = 3,
+) -> dict[str, Any] | None:
+    return build_financials_payload(
+        income, balance, ratios, cashflow, key_metrics, last_close, n, "annual"
+    )
 
 
 @router.get("/stock/{symbol}/details")
@@ -961,7 +1066,18 @@ async def stock_details(
         return [r for r in res if isinstance(r, dict)] if isinstance(res, list) else []
 
     try:
-        inc_t, bal_t, rat_t, cf_t, km_t = await asyncio.gather(
+        (
+            inc_t,
+            bal_t,
+            rat_t,
+            cf_t,
+            km_t,
+            inc_a,
+            bal_a,
+            rat_a,
+            cf_a,
+            km_a,
+        ) = await asyncio.gather(
             provider.fetch_fmp_quarterly_series(symbol, "income-statement", 24, 20.0, True),
             provider.fetch_fmp_quarterly_series(
                 symbol, "balance-sheet-statement", 24, 20.0, True
@@ -971,6 +1087,11 @@ async def stock_details(
                 symbol, "cash-flow-statement", 24, 20.0, True
             ),
             provider.fetch_fmp_quarterly_series(symbol, "key-metrics", 24, 20.0, True),
+            provider.fetch_fmp_annual_series(symbol, "income-statement", 6, 20.0),
+            provider.fetch_fmp_annual_series(symbol, "balance-sheet-statement", 6, 20.0),
+            provider.fetch_fmp_annual_series(symbol, "ratios", 6, 20.0),
+            provider.fetch_fmp_annual_series(symbol, "cash-flow-statement", 6, 20.0),
+            provider.fetch_fmp_annual_series(symbol, "key-metrics", 6, 20.0),
             return_exceptions=True,
         )
         payload["quarterly_financials"] = build_quarterly_financials_payload(
@@ -980,11 +1101,21 @@ async def stock_details(
             _qf_list(cf_t),
             _qf_list(km_t),
             close_latest,
+            n=8,
+        )
+        payload["annual_financials"] = build_annual_financials_payload(
+            _qf_list(inc_a),
+            _qf_list(bal_a),
+            _qf_list(rat_a),
+            _qf_list(cf_a),
+            _qf_list(km_a),
+            close_latest,
             n=3,
         )
     except Exception as e:
-        logger.warning("quarterly financials %s: %s", symbol, e)
+        logger.warning("fundamentals financials %s: %s", symbol, e)
         payload["quarterly_financials"] = None
+        payload["annual_financials"] = None
 
     return payload
 
@@ -1033,6 +1164,53 @@ def _peer_ytd(close: pd.Series) -> float | None:
         return round((latest - base) / base * 100, 2)
     except Exception:
         return None
+
+
+def _peer_safe_float_series_val(v: Any) -> float | None:
+    """Match analysis_service._safe_float (handles pd.NA / NaN)."""
+    try:
+        if v is None or pd.isna(v):
+            return None
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def _peer_weekly_signals_1y(score_series: pd.Series | None) -> tuple[list[str], list[str]]:
+    """
+    Last ~52 weekly score classifications (Fri week-end), oldest → newest — same logic as dashboard heatmap.
+    """
+    if score_series is None or len(score_series) < 2:
+        return [], []
+    ser = score_series.sort_index()
+    if not isinstance(ser.index, pd.DatetimeIndex):
+        ser = ser.copy()
+        ser.index = pd.to_datetime(ser.index, errors="coerce")
+    # Drop bad / duplicate calendar rows (bad cache rows used to break .date() and trip the old bare except → empty heatmap).
+    ser = ser[ser.index.notna()]
+    ser = ser[~ser.index.duplicated(keep="last")].sort_index()
+    if len(ser) < 2:
+        return [], []
+
+    weekly_dates: list[str] = []
+    weekly_signals: list[str] = []
+    fri_grouper = pd.Grouper(freq="W-FRI", label="right", closed="right")
+    for _week_end, grp in ser.groupby(fri_grouper):
+        if grp.empty:
+            continue
+        last_ts = grp.index[-1]
+        if pd.isna(last_ts):
+            continue
+        try:
+            weekly_dates.append(pd.Timestamp(last_ts).date().isoformat())
+        except (ValueError, OSError):
+            continue
+        weekly_signals.append(_peer_sig_classify(_peer_safe_float_series_val(grp.iloc[-1])))
+
+    n_1y = 52
+    tail_d = weekly_dates[-n_1y:] if weekly_dates else []
+    tail_s = weekly_signals[-n_1y:] if weekly_signals else []
+    return tail_s, tail_d
 
 
 def _norm_peer_symbol(s: str) -> str:
@@ -1228,7 +1406,8 @@ async def stock_peers(
                     "return_1m": None,
                     "return_3m": None,
                     "return_ytd": None,
-                    "announcement_date": meta.get(c.symbol, {}).get("announcement_date"),
+                    "signals_1y": [],
+                    "signals_1y_dates": [],
                     "is_subject": c.symbol.upper() == sym_u,
                 }
             )
@@ -1248,7 +1427,8 @@ async def stock_peers(
                     "return_1m": None,
                     "return_3m": None,
                     "return_ytd": None,
-                    "announcement_date": meta.get(c.symbol, {}).get("announcement_date"),
+                    "signals_1y": [],
+                    "signals_1y_dates": [],
                     "is_subject": c.symbol.upper() == sym_u,
                 }
             )
@@ -1260,6 +1440,7 @@ async def stock_peers(
         scores = scoring_service.compute_scores(close, avg_last5, prev_close, ind.avg_all_emas)
         series = scores.get(sk)
         sig = _peer_sig_classify(series.iloc[-1]) if series is not None and len(series) else "N/A"
+        sig_1y, sig_1y_dates = _peer_weekly_signals_1y(series)
 
         peers_out.append(
             {
@@ -1272,7 +1453,8 @@ async def stock_peers(
                 "return_1m": _peer_pct_return(close, 21),
                 "return_3m": _peer_pct_return(close, 63),
                 "return_ytd": _peer_ytd(close),
-                "announcement_date": meta.get(c.symbol, {}).get("announcement_date"),
+                "signals_1y": sig_1y,
+                "signals_1y_dates": sig_1y_dates,
                 "is_subject": c.symbol.upper() == sym_u,
             }
         )

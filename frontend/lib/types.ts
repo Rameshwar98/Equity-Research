@@ -111,8 +111,10 @@ export type StockDetailsResponse = {
     priceUp?: boolean | null;
   }[];
   history?: { date: string; close: number; ema_10?: number; ema_20?: number }[];
-  /** Last 3 reported quarters from FMP income statement + live last price */
+  /** Last 8 reported quarters (FMP) + live last price; UI may show 4 or 8 columns */
   quarterly_financials?: QuarterlyFinancials | null;
+  /** Last 3 fiscal years (FMP annual statements) + live last price */
+  annual_financials?: QuarterlyFinancials | null;
 };
 
 export type PeerRow = {
@@ -125,7 +127,9 @@ export type PeerRow = {
   return_1m?: number | null;
   return_3m?: number | null;
   return_ytd?: number | null;
-  announcement_date?: string | null;
+  /** Weekly score signals (~1y), oldest → newest — same convention as dashboard heatmap */
+  signals_1y?: Signal[];
+  signals_1y_dates?: string[];
   is_subject?: boolean;
 };
 

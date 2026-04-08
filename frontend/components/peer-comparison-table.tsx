@@ -1,8 +1,9 @@
 "use client";
 
-import type { PeerRow, Signal } from "@/lib/types";
+import { DashboardSignalHeatmap } from "@/components/dashboard-signal-heatmap";
 import { TrendBadge } from "@/components/trend-badge";
 import { cn } from "@/lib/utils";
+import type { PeerRow, Signal } from "@/lib/types";
 
 function fmtCap(v?: number | null) {
   if (v == null || Number.isNaN(v)) return "—";
@@ -36,15 +37,6 @@ function retHeat(v?: number | null) {
     return "bg-orange-100 text-orange-950 dark:bg-orange-950/40 dark:text-orange-100";
   }
   return "bg-rose-200 text-rose-950 font-semibold dark:bg-rose-950/55 dark:text-rose-50";
-}
-
-function fmtAnnounce(iso?: string | null) {
-  if (!iso) return "—";
-  const p = iso.split("-");
-  if (p.length !== 3) return iso;
-  const [y, m, d] = p.map(Number);
-  if (!y || !m || !d) return iso;
-  return `${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}/${y}`;
 }
 
 export function PeerComparisonTable({
@@ -91,7 +83,7 @@ export function PeerComparisonTable({
     { key: "1m", label: "1M" },
     { key: "3m", label: "3M" },
     { key: "ytd", label: "YTD" },
-    { key: "ann", label: "Latest news" },
+    { key: "hm", label: "1Y heatmap" },
   ] as const;
 
   return (
@@ -119,7 +111,8 @@ export function PeerComparisonTable({
                     "px-2.5 py-2.5 font-semibold text-left whitespace-nowrap text-foreground",
                     c.key !== "name" && c.key !== "sig" && "text-center",
                     (c.key === "1d" || c.key === "1w" || c.key === "1m" || c.key === "3m" || c.key === "ytd") &&
-                      "min-w-[4.75rem]"
+                      "min-w-[4.75rem]",
+                    c.key === "hm" && "min-w-[8rem] text-center"
                   )}
                 >
                   {c.label}
@@ -165,8 +158,13 @@ export function PeerComparisonTable({
                 <td className={cn("px-1.5 py-2 text-center tabular-nums text-sm min-w-[4.75rem]", retHeat(p.return_ytd))}>
                   {fmtPct(p.return_ytd)}
                 </td>
-                <td className="px-2.5 py-2 tabular-nums text-center whitespace-nowrap text-foreground/85 text-sm min-w-[5.5rem]">
-                  {fmtAnnounce(p.announcement_date)}
+                <td className="px-2.5 py-2 align-middle min-w-[8rem]">
+                  <div className="flex justify-center">
+                    <DashboardSignalHeatmap
+                      signals={(p.signals_1y ?? []) as Signal[]}
+                      dates={p.signals_1y_dates ?? []}
+                    />
+                  </div>
                 </td>
               </tr>
             ))}

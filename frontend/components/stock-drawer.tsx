@@ -10,6 +10,10 @@ import { SignalHeatmap } from "@/components/signal-heatmap";
 import { SignalTimeline } from "@/components/signal-timeline";
 import { TrendBadge } from "@/components/trend-badge";
 import { getStockPeers } from "@/lib/api";
+import {
+  sliceFinancialColumns,
+  type FundamentalsView,
+} from "@/lib/fundamentals-view";
 import type { PeerRow, PeersResponse } from "@/lib/types";
 import {
   Dialog,
@@ -149,10 +153,27 @@ export function StockDrawer({
   const [drawerLayout, setDrawerLayout] = React.useState<StockDrawerLayout>("split");
   /** Shared ISO date when heatmap + price chart hover are linked (heatmap view only). */
   const [chartHeatSyncDate, setChartHeatSyncDate] = React.useState<string | null>(null);
+  const [fundamentalsView, setFundamentalsView] = React.useState<FundamentalsView>("q8");
 
   React.useEffect(() => {
     setChartHeatSyncDate(null);
   }, [open, data?.symbol, trendView]);
+
+  React.useEffect(() => {
+    setFundamentalsView("q8");
+  }, [data?.symbol]);
+
+  const displayedFundamentals = React.useMemo(() => {
+    if (!data) return null;
+    if (fundamentalsView === "y3") {
+      return data.annual_financials ?? null;
+    }
+    const q = data.quarterly_financials;
+    if (!q) return null;
+    return fundamentalsView === "q4"
+      ? sliceFinancialColumns(q, 4)
+      : sliceFinancialColumns(q, 8);
+  }, [data, fundamentalsView]);
 
   React.useEffect(() => {
     try {
@@ -274,9 +295,44 @@ export function StockDrawer({
 
               const fundamentalsBlock = (
                 <>
-                  <SectionLabel>Quarterly fundamentals (last 3 periods)</SectionLabel>
-                  {data.quarterly_financials ? (
-                    <QuarterlyFinancialsPanel symbol={data.symbol} data={data.quarterly_financials} />
+                  <div className="flex flex-wrap items-end justify-between gap-2 mb-2.5">
+                    <SectionLabel className="mb-0">Fundamentals</SectionLabel>
+                    <div
+                      className="inline-flex shrink-0 rounded-lg border border-border/80 bg-muted/40 p-1"
+                      role="group"
+                      aria-label="Fundamentals period"
+                    >
+                      {(
+                        [
+                          { id: "q4" as const, label: "4Q" },
+                          { id: "q8" as const, label: "8Q" },
+                          { id: "y3" as const, label: "3Y" },
+                        ] as const
+                      ).map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setFundamentalsView(opt.id)}
+                          className={cn(
+                            "rounded-md px-2.5 py-1 text-xs font-medium transition-all",
+                            fundamentalsView === opt.id
+                              ? "bg-background text-foreground shadow-sm"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {displayedFundamentals ? (
+                    <QuarterlyFinancialsPanel symbol={data.symbol} data={displayedFundamentals} />
+                  ) : fundamentalsView === "y3" ? (
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      No annual fundamentals returned. FMP Starter and above typically include annual
+                      statements; the Free tier is often quarterly-only. If 4Q/8Q works but 3Y is empty,
+                      verify your plan, symbol coverage, and backend logs.
+                    </p>
                   ) : (
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       Quarterly statements not available (plan limits, symbol, or API error).
