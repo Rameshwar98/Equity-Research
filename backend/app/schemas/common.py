@@ -50,6 +50,7 @@ class AnalysisRow(BaseModel):
     score_2: float | None = None
     score_3: float | None = None
     last_price: float | None = None
+    last_price_date: str | None = None  # YYYY-MM-DD of EOD close used for last_price
     mkt_cap: float | None = None
     high_52w: float | None = None
     low_52w: float | None = None

@@ -109,7 +109,7 @@ function toCsv(resp: RunAnalysisResponse) {
   const headers = [
     "name", "symbol", "sector", "sub_sector",
     "score_1", "score_2", "score_3",
-    "last_price", "mkt_cap", "52w_low", "52w_high",
+    "last_price", "last_price_date", "mkt_cap", "52w_low", "52w_high",
     "return_1d", "return_1w", "return_1m", "return_3m", "return_ytd",
     `latest_${headerForIdx(resp.date_labels, 0)}`,
     "1y_weekly_heatmap",
@@ -123,7 +123,7 @@ function toCsv(resp: RunAnalysisResponse) {
       JSON.stringify(r.sector ?? ""),
       JSON.stringify(r.sub_sector ?? ""),
       r.score_1 ?? "", r.score_2 ?? "", r.score_3 ?? "",
-      r.last_price ?? "", r.mkt_cap ?? "", r.low_52w ?? "", r.high_52w ?? "",
+      r.last_price ?? "", r.last_price_date ?? "", r.mkt_cap ?? "", r.low_52w ?? "", r.high_52w ?? "",
       r.return_1d ?? "", r.return_1w ?? "", r.return_1m ?? "", r.return_3m ?? "", r.return_ytd ?? "",
       r.signals[0] ?? "",
       (
@@ -285,11 +285,39 @@ export function AnalysisTable({
       },
       {
         accessorKey: "last_price",
-        header: "Last Price",
-        sortingFn: "basic",
-        cell: ({ row }) => (
-          <div className="tabular-nums text-xs font-semibold">{fmtPrice(row.original.last_price)}</div>
+        header: () => (
+          <div className="whitespace-nowrap text-[11px] leading-snug">
+            <div className="font-semibold text-foreground">Last Price</div>
+            <div className="font-normal text-muted-foreground">EOD date</div>
+          </div>
         ),
+        sortingFn: "basic",
+        cell: ({ row }) => {
+          const iso = row.original.last_price_date;
+          const dateLabel =
+            iso != null && iso !== ""
+              ? new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : null;
+          return (
+            <div className="flex flex-col gap-0.5">
+              <div className="tabular-nums text-xs font-semibold">{fmtPrice(row.original.last_price)}</div>
+              {dateLabel ? (
+                <div
+                  className="text-[10px] tabular-nums leading-tight text-muted-foreground"
+                  title={`End-of-day close as of ${iso}`}
+                >
+                  {dateLabel}
+                </div>
+              ) : (
+                <div className="text-[10px] text-muted-foreground">—</div>
+              )}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "mkt_cap",

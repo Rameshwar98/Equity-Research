@@ -63,6 +63,8 @@ class StockComputed:
     return_ytd: float | None = None
     signals_1y: tuple[str, ...] = ()
     signals_1y_dates: tuple[str, ...] = ()
+    # ISO calendar date (YYYY-MM-DD) of the EOD bar used for last_price / returns
+    last_price_date: str | None = None
 
 
 class AnalysisService:
@@ -243,6 +245,10 @@ class AnalysisService:
         # Latest values
         score_latest = self.scoring_svc.latest_scores(scores)
         close_latest = _safe_float(close.iloc[-1])
+        try:
+            last_price_date = pd.Timestamp(close.index[-1]).date().isoformat()
+        except Exception:
+            last_price_date = None
 
         ema_latest = {
             "ema_10": _safe_float(ind.ema[10].iloc[-1]),
@@ -312,6 +318,7 @@ class AnalysisService:
             return_1m=return_1m,
             return_3m=return_3m,
             return_ytd=return_ytd,
+            last_price_date=last_price_date,
         )
 
     async def run_analysis(
@@ -409,6 +416,7 @@ class AnalysisService:
                         score_2=c.score_latest.get("score_2"),
                         score_3=c.score_latest.get("score_3"),
                         last_price=c.close_latest,
+                        last_price_date=c.last_price_date,
                         mkt_cap=fmp_meta.get("mkt_cap"),
                         high_52w=c.high_52w,
                         low_52w=c.low_52w,

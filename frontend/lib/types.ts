@@ -13,6 +13,8 @@ export type AnalysisRow = {
   score_2?: number | null;
   score_3?: number | null;
   last_price?: number | null;
+  /** YYYY-MM-DD — trading date of the EOD close shown as last_price */
+  last_price_date?: string | null;
   mkt_cap?: number | null;
   high_52w?: number | null;
   low_52w?: number | null;
