@@ -60,20 +60,25 @@ function pctColor(v?: number | null) {
   return "";
 }
 
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
+const WEEKDAYS_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
 /** Calendar Y-M-D only (avoids TZ / SSR–client hydration drift vs local midnight). */
-function headerForIdx(dateLabels: string[], i: number) {
-  const iso = dateLabels[i];
-  if (!iso) return `W-${i}`;
+function formatCalendarYmd(iso: string): string {
   const parts = iso.split("-");
   if (parts.length !== 3) return iso;
   const y = Number(parts[0]);
   const m = Number(parts[1]);
   const d = Number(parts[2]);
   if (!y || !m || !d) return iso;
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
-  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
-  const wd = DAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
-  return `${wd}, ${MONTHS[m - 1]} ${d}`;
+  const wd = WEEKDAYS_SHORT[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+  return `${wd}, ${MONTHS_SHORT[m - 1]} ${d}`;
+}
+
+function headerForIdx(dateLabels: string[], i: number) {
+  const iso = dateLabels[i];
+  if (!iso) return `W-${i}`;
+  return formatCalendarYmd(iso);
 }
 
 function heatmapFromRow(row: AnalysisRow, dateLabels: string[]): { signals: Signal[]; dates: string[] } {
@@ -187,6 +192,8 @@ export function AnalysisTable({
 
   const columns = React.useMemo<ColumnDef<AnalysisRow>[]>(() => {
     const badgeSm = "px-1.5 py-0 text-[10px] leading-tight h-5 font-semibold";
+    const eodIso = data.rows.find((r) => r.last_price_date)?.last_price_date ?? null;
+    const lastPriceSubheader = eodIso ? formatCalendarYmd(eodIso) : "—";
 
     const latestCol: ColumnDef<AnalysisRow> = {
       id: "sig_0",
@@ -288,36 +295,15 @@ export function AnalysisTable({
         header: () => (
           <div className="whitespace-nowrap text-[11px] leading-snug">
             <div className="font-semibold text-foreground">Last Price</div>
-            <div className="font-normal text-muted-foreground">EOD date</div>
+            <div className="font-normal text-muted-foreground" title={eodIso ? `EOD as of ${eodIso}` : undefined}>
+              {lastPriceSubheader}
+            </div>
           </div>
         ),
         sortingFn: "basic",
-        cell: ({ row }) => {
-          const iso = row.original.last_price_date;
-          const dateLabel =
-            iso != null && iso !== ""
-              ? new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : null;
-          return (
-            <div className="flex flex-col gap-0.5">
-              <div className="tabular-nums text-xs font-semibold">{fmtPrice(row.original.last_price)}</div>
-              {dateLabel ? (
-                <div
-                  className="text-[10px] tabular-nums leading-tight text-muted-foreground"
-                  title={`End-of-day close as of ${iso}`}
-                >
-                  {dateLabel}
-                </div>
-              ) : (
-                <div className="text-[10px] text-muted-foreground">—</div>
-              )}
-            </div>
-          );
-        },
+        cell: ({ row }) => (
+          <div className="tabular-nums text-xs font-semibold">{fmtPrice(row.original.last_price)}</div>
+        ),
       },
       {
         accessorKey: "mkt_cap",
@@ -403,7 +389,7 @@ export function AnalysisTable({
       },
       ...signalCols,
     ];
-  }, [data.date_labels, selectedScore]);
+  }, [data.date_labels, data.rows, selectedScore]);
 
   const table = useReactTable({
     data: data.rows,
