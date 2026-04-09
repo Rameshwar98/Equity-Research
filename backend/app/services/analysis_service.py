@@ -91,7 +91,7 @@ class AnalysisService:
         timeout_seconds: float,
     ) -> Dict[str, pd.DataFrame]:
         prices_by_symbol: Dict[str, pd.DataFrame] = {}
-        # Always try cache first (even when refresh=true) so we can fallback if provider is down/rate-limited.
+        # Preload cache for fallback when refresh=True and FMP fails or returns empty for a symbol.
         for s in symbols:
             cached = await self.cache.get_price_history(s)
             if cached is not None and not cached.empty:
@@ -104,7 +104,13 @@ class AnalysisService:
             for s in symbols
         )
 
-        missing = [s for s in symbols if s not in prices_by_symbol or prices_by_symbol[s].empty]
+        # refresh=False: only fetch symbols with no usable cache (typical Run).
+        # refresh=True: re-fetch every symbol in the batch so closes/dates match latest EOD data (Refresh).
+        missing = (
+            list(symbols)
+            if refresh
+            else [s for s in symbols if s not in prices_by_symbol or prices_by_symbol[s].empty]
+        )
         if missing:
             missing_without_cache = [s for s in missing if s not in prices_by_symbol or prices_by_symbol[s].empty]
             from app.utils.errors import ProviderRateLimitError
