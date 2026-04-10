@@ -8,6 +8,7 @@ import { QuarterlyFinancialsPanel } from "@/components/quarterly-financials-pane
 import { PriceChart } from "@/components/price-chart";
 import { SignalHeatmap } from "@/components/signal-heatmap";
 import { SignalTimeline } from "@/components/signal-timeline";
+import { StockNewsPanel } from "@/components/stock-news-panel";
 import { TrendBadge } from "@/components/trend-badge";
 import { getStockPeers } from "@/lib/api";
 import {
@@ -31,6 +32,8 @@ function fmt4(n?: number | null) {
 }
 
 type TrendView = "heatmap" | "timeline";
+
+type DrawerMainTab = "overview" | "news";
 
 /** Client-selectable drawer structure; persisted in localStorage. */
 export type StockDrawerLayout = "split" | "stacked" | "chart_top";
@@ -154,6 +157,7 @@ export function StockDrawer({
   /** Shared ISO date when heatmap + price chart hover are linked (heatmap view only). */
   const [chartHeatSyncDate, setChartHeatSyncDate] = React.useState<string | null>(null);
   const [fundamentalsView, setFundamentalsView] = React.useState<FundamentalsView>("q8");
+  const [drawerMainTab, setDrawerMainTab] = React.useState<DrawerMainTab>("overview");
 
   React.useEffect(() => {
     setChartHeatSyncDate(null);
@@ -162,6 +166,10 @@ export function StockDrawer({
   React.useEffect(() => {
     setFundamentalsView("q8");
   }, [data?.symbol]);
+
+  React.useEffect(() => {
+    setDrawerMainTab("overview");
+  }, [open, data?.symbol]);
 
   const displayedFundamentals = React.useMemo(() => {
     if (!data) return null;
@@ -237,12 +245,29 @@ export function StockDrawer({
       >
         <DialogHeader className="pb-2 mb-0 space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between pr-10 sm:pr-12">
-            <div className="min-w-0 space-y-1">
+            <div className="min-w-0 space-y-2">
               <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">
                 {data ? data.symbol : "Stock Details"}
               </DialogTitle>
-              <DialogDescription className="text-sm sm:text-base text-muted-foreground">
-                {data?.name ?? "Equity analysis"}
+              <DialogDescription asChild>
+                <div className="space-y-2 text-left text-sm sm:text-base text-muted-foreground">
+                  {!data && "Open a row to load details."}
+                  {data && (
+                    <>
+                      {data.name ? (
+                        <div className="font-semibold text-foreground">{data.name}</div>
+                      ) : null}
+                      {data.description ? (
+                        <p className="text-sm font-normal leading-relaxed text-muted-foreground">
+                          {data.description}
+                        </p>
+                      ) : null}
+                      {!data.name && !data.description ? (
+                        <span>Equity analysis</span>
+                      ) : null}
+                    </>
+                  )}
+                </div>
               </DialogDescription>
             </div>
             <DrawerLayoutPicker value={drawerLayout} onChange={setDrawerLayoutPersist} />
@@ -261,7 +286,7 @@ export function StockDrawer({
           <div className="pr-1 sm:pr-0">
 
             {/* ── Key metrics row ── */}
-            <div className="mt-5 flex flex-wrap items-end gap-8 gap-y-4">
+            <div className="mt-5 flex flex-wrap items-end gap-6 gap-y-4">
               <div>
                 <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Last
@@ -278,6 +303,46 @@ export function StockDrawer({
                 <TrendBadge signal={data.signals?.[0] ?? "N/A"} />
               </div>
 
+              <div>
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
+                  View
+                </div>
+                <div
+                  className="inline-flex rounded-lg border border-border/80 bg-muted/40 p-1"
+                  role="tablist"
+                  aria-label="Drawer content"
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={drawerMainTab === "overview"}
+                    onClick={() => setDrawerMainTab("overview")}
+                    className={cn(
+                      "rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3",
+                      drawerMainTab === "overview"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Overview
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={drawerMainTab === "news"}
+                    onClick={() => setDrawerMainTab("news")}
+                    className={cn(
+                      "rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3",
+                      drawerMainTab === "news"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    News
+                  </button>
+                </div>
+              </div>
+
               <div className="ml-auto text-right min-w-[6rem]">
                 <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   {SCORE_LABELS[selectedScore]}
@@ -290,7 +355,15 @@ export function StockDrawer({
 
             <Divider />
 
-            {(() => {
+            {drawerMainTab === "news" ? (
+              <>
+                <SectionLabel className="mb-3">News</SectionLabel>
+                <StockNewsPanel symbol={data.symbol} />
+              </>
+            ) : null}
+
+            {drawerMainTab === "overview"
+              ? (() => {
               const hasChart = !!(data.chart_data && data.chart_data.length > 0);
 
               const fundamentalsBlock = (
@@ -462,7 +535,8 @@ export function StockDrawer({
                   </div>
                 </div>
               );
-            })()}
+            })()
+              : null}
           </div>
         ) : (
           <div className="flex min-h-[8rem] items-center justify-center text-base text-muted-foreground">

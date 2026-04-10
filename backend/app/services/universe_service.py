@@ -26,6 +26,8 @@ class UniverseService:
             IndexInfo(name="niftynext50", label="NIFTY NEXT 50"),
             IndexInfo(name="nasdaq100", label="NASDAQ 100"),
             IndexInfo(name="dow30", label="DOW 30"),
+            IndexInfo(name="global_indices", label="Global indices"),
+            IndexInfo(name="sector_indices", label="Sector indices (GICS)"),
             IndexInfo(name="custom", label="Custom Watchlist (Coming Soon)"),
         ]
 

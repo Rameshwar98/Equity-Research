@@ -897,6 +897,10 @@ async def stock_details(
     if len(prices) < 260:
         raise HTTPException(status_code=400, detail="Insufficient history for indicators.")
 
+    prof_task = asyncio.create_task(
+        provider.fetch_stock_profile_summary(symbol, timeout_seconds=20.0)
+    )
+
     ind = indicator_service.compute_indicators(prices)
     close = prices["Close"].astype(float)
     avg_last5 = indicator_service.avg_last_5_close(close)
@@ -1117,7 +1121,39 @@ async def stock_details(
         payload["quarterly_financials"] = None
         payload["annual_financials"] = None
 
+    try:
+        prof = await prof_task
+        if isinstance(prof, dict):
+            if prof.get("name"):
+                payload["name"] = prof["name"]
+            if prof.get("description"):
+                payload["description"] = prof["description"]
+    except Exception as e:
+        logger.debug("stock profile summary await %s: %s", symbol, e)
+
     return payload
+
+
+@router.get("/stock/{symbol}/news")
+async def stock_news(
+    symbol: str,
+    limit: int = Query(20, ge=1, le=50, description="Max articles to return"),
+) -> Dict[str, Any]:
+    """Headlines and snippets from FMP stock news (plan-dependent)."""
+    from app.main import provider
+    from app.utils.errors import ProviderRateLimitError
+
+    try:
+        items = await provider.fetch_stock_news(symbol, limit=limit, timeout_seconds=25.0)
+    except ProviderRateLimitError:
+        raise HTTPException(
+            status_code=429,
+            detail="FMP rate-limited (429). Wait and retry.",
+        )
+    except Exception as e:
+        logger.warning("stock news %s: %s", symbol, e)
+        raise HTTPException(status_code=502, detail="Failed to load news from provider.")
+    return {"symbol": symbol, "items": items}
 
 
 def _peer_sig_classify(v: Any) -> str:

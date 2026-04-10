@@ -415,6 +415,221 @@ class FMPProvider(DataProvider):
 
         return result
 
+    async def fetch_stock_profile_summary(
+        self, symbol: str, timeout_seconds: float = 15.0
+    ) -> dict[str, str | None]:
+        """
+        Company display name + description from FMP profile.
+        Tries stable/profile first (documented), then v3/profile.
+        """
+        fmp = _to_fmp_symbol(symbol)
+        out: dict[str, str | None] = {"name": None, "description": None}
+        headers = {"User-Agent": "Mozilla/5.0"}
+        timeout = httpx.Timeout(timeout_seconds)
+
+        def _pick_desc(row: dict[str, Any]) -> str | None:
+            for key in (
+                "description",
+                "longBusinessSummary",
+                "longDescription",
+                "companyDescription",
+                "shortBusinessSummary",
+                "businessSummary",
+                "desc",
+                "about",
+            ):
+                raw = row.get(key)
+                if raw is None:
+                    continue
+                s = str(raw).strip()
+                if s and s.lower() not in ("none", "n/a"):
+                    return s
+            return None
+
+        def _pick_name(row: dict[str, Any]) -> str | None:
+            for key in ("companyName", "company_name", "name", "shortName"):
+                raw = row.get(key)
+                if raw is None:
+                    continue
+                s = str(raw).strip()
+                if s:
+                    return s
+            return None
+
+        def _sector_industry_blurb(row: dict[str, Any]) -> str | None:
+            """When FMP omits prose, still show something useful in the drawer."""
+            parts: list[str] = []
+            for key in ("sector", "industry"):
+                raw = row.get(key)
+                if raw is None:
+                    continue
+                s = str(raw).strip()
+                if s and s not in parts:
+                    parts.append(s)
+            exc = row.get("exchangeShortName") or row.get("exchange")
+            if exc:
+                e = str(exc).strip()
+                if e and e not in parts:
+                    parts.append(e)
+            if not parts:
+                return None
+            return " · ".join(parts)
+
+        def _merge_row(row: dict[str, Any]) -> None:
+            if not row:
+                return
+            nm = _pick_name(row)
+            if nm and out["name"] is None:
+                out["name"] = nm
+            desc = _pick_desc(row)
+            if desc and out["description"] is None:
+                out["description"] = desc
+
+        def _profile_rows(data: Any) -> list[dict[str, Any]]:
+            if isinstance(data, list):
+                return [r for r in data if isinstance(r, dict)]
+            if isinstance(data, dict) and data:
+                # Error payloads are dicts without profile keys; still merge if any useful key exists.
+                return [data]
+            return []
+
+        async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
+            endpoints: tuple[tuple[str, dict[str, str]], ...] = (
+                (
+                    f"{self.config.base_url}/stable/profile",
+                    {"symbol": fmp, "apikey": self.config.api_key},
+                ),
+                (
+                    f"{self.config.base_url}/api/v3/profile/{fmp}",
+                    {"apikey": self.config.api_key},
+                ),
+            )
+            last_nonempty: dict[str, Any] = {}
+            for purl, params in endpoints:
+                try:
+                    pdata = await self._fetch_json(
+                        client, purl, params=params, timeout_seconds=timeout_seconds
+                    )
+                    rows = _profile_rows(pdata)
+                    for row in rows:
+                        if row:
+                            last_nonempty = row
+                        _merge_row(row)
+                    if out["name"] and out["description"]:
+                        break
+                except Exception as e:
+                    logger.debug("profile summary %s %s: %s", purl, symbol, e)
+
+            if out["description"] is None and last_nonempty:
+                blurb = _sector_industry_blurb(last_nonempty)
+                if blurb:
+                    out["description"] = blurb
+
+        return out
+
+    def _normalize_stock_news_rows(self, raw: Any, cap: int) -> list[dict[str, Any]]:
+        if not isinstance(raw, list):
+            return []
+        out: list[dict[str, Any]] = []
+        for row in raw:
+            if not isinstance(row, dict):
+                continue
+            title = row.get("title") or row.get("headline")
+            if not title:
+                continue
+            t = str(title).strip()
+            if not t:
+                continue
+            pub = (
+                row.get("publishedDate")
+                or row.get("date")
+                or row.get("published_date")
+                or row.get("publishedAt")
+            )
+            pub_s: str | None = None
+            if pub is not None:
+                pub_s = str(pub).strip()
+                if " " in pub_s:
+                    pub_s = pub_s.split(" ")[0]
+                if not pub_s:
+                    pub_s = None
+            text_raw = row.get("text") or row.get("content") or row.get("description")
+            text_s: str | None = None
+            if text_raw is not None:
+                text_s = str(text_raw).strip()
+                if len(text_s) > 2500:
+                    text_s = text_s[:2500] + "…"
+                if not text_s:
+                    text_s = None
+            url_raw = row.get("url") or row.get("link")
+            url_s = str(url_raw).strip() if url_raw else None
+            if url_s == "":
+                url_s = None
+            site_raw = row.get("site") or row.get("publisher") or row.get("source")
+            site_s = str(site_raw).strip() if site_raw else None
+            if site_s == "":
+                site_s = None
+            out.append(
+                {
+                    "title": t,
+                    "text": text_s,
+                    "url": url_s,
+                    "published_at": pub_s,
+                    "site": site_s,
+                }
+            )
+            if len(out) >= cap:
+                break
+        return out
+
+    async def fetch_stock_news(
+        self,
+        symbol: str,
+        *,
+        limit: int = 20,
+        timeout_seconds: float = 20.0,
+    ) -> list[dict[str, Any]]:
+        """
+        FMP stock news: v3 stock_news, then stable/news/stock if needed.
+        """
+        fmp = _to_fmp_symbol(symbol)
+        cap = max(1, min(50, limit))
+        headers = {"User-Agent": "Mozilla/5.0"}
+        timeout = httpx.Timeout(timeout_seconds)
+
+        async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
+            try:
+                url = f"{self.config.base_url}/api/v3/stock_news"
+                params = {
+                    "tickers": fmp,
+                    "limit": cap,
+                    "apikey": self.config.api_key,
+                }
+                data = await self._fetch_json(
+                    client, url, params=params, timeout_seconds=timeout_seconds
+                )
+                norm = self._normalize_stock_news_rows(data, cap)
+                if norm:
+                    return norm
+            except Exception as e:
+                logger.debug("stock_news v3 %s: %s", symbol, e)
+
+            try:
+                url = f"{self.config.base_url}/stable/news/stock"
+                params = {
+                    "symbols": fmp,
+                    "limit": cap,
+                    "apikey": self.config.api_key,
+                }
+                data = await self._fetch_json(
+                    client, url, params=params, timeout_seconds=timeout_seconds
+                )
+                return self._normalize_stock_news_rows(data, cap)
+            except Exception as e:
+                logger.debug("stock_news stable %s: %s", symbol, e)
+
+        return []
+
     async def fetch_stock_peers_symbols(self, symbol: str, timeout_seconds: float = 20.0) -> list[str]:
         """
         FMP curated peers: /stable/stock-peers?symbol=...

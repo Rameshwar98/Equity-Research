@@ -42,6 +42,8 @@ const FALLBACK_INDICES: IndexInfo[] = [
   { name: "dow30", label: "Dow 30" },
   { name: "nifty50", label: "Nifty 50" },
   { name: "niftynext50", label: "Nifty Next 50" },
+  { name: "global_indices", label: "Global indices" },
+  { name: "sector_indices", label: "Sector indices (GICS)" },
 ];
 
 const ALL_VALUE = "__all__";

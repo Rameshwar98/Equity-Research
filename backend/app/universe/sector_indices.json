@@ -1,0 +1,70 @@
+{
+  "constituents": [
+    {
+      "symbol": "XLI",
+      "name": "Industrials",
+      "sector": "GICS",
+      "sub_sector": "Capital goods, aerospace & defense, transportation, professional services"
+    },
+    {
+      "symbol": "XLK",
+      "name": "Information Technology",
+      "sector": "GICS",
+      "sub_sector": "Software, semiconductors, hardware, cloud & AI"
+    },
+    {
+      "symbol": "XLF",
+      "name": "Financials",
+      "sector": "GICS",
+      "sub_sector": "Banks, insurance, asset management, capital markets"
+    },
+    {
+      "symbol": "XLE",
+      "name": "Energy",
+      "sector": "GICS",
+      "sub_sector": "Oil & gas, refining, energy services, renewables"
+    },
+    {
+      "symbol": "XLB",
+      "name": "Materials",
+      "sector": "GICS",
+      "sub_sector": "Metals & mining, chemicals, construction materials"
+    },
+    {
+      "symbol": "XLY",
+      "name": "Consumer Discretionary",
+      "sector": "GICS",
+      "sub_sector": "Automobiles, retail, travel & leisure, media"
+    },
+    {
+      "symbol": "XLP",
+      "name": "Consumer Staples",
+      "sector": "GICS",
+      "sub_sector": "Food & beverages, household goods, personal care"
+    },
+    {
+      "symbol": "XLV",
+      "name": "Health Care",
+      "sector": "GICS",
+      "sub_sector": "Pharma, biotech, medical devices, healthcare services"
+    },
+    {
+      "symbol": "XLC",
+      "name": "Communication Services",
+      "sector": "GICS",
+      "sub_sector": "Telecom, media, social platforms"
+    },
+    {
+      "symbol": "XLU",
+      "name": "Utilities",
+      "sector": "GICS",
+      "sub_sector": "Electric, water, gas, renewable utilities"
+    },
+    {
+      "symbol": "XLRE",
+      "name": "Real Estate",
+      "sector": "GICS",
+      "sub_sector": "REITs, commercial and residential real estate"
+    }
+  ]
+}

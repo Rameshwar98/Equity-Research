@@ -28,9 +28,12 @@ function fmtTip(iso: string | undefined, sig: Signal) {
 export function DashboardSignalHeatmap({
   signals,
   dates,
+  variant = "default",
 }: {
   signals: Signal[] | undefined | null;
   dates?: string[] | null;
+  /** compact: shorter bar for dense tables (e.g. peer comparison) */
+  variant?: "default" | "compact";
 }) {
   const s = signals ?? [];
   if (s.length === 0) {
@@ -39,7 +42,12 @@ export function DashboardSignalHeatmap({
 
   return (
     <div
-      className="flex h-4 w-[min(100%,12rem)] min-w-[7rem] max-w-[12rem] shrink-0 overflow-hidden rounded-sm border border-border/70"
+      className={cn(
+        "flex shrink-0 overflow-hidden rounded-sm border border-border/70",
+        variant === "compact"
+          ? "h-3 w-full min-w-[4.5rem] max-w-[6.75rem]"
+          : "h-4 w-[min(100%,12rem)] min-w-[7rem] max-w-[12rem]"
+      )}
       title="Weekly signals (~1 year, oldest → newest)"
     >
       {s.map((sig, i) => (

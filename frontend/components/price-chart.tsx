@@ -37,110 +37,121 @@ function formatDateFull(d: string) {
   return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-/** Reports the active tooltip date to parent for heatmap ↔ chart hover sync. */
-function TooltipSyncHost({
+/** Drives heatmap sync + hovered bar for the stats strip; renders no overlay (keeps chart clear). */
+function ChartHoverBridge({
+  active,
+  payload,
+  onHoverPoint,
   onSyncHoverDate,
-  TooltipBody,
-  ...props
 }: {
-  onSyncHoverDate: (date: string | null) => void;
-  TooltipBody: React.ComponentType<any>;
-} & Record<string, unknown>) {
-  const p = props as { active?: boolean; payload?: { payload?: ChartPoint }[] };
-  const date =
-    p.active && p.payload?.[0]?.payload?.date != null
-      ? String(p.payload[0].payload.date)
-      : null;
+  active?: boolean;
+  payload?: { payload?: ChartPoint }[];
+  onHoverPoint: (p: ChartPoint | null) => void;
+  onSyncHoverDate?: (date: string | null) => void;
+}) {
+  const p =
+    active && payload?.[0]?.payload != null ? (payload[0].payload as ChartPoint) : null;
+  const date = p?.date != null ? String(p.date) : null;
   React.useLayoutEffect(() => {
-    onSyncHoverDate(date);
-  }, [date, onSyncHoverDate]);
-  return <TooltipBody {...props} />;
+    onSyncHoverDate?.(date);
+    onHoverPoint(p);
+  }, [date, p, onHoverPoint, onSyncHoverDate]);
+  return null;
 }
 
-function PriceTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null;
-  const p = payload[0]?.payload as ChartPoint | undefined;
-  if (!p) return null;
+function StatSep() {
+  return <span className="text-border select-none" aria-hidden>|</span>;
+}
 
-  const signal = p.signal;
-  const signalColor = signal === "BUY" ? "text-emerald-600" : signal === "SELL" ? "text-rose-600" : "text-amber-600";
-
+/** Price / volume / signal stats for the bar under the toggles (replaces hover tooltip). */
+function PriceStatsStrip({
+  p,
+  emaKeys,
+  showVolume,
+  hasVolume,
+  showRsi,
+  showMacd,
+}: {
+  p: ChartPoint;
+  emaKeys: Set<EmaKey>;
+  showVolume: boolean;
+  hasVolume: boolean;
+  showRsi: boolean;
+  showMacd: boolean;
+}) {
   return (
-    <div className="rounded-lg border bg-background/95 backdrop-blur-sm px-3 py-2 shadow-lg text-xs space-y-0.5 max-w-[200px]">
-      <div className="font-medium text-foreground">{formatDateFull(p.date)}</div>
-      <div className="flex justify-between gap-3">
+    <div className="mb-2 rounded-md border border-border/70 bg-muted/25 px-2 py-1.5 text-[11px] leading-snug">
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="font-semibold text-foreground">{formatDateFull(p.date)}</span>
+        <StatSep />
         <span className="text-muted-foreground">Close</span>
-        <span className="tabular-nums font-semibold">${p.close?.toFixed(2)}</span>
+        <span className="tabular-nums font-semibold text-foreground">${p.close?.toFixed(2)}</span>
+        {(Object.keys(EMA_META) as EmaKey[]).map((k) => {
+          if (!emaKeys.has(k)) return null;
+          const v = p[k];
+          if (v == null) return null;
+          return (
+            <React.Fragment key={k}>
+              <StatSep />
+              <span style={{ color: EMA_META[k].color }}>{EMA_META[k].label}</span>
+              <span className="tabular-nums text-foreground">{v.toFixed(2)}</span>
+            </React.Fragment>
+          );
+        })}
+        {showVolume && hasVolume && p.volume != null && (
+          <>
+            <StatSep />
+            <span className={p.priceUp ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
+              Vol
+            </span>
+            <span className="tabular-nums">{(p.volume / 1e6).toFixed(2)}M</span>
+          </>
+        )}
+        {showVolume && hasVolume && p.volEma5 != null && (
+          <>
+            <StatSep />
+            <span style={{ color: "#f59e0b" }}>EMA 5</span>
+            <span className="tabular-nums">{(p.volEma5 / 1e6).toFixed(2)}M</span>
+          </>
+        )}
+        {showVolume && hasVolume && p.volRatio != null && (
+          <>
+            <StatSep />
+            <span className="text-muted-foreground">vs 20D</span>
+            <span className="tabular-nums font-medium">{p.volRatio.toFixed(2)}×</span>
+          </>
+        )}
+        {showRsi && p.rsi != null && (
+          <>
+            <StatSep />
+            <span className="text-purple-600 dark:text-purple-400">RSI</span>
+            <span className="tabular-nums">{p.rsi.toFixed(1)}</span>
+          </>
+        )}
+        {showMacd && (p.macd != null || p.macdSignal != null || p.macdHist != null) && (
+          <>
+            <StatSep />
+            {p.macd != null && (
+              <>
+                <span style={{ color: "#3b82f6" }}>MACD</span>
+                <span className="tabular-nums mr-1">{p.macd.toFixed(2)}</span>
+              </>
+            )}
+            {p.macdSignal != null && (
+              <>
+                <span style={{ color: "#f97316" }}>Sig</span>
+                <span className="tabular-nums mr-1">{p.macdSignal.toFixed(2)}</span>
+              </>
+            )}
+            {p.macdHist != null && (
+              <>
+                <span className="text-muted-foreground">Hist</span>
+                <span className="tabular-nums">{p.macdHist.toFixed(2)}</span>
+              </>
+            )}
+          </>
+        )}
       </div>
-      {(Object.keys(EMA_META) as EmaKey[]).map((k) => {
-        const v = p[k];
-        if (v == null) return null;
-        return (
-          <div key={k} className="flex justify-between gap-3">
-            <span style={{ color: EMA_META[k].color }}>{EMA_META[k].label}</span>
-            <span className="tabular-nums">{v.toFixed(2)}</span>
-          </div>
-        );
-      })}
-      {p.volume != null && (
-        <div className="flex justify-between gap-3">
-          <span className={p.priceUp ? "text-emerald-600" : "text-rose-600"}>Vol</span>
-          <span className="tabular-nums">{(p.volume / 1e6).toFixed(2)}M</span>
-        </div>
-      )}
-      {p.volEma5 != null && (
-        <div className="flex justify-between gap-3">
-          <span style={{ color: "#f59e0b" }}>EMA 5</span>
-          <span className="tabular-nums">{(p.volEma5 / 1e6).toFixed(2)}M</span>
-        </div>
-      )}
-      {p.volRatio != null && (
-        <div className="flex justify-between gap-3">
-          <span className="text-muted-foreground">vs 20D avg</span>
-          <span className="tabular-nums font-medium">{p.volRatio.toFixed(2)}x</span>
-        </div>
-      )}
-      {signal && signal !== "N/A" && <div className={`font-semibold ${signalColor}`}>{signal}</div>}
-    </div>
-  );
-}
-
-function RsiTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null;
-  const p = payload[0]?.payload as ChartPoint | undefined;
-  if (!p || p.rsi == null) return null;
-  return (
-    <div className="rounded-lg border bg-background/95 backdrop-blur-sm px-2 py-1 shadow-lg text-xs">
-      <span className="text-muted-foreground">RSI </span>
-      <span className="tabular-nums font-medium">{p.rsi.toFixed(1)}</span>
-    </div>
-  );
-}
-
-function MacdTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null;
-  const p = payload[0]?.payload as ChartPoint | undefined;
-  if (!p) return null;
-  return (
-    <div className="rounded-lg border bg-background/95 backdrop-blur-sm px-2 py-1 shadow-lg text-xs space-y-0.5">
-      {p.macd != null && (
-        <div className="flex justify-between gap-3">
-          <span style={{ color: "#3b82f6" }}>MACD</span>
-          <span className="tabular-nums">{p.macd.toFixed(2)}</span>
-        </div>
-      )}
-      {p.macdSignal != null && (
-        <div className="flex justify-between gap-3">
-          <span style={{ color: "#f97316" }}>Signal</span>
-          <span className="tabular-nums">{p.macdSignal.toFixed(2)}</span>
-        </div>
-      )}
-      {p.macdHist != null && (
-        <div className="flex justify-between gap-3">
-          <span className="text-muted-foreground">Hist</span>
-          <span className="tabular-nums">{p.macdHist.toFixed(2)}</span>
-        </div>
-      )}
     </div>
   );
 }
@@ -188,6 +199,14 @@ export function PriceChart({
   const [showFib, setShowFib] = React.useState(false);
   const [showRsi, setShowRsi] = React.useState(false);
   const [showMacd, setShowMacd] = React.useState(false);
+  /** null = show latest bar in strip; non-null = crosshair bar */
+  const [hoverPoint, setHoverPoint] = React.useState<ChartPoint | null>(null);
+
+  const onHoverPoint = React.useCallback((p: ChartPoint | null) => {
+    setHoverPoint(p);
+  }, []);
+
+  const stripPoint = hoverPoint ?? chartData[chartData.length - 1]!;
 
   const hasVolume = chartData.some((d) => d.volume != null && d.volume > 0);
   const hasRsi = chartData.some((d) => d.rsi != null);
@@ -240,23 +259,16 @@ export function PriceChart({
   const gridProps = { strokeDasharray: "3 3", stroke: "hsl(var(--border))", opacity: 0.4 };
   const cursorProps = { stroke: "hsl(var(--muted-foreground))", strokeDasharray: "3 3" };
 
-  const priceTooltipContent = onSyncHoverDate
-    ? (props: Record<string, unknown>) => (
-        <TooltipSyncHost {...props} onSyncHoverDate={onSyncHoverDate} TooltipBody={PriceTooltip} />
-      )
-    : (props: Record<string, unknown>) => <PriceTooltip {...props} />;
-
-  const rsiTooltipContent = onSyncHoverDate
-    ? (props: Record<string, unknown>) => (
-        <TooltipSyncHost {...props} onSyncHoverDate={onSyncHoverDate} TooltipBody={RsiTooltip} />
-      )
-    : (props: Record<string, unknown>) => <RsiTooltip {...props} />;
-
-  const macdTooltipContent = onSyncHoverDate
-    ? (props: Record<string, unknown>) => (
-        <TooltipSyncHost {...props} onSyncHoverDate={onSyncHoverDate} TooltipBody={MacdTooltip} />
-      )
-    : (props: Record<string, unknown>) => <MacdTooltip {...props} />;
+  const tooltipBridge = React.useCallback(
+    (props: Record<string, unknown>) => (
+      <ChartHoverBridge
+        {...(props as { active?: boolean; payload?: { payload?: ChartPoint }[] })}
+        onHoverPoint={onHoverPoint}
+        onSyncHoverDate={onSyncHoverDate}
+      />
+    ),
+    [onHoverPoint, onSyncHoverDate]
+  );
 
   const showSyncRefLine =
     !!syncHoverDate && chartData.some((d) => d.date === syncHoverDate);
@@ -281,6 +293,17 @@ export function PriceChart({
           <ToggleBtn active={showMacd} color="#3b82f6" onClick={() => setShowMacd((v) => !v)}>MACD</ToggleBtn>
         )}
       </div>
+
+      {stripPoint && (
+        <PriceStatsStrip
+          p={stripPoint}
+          emaKeys={emaOverlays}
+          showVolume={showVolume}
+          hasVolume={hasVolume}
+          showRsi={showRsi && hasRsi}
+          showMacd={showMacd && hasMacd}
+        />
+      )}
 
       {/* Combined Price + Volume Chart */}
       <ResponsiveContainer width="100%" height={300}>
@@ -351,7 +374,11 @@ export function PriceChart({
             />
           )}
 
-          <Tooltip content={priceTooltipContent} cursor={cursorProps} />
+          <Tooltip
+            content={tooltipBridge}
+            cursor={cursorProps}
+            wrapperStyle={{ visibility: "hidden", pointerEvents: "none" }}
+          />
         </ComposedChart>
       </ResponsiveContainer>
 
@@ -374,7 +401,11 @@ export function PriceChart({
               <ReferenceLine y={70} stroke="#ef4444" strokeDasharray="3 3" strokeWidth={0.5} />
               <ReferenceLine y={30} stroke="#22c55e" strokeDasharray="3 3" strokeWidth={0.5} />
               <Line type="monotone" dataKey="rsi" stroke="#a855f7" strokeWidth={1.2} dot={false} isAnimationActive={false} />
-              <Tooltip content={rsiTooltipContent} cursor={cursorProps} />
+              <Tooltip
+                content={tooltipBridge}
+                cursor={cursorProps}
+                wrapperStyle={{ visibility: "hidden", pointerEvents: "none" }}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -414,7 +445,11 @@ export function PriceChart({
               </Bar>
               <Line type="monotone" dataKey="macd" stroke="#3b82f6" strokeWidth={1.2} dot={false} isAnimationActive={false} />
               <Line type="monotone" dataKey="macdSignal" stroke="#f97316" strokeWidth={1} dot={false} isAnimationActive={false} />
-              <Tooltip content={macdTooltipContent} cursor={cursorProps} />
+              <Tooltip
+                content={tooltipBridge}
+                cursor={cursorProps}
+                wrapperStyle={{ visibility: "hidden", pointerEvents: "none" }}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

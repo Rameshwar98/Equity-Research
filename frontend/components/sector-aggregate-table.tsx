@@ -1,7 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { signalCell, type SectorAggregateRow } from "@/lib/sector-aggregates";
+import {
+  signalCell,
+  type SectorAggregateRow,
+  type SectorPortfolioTotals,
+} from "@/lib/sector-aggregates";
 
 function fmtCapSum(v: number) {
   if (v <= 0) return "—";
@@ -24,7 +28,13 @@ function pctColor(v: number | null) {
   return "";
 }
 
-export function SectorAggregateTable({ aggregates }: { aggregates: SectorAggregateRow[] }) {
+export function SectorAggregateTable({
+  aggregates,
+  totals,
+}: {
+  aggregates: SectorAggregateRow[];
+  totals: SectorPortfolioTotals;
+}) {
   const data = aggregates;
 
   return (
@@ -91,13 +101,51 @@ export function SectorAggregateTable({ aggregates }: { aggregates: SectorAggrega
               </td>
             </tr>
           ) : (
-            data.map((r) => (
-              <SectorRow key={r.sector} r={r} />
-            ))
+            data.map((r) => <SectorRow key={r.sector} r={r} />)
           )}
         </tbody>
+        {data.length > 0 ? (
+          <tfoot className="sticky bottom-0 z-[1] bg-card shadow-[0_-1px_0_0_hsl(var(--border))]">
+            <TotalFooterRow totals={totals} />
+          </tfoot>
+        ) : null}
       </table>
     </div>
+  );
+}
+
+function TotalFooterRow({ totals: t }: { totals: SectorPortfolioTotals }) {
+  const n = t.stockCount;
+  return (
+    <tr className="border-t-2 border-border bg-muted/50 font-semibold text-foreground dark:bg-muted/35">
+      <td className="px-2 py-2 text-left">Total (all rows)</td>
+      <td className="px-2 py-2 text-right tabular-nums">{n}</td>
+      <td className="px-2 py-2 text-right tabular-nums">{fmtCapSum(t.sumMktCap)}</td>
+      <td className={cn("px-2 py-2 text-right tabular-nums", pctColor(t.avgReturn1d))}>
+        {fmtAvgPct(t.avgReturn1d)}
+      </td>
+      <td className={cn("px-2 py-2 text-right tabular-nums", pctColor(t.avgReturn1w))}>
+        {fmtAvgPct(t.avgReturn1w)}
+      </td>
+      <td className={cn("px-2 py-2 text-right tabular-nums", pctColor(t.avgReturn1m))}>
+        {fmtAvgPct(t.avgReturn1m)}
+      </td>
+      <td className={cn("px-2 py-2 text-right tabular-nums", pctColor(t.avgReturn3m))}>
+        {fmtAvgPct(t.avgReturn3m)}
+      </td>
+      <td className={cn("px-2 py-2 text-right tabular-nums", pctColor(t.avgReturnYtd))}>
+        {fmtAvgPct(t.avgReturnYtd)}
+      </td>
+      <td className="px-2 py-2 text-right tabular-nums text-emerald-700 dark:text-emerald-400">
+        {signalCell(t.buyCount, n)}
+      </td>
+      <td className="px-2 py-2 text-right tabular-nums text-amber-700 dark:text-amber-400">
+        {signalCell(t.holdCount, n)}
+      </td>
+      <td className="px-2 py-2 text-right tabular-nums text-rose-700 dark:text-rose-400">
+        {signalCell(t.sellCount, n)}
+      </td>
+    </tr>
   );
 }
 

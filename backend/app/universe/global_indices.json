@@ -1,0 +1,154 @@
+{
+  "constituents": [
+    {
+      "symbol": "SPY",
+      "name": "S&P 500",
+      "sector": "United States",
+      "sub_sector": "Large cap benchmark (500 companies)"
+    },
+    {
+      "symbol": "DIA",
+      "name": "Dow Jones Industrial Average",
+      "sector": "United States",
+      "sub_sector": "30 blue-chip companies"
+    },
+    {
+      "symbol": "QQQ",
+      "name": "NASDAQ Composite (proxy)",
+      "sector": "United States",
+      "sub_sector": "Tech-heavy index (tracks NASDAQ-100)"
+    },
+    {
+      "symbol": "IWM",
+      "name": "Russell 2000",
+      "sector": "United States",
+      "sub_sector": "Small-cap index"
+    },
+    {
+      "symbol": "EWU",
+      "name": "FTSE 100",
+      "sector": "Europe",
+      "sub_sector": "Top UK companies"
+    },
+    {
+      "symbol": "EWG",
+      "name": "DAX",
+      "sector": "Europe",
+      "sub_sector": "Major German companies"
+    },
+    {
+      "symbol": "EWQ",
+      "name": "CAC 40",
+      "sector": "Europe",
+      "sub_sector": "Leading French stocks"
+    },
+    {
+      "symbol": "FEZ",
+      "name": "Euro Stoxx 50",
+      "sector": "Europe",
+      "sub_sector": "Pan-European blue chips"
+    },
+    {
+      "symbol": "EWJ",
+      "name": "Nikkei 225 (proxy)",
+      "sector": "Asia",
+      "sub_sector": "Japan flagship index"
+    },
+    {
+      "symbol": "1306.T",
+      "name": "TOPIX",
+      "sector": "Asia",
+      "sub_sector": "Broad Japan market"
+    },
+    {
+      "symbol": "000001.SS",
+      "name": "Shanghai Composite",
+      "sector": "Asia",
+      "sub_sector": "Mainland China index"
+    },
+    {
+      "symbol": "ASHR",
+      "name": "CSI 300",
+      "sector": "Asia",
+      "sub_sector": "Top Shanghai & Shenzhen stocks"
+    },
+    {
+      "symbol": "EWH",
+      "name": "Hang Seng (proxy)",
+      "sector": "Asia",
+      "sub_sector": "Hong Kong benchmark"
+    },
+    {
+      "symbol": "INDA",
+      "name": "Nifty 50",
+      "sector": "Asia",
+      "sub_sector": "Top 50 NSE stocks"
+    },
+    {
+      "symbol": "INDY",
+      "name": "Sensex (proxy)",
+      "sector": "Asia",
+      "sub_sector": "Major Indian companies"
+    },
+    {
+      "symbol": "EEM",
+      "name": "MSCI Emerging Markets",
+      "sector": "Emerging Markets",
+      "sub_sector": "EM benchmark"
+    },
+    {
+      "symbol": "EWZ",
+      "name": "Bovespa",
+      "sector": "Emerging Markets",
+      "sub_sector": "Brazil index"
+    },
+    {
+      "symbol": "EZA",
+      "name": "FTSE/JSE All Share",
+      "sector": "Emerging Markets",
+      "sub_sector": "South Africa benchmark"
+    },
+    {
+      "symbol": "EWY",
+      "name": "KOSPI",
+      "sector": "Emerging Markets",
+      "sub_sector": "South Korea index"
+    },
+    {
+      "symbol": "KSA",
+      "name": "Tadawul All Share (TASI) (proxy)",
+      "sector": "GCC",
+      "sub_sector": "Saudi market"
+    },
+    {
+      "symbol": "UAE",
+      "name": "UAE equity (MSCI UAE)",
+      "sector": "GCC",
+      "sub_sector": "Dubai & Abu Dhabi markets (proxy)"
+    },
+    {
+      "symbol": "QAT",
+      "name": "Qatar (MSCI Qatar)",
+      "sector": "GCC",
+      "sub_sector": "Qatar market"
+    },
+    {
+      "symbol": "URTH",
+      "name": "MSCI World",
+      "sector": "Global",
+      "sub_sector": "Developed markets"
+    },
+    {
+      "symbol": "ACWI",
+      "name": "MSCI ACWI",
+      "sector": "Global",
+      "sub_sector": "All country world index"
+    },
+    {
+      "symbol": "VT",
+      "name": "FTSE All-World (proxy)",
+      "sector": "Global",
+      "sub_sector": "Broad global index"
+    }
+  ]
+}

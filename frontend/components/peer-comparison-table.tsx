@@ -13,10 +13,10 @@ function fmtCap(v?: number | null) {
   return `${(v / 1e3).toFixed(0)}K`;
 }
 
-function fmtPct(v?: number | null) {
+function fmtPct(v?: number | null, digits = 2) {
   if (v == null || Number.isNaN(v)) return "—";
   const sign = v > 0 ? "+" : "";
-  return `${sign}${v.toFixed(2)}%`;
+  return `${sign}${v.toFixed(digits)}%`;
 }
 
 /** Return cells: solid-enough tints + dark text (light) / light text (dark) for WCAG-friendly contrast. */
@@ -83,7 +83,7 @@ export function PeerComparisonTable({
     { key: "1m", label: "1M" },
     { key: "3m", label: "3M" },
     { key: "ytd", label: "YTD" },
-    { key: "hm", label: "1Y heatmap" },
+    { key: "hm", label: "1Y" },
   ] as const;
 
   return (
@@ -101,18 +101,27 @@ export function PeerComparisonTable({
         ) : null}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] text-sm border-collapse">
+        <table className="w-full table-fixed border-collapse text-[11px] leading-tight">
+          <colgroup>
+            <col className="w-[6.75rem]" />
+            <col className="w-[2.85rem]" />
+            <col className="w-[2.65rem]" />
+            <col className="w-[2.5rem]" />
+            <col className="w-[2.5rem]" />
+            <col className="w-[2.5rem]" />
+            <col className="w-[2.5rem]" />
+            <col className="w-[2.5rem]" />
+            <col className="w-[6.5rem]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-border/80 bg-muted/70 dark:bg-muted/40">
               {cols.map((c) => (
                 <th
                   key={c.key}
                   className={cn(
-                    "px-2.5 py-2.5 font-semibold text-left whitespace-nowrap text-foreground",
+                    "px-1 py-1.5 font-semibold text-left whitespace-nowrap text-foreground",
                     c.key !== "name" && c.key !== "sig" && "text-center",
-                    (c.key === "1d" || c.key === "1w" || c.key === "1m" || c.key === "3m" || c.key === "ytd") &&
-                      "min-w-[4.75rem]",
-                    c.key === "hm" && "min-w-[8rem] text-center"
+                    c.key === "hm" && "text-center"
                   )}
                 >
                   {c.label}
@@ -129,38 +138,45 @@ export function PeerComparisonTable({
                   p.is_subject && "bg-primary/10 ring-1 ring-inset ring-primary/25"
                 )}
               >
-                <td className="px-2.5 py-2 max-w-[200px] align-top">
-                  <div className="truncate font-semibold text-foreground leading-snug" title={p.name ?? p.symbol}>
+                <td className="px-1 py-1 align-top">
+                  <div
+                    className="truncate font-semibold text-foreground leading-tight"
+                    title={p.name ?? p.symbol}
+                  >
                     {p.name ?? p.symbol}
                   </div>
-                  <div className="font-mono text-xs font-semibold text-foreground/75 dark:text-foreground/80 mt-1 tracking-tight">
+                  <div className="mt-0.5 font-mono text-[10px] font-semibold text-foreground/75 dark:text-foreground/80 tracking-tight">
                     {p.symbol}
                   </div>
                 </td>
-                <td className="px-2.5 py-2 tabular-nums text-right font-medium text-foreground align-middle">
+                <td className="px-1 py-1 tabular-nums text-right font-medium text-foreground align-middle">
                   {fmtCap(p.mkt_cap)}
                 </td>
-                <td className="px-2.5 py-2 text-center align-middle">
-                  <TrendBadge signal={p.signal as Signal} />
+                <td className="px-0.5 py-1 text-center align-middle">
+                  <TrendBadge
+                    signal={p.signal as Signal}
+                    className="h-5 px-1 py-0 text-[9px] leading-none font-semibold"
+                  />
                 </td>
-                <td className={cn("px-1.5 py-2 text-center tabular-nums text-sm min-w-[4.75rem]", retHeat(p.return_1d))}>
-                  {fmtPct(p.return_1d)}
+                <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_1d))}>
+                  {fmtPct(p.return_1d, 1)}
                 </td>
-                <td className={cn("px-1.5 py-2 text-center tabular-nums text-sm min-w-[4.75rem]", retHeat(p.return_1w))}>
-                  {fmtPct(p.return_1w)}
+                <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_1w))}>
+                  {fmtPct(p.return_1w, 1)}
                 </td>
-                <td className={cn("px-1.5 py-2 text-center tabular-nums text-sm min-w-[4.75rem]", retHeat(p.return_1m))}>
-                  {fmtPct(p.return_1m)}
+                <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_1m))}>
+                  {fmtPct(p.return_1m, 1)}
                 </td>
-                <td className={cn("px-1.5 py-2 text-center tabular-nums text-sm min-w-[4.75rem]", retHeat(p.return_3m))}>
-                  {fmtPct(p.return_3m)}
+                <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_3m))}>
+                  {fmtPct(p.return_3m, 1)}
                 </td>
-                <td className={cn("px-1.5 py-2 text-center tabular-nums text-sm min-w-[4.75rem]", retHeat(p.return_ytd))}>
-                  {fmtPct(p.return_ytd)}
+                <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_ytd))}>
+                  {fmtPct(p.return_ytd, 1)}
                 </td>
-                <td className="px-2.5 py-2 align-middle min-w-[8rem]">
+                <td className="px-1 py-1 align-middle">
                   <div className="flex justify-center">
                     <DashboardSignalHeatmap
+                      variant="compact"
                       signals={(p.signals_1y ?? []) as Signal[]}
                       dates={p.signals_1y_dates ?? []}
                     />

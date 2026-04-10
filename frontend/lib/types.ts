@@ -61,6 +61,8 @@ export type QuarterlyFinancials = {
 export type StockDetailsResponse = {
   symbol: string;
   name?: string | null;
+  /** FMP company profile description */
+  description?: string | null;
   date_labels: string[];
   signals: Signal[];
   closes?: (number | null)[];
@@ -141,5 +143,19 @@ export type PeersResponse = {
   /** "fmp" = FMP stock-peers API (filtered to index); "sector" = same-sector fallback */
   peer_source?: string | null;
   peers: PeerRow[];
+};
+
+/** FMP stock news article (normalized in backend). */
+export type StockNewsItem = {
+  title: string;
+  text?: string | null;
+  url?: string | null;
+  published_at?: string | null;
+  site?: string | null;
+};
+
+export type StockNewsResponse = {
+  symbol: string;
+  items: StockNewsItem[];
 };
 

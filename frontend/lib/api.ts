@@ -5,6 +5,7 @@ import type {
   RunAnalysisResponse,
   ScoreKey,
   StockDetailsResponse,
+  StockNewsResponse,
 } from "@/lib/types";
 
 const baseUrl =
@@ -97,5 +98,12 @@ export function getStockPeers(symbol: string, indexName: string, selectedScore: 
     selected_score: selectedScore,
   });
   return http<PeersResponse>(`/api/stock/${encodeURIComponent(symbol)}/peers?${q.toString()}`);
+}
+
+export function getStockNews(symbol: string, limit = 20) {
+  const q = new URLSearchParams({ limit: String(limit) });
+  return http<StockNewsResponse>(
+    `/api/stock/${encodeURIComponent(symbol)}/news?${q.toString()}`
+  );
 }
 

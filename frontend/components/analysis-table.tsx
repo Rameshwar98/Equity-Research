@@ -16,7 +16,7 @@ import { DashboardSignalHeatmap } from "@/components/dashboard-signal-heatmap";
 import { SectorAggregateTable } from "@/components/sector-aggregate-table";
 import { TrendBadge } from "@/components/trend-badge";
 import { Week52RangeBar } from "@/components/week-52-range-bar";
-import { computeSectorAggregates } from "@/lib/sector-aggregates";
+import { computeSectorAggregates, computeSectorPortfolioTotals } from "@/lib/sector-aggregates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -419,6 +419,10 @@ export function AnalysisTable({
     () => computeSectorAggregates(data.rows),
     [data.rows]
   );
+  const sectorPortfolioTotals = React.useMemo(
+    () => computeSectorPortfolioTotals(data.rows),
+    [data.rows]
+  );
 
   return (
     <div className="rounded-xl border bg-card shadow-sm">
@@ -534,13 +538,15 @@ export function AnalysisTable({
               Showing {table.getRowModel().rows.length} of {data.rows.length}
             </>
           ) : (
-            <>{sectorAggregates.length} sectors</>
+            <>
+              {sectorAggregates.length} sectors · {sectorPortfolioTotals.stockCount} stocks
+            </>
           )}
         </span>
       </div>
 
       {tableView === "sectors" ? (
-        <SectorAggregateTable aggregates={sectorAggregates} />
+        <SectorAggregateTable aggregates={sectorAggregates} totals={sectorPortfolioTotals} />
       ) : null}
 
       {tableView === "stocks" ? (
