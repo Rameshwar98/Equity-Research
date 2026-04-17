@@ -91,7 +91,8 @@ async def run_analysis_with_progress(req: RunAnalysisRequest) -> Dict[str, Any]:
     if req.selected_score not in ("score_1", "score_2", "score_3"):
         raise HTTPException(status_code=400, detail="selected_score must be score_1|score_2|score_3")
 
-    run_key = f"{req.index_name}::{req.selected_score}::refresh={int(req.refresh_data)}"
+    uver = universe_svc.universe_version(req.index_name)
+    run_key = f"{req.index_name}::{req.selected_score}::refresh={int(req.refresh_data)}::uver={uver}"
 
     # If not refreshing, try cached result immediately.
     if not req.refresh_data:
@@ -238,10 +239,61 @@ async def run_analysis_with_progress(req: RunAnalysisRequest) -> Dict[str, Any]:
             async with _PARTIAL_LOCK:
                 _PARTIAL.pop(run_id, None)
         except Exception as e:
-            await _set_run_state(
-                run_id,
-                {"status": "error", "message": "Error", "result": None, "error": str(e)},
-            )
+            from app.utils.errors import ProviderAuthError, ProviderRateLimitError
+            from app.utils.time import utc_now
+            from app.schemas.common import SummaryStats
+
+            if isinstance(e, ProviderAuthError) or type(e).__name__ == "ProviderAuthError":
+                await _set_run_state(
+                    run_id,
+                    {
+                        "status": "error",
+                        "processed": 0,
+                        "total": 0,
+                        "message": "Auth failed",
+                        "result": None,
+                        "error": str(e) or "Provider auth failed (401/403).",
+                    },
+                )
+                async with _PARTIAL_LOCK:
+                    _PARTIAL.pop(run_id, None)
+                return
+
+            # For rate-limit/provider-outage, prefer returning an empty "done" result (not a hard error)
+            # so the UI can render the normal "0 rows" state with actionable guidance.
+            is_rate_limited = isinstance(e, ProviderRateLimitError) or type(e).__name__ == "ProviderRateLimitError"
+            if not is_rate_limited and "Provider returned no data" in str(e):
+                is_rate_limited = True
+
+            if is_rate_limited:
+                empty = RunAnalysisResponse(
+                    metadata={
+                        "index_name": req.index_name,
+                        "selected_score": req.selected_score,
+                        "refresh_data": req.refresh_data,
+                    },
+                    date_labels=[],
+                    rows=[],
+                    summary=SummaryStats(total=0, buy=0, hold=0, sell=0),
+                    cached_at=utc_now(),
+                )
+                await _set_run_state(
+                    run_id,
+                    {
+                        "status": "done",
+                        "processed": 0,
+                        "total": 0,
+                        "message": "Rate limited",
+                        "result": empty.model_dump(),
+                        "error": str(e),
+                    },
+                )
+            else:
+                await _set_run_state(
+                    run_id,
+                    {"status": "error", "message": "Error", "result": None, "error": str(e)},
+                )
+
             async with _PARTIAL_LOCK:
                 _PARTIAL.pop(run_id, None)
 
@@ -338,7 +390,8 @@ async def run_analysis(req: RunAnalysisRequest) -> RunAnalysisResponse:
     if req.selected_score not in ("score_1", "score_2", "score_3"):
         raise HTTPException(status_code=400, detail="selected_score must be score_1|score_2|score_3")
 
-    run_key = f"{req.index_name}::{req.selected_score}::refresh={int(req.refresh_data)}"
+    uver = universe_svc.universe_version(req.index_name)
+    run_key = f"{req.index_name}::{req.selected_score}::refresh={int(req.refresh_data)}::uver={uver}"
     if not req.refresh_data:
         cached = await cache_svc.get_recent_run_for_key(run_key, ttl_seconds=ttl)
         if cached:
@@ -1436,6 +1489,7 @@ async def stock_peers(
                     "symbol": c.symbol,
                     "name": meta.get(c.symbol, {}).get("name") or c.name,
                     "mkt_cap": meta.get(c.symbol, {}).get("mkt_cap"),
+                    "score": None,
                     "signal": "N/A",
                     "return_1d": None,
                     "return_1w": None,
@@ -1457,6 +1511,7 @@ async def stock_peers(
                     "symbol": c.symbol,
                     "name": meta.get(c.symbol, {}).get("name") or c.name,
                     "mkt_cap": meta.get(c.symbol, {}).get("mkt_cap"),
+                    "score": None,
                     "signal": "N/A",
                     "return_1d": None,
                     "return_1w": None,
@@ -1475,7 +1530,8 @@ async def stock_peers(
         prev_close = indicator_service.prev_close(close)
         scores = scoring_service.compute_scores(close, avg_last5, prev_close, ind.avg_all_emas)
         series = scores.get(sk)
-        sig = _peer_sig_classify(series.iloc[-1]) if series is not None and len(series) else "N/A"
+        last_score = float(series.iloc[-1]) if series is not None and len(series) else None
+        sig = _peer_sig_classify(last_score) if last_score is not None else "N/A"
         sig_1y, sig_1y_dates = _peer_weekly_signals_1y(series)
 
         peers_out.append(
@@ -1483,6 +1539,7 @@ async def stock_peers(
                 "symbol": c.symbol,
                 "name": meta.get(c.symbol, {}).get("name") or c.name,
                 "mkt_cap": meta.get(c.symbol, {}).get("mkt_cap"),
+                "score": last_score,
                 "signal": sig,
                 "return_1d": _peer_pct_return(close, 1),
                 "return_1w": _peer_pct_return(close, 5),

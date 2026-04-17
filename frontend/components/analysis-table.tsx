@@ -184,16 +184,37 @@ export function AnalysisTable({
 }) {
   const selectedScore = data.metadata.selected_score as ScoreKey;
 
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: selectedScore, desc: true },
-  ]);
+  const defaultSorting = React.useMemo<SortingState>(() => {
+    // For global indices we want a stable continent-wise layout by default.
+    if (data.metadata.index_name === "global_indices") {
+      return [{ id: "sector", desc: false }];
+    }
+    return [{ id: selectedScore, desc: true }];
+  }, [data.metadata.index_name, selectedScore]);
+
+  const [sorting, setSorting] = React.useState<SortingState>(() => defaultSorting);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [tableView, setTableView] = React.useState<"stocks" | "sectors">("stocks");
+
+  React.useEffect(() => {
+    setSorting(defaultSorting);
+  }, [defaultSorting]);
 
   const columns = React.useMemo<ColumnDef<AnalysisRow>[]>(() => {
     const badgeSm = "px-1.5 py-0 text-[10px] leading-tight h-5 font-semibold";
     const eodIso = data.rows.find((r) => r.last_price_date)?.last_price_date ?? null;
     const lastPriceSubheader = eodIso ? formatCalendarYmd(eodIso) : "—";
+    const isGlobalIndices = data.metadata.index_name === "global_indices";
+    const continentRank = (v?: string | null) => {
+      const s = (v || "").trim();
+      if (s === "Americas") return 0;
+      if (s === "EMEA") return 1;
+      if (s === "Asia/Pacific") return 2;
+      if (s === "Global") return 3;
+      return 99;
+    };
+    const uniRank = (r: AnalysisRow) =>
+      r.universe_rank === null || r.universe_rank === undefined ? 10 ** 9 : r.universe_rank;
 
     const latestCol: ColumnDef<AnalysisRow> = {
       id: "sig_0",
@@ -265,6 +286,14 @@ export function AnalysisTable({
       {
         accessorKey: "sector",
         header: "Sector",
+        sortingFn: isGlobalIndices
+          ? (a, b) => {
+              const ca = continentRank(a.original.sector);
+              const cb = continentRank(b.original.sector);
+              if (ca !== cb) return ca - cb;
+              return uniRank(a.original) - uniRank(b.original);
+            }
+          : "alphanumeric",
         cell: ({ row }) => (
           <div className="max-w-[120px] truncate text-xs text-muted-foreground" title={row.original.sector ?? ""}>
             {row.original.sector ?? "—"}

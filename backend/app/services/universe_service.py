@@ -19,14 +19,36 @@ class UniverseService:
     def __init__(self, universe_dir: Path) -> None:
         self.universe_dir = universe_dir
 
+    def universe_version(self, index_name: str) -> str:
+        """
+        Fingerprint the universe definition for cache keys.
+        Uses JSON file mtime so edits invalidate cached analysis runs.
+        """
+        if index_name == "custom":
+            return "custom"
+        p = self.universe_dir / f"{index_name}.json"
+        try:
+            st = p.stat()
+            # nanosecond precision when available
+            return str(getattr(st, "st_mtime_ns", int(st.st_mtime * 1_000_000_000)))
+        except Exception:
+            return "0"
+
     def list_indices(self) -> List[IndexInfo]:
         return [
+            # US
             IndexInfo(name="sp500", label="S&P 500"),
-            IndexInfo(name="nifty50", label="NIFTY 50"),
-            IndexInfo(name="niftynext50", label="NIFTY NEXT 50"),
             IndexInfo(name="nasdaq100", label="NASDAQ 100"),
             IndexInfo(name="dow30", label="DOW 30"),
+            # India
+            IndexInfo(name="nifty50", label="NIFTY 50"),
+            IndexInfo(name="niftynext50", label="NIFTY NEXT 50"),
+            IndexInfo(name="nifty500", label="NIFTY 500"),
+            # Global
             IndexInfo(name="global_indices", label="Global indices"),
+            # Commodities
+            IndexInfo(name="commodities", label="Commodities"),
+            # Sectors
             IndexInfo(name="sector_indices", label="Sector indices (GICS)"),
             IndexInfo(name="custom", label="Custom Watchlist (Coming Soon)"),
         ]

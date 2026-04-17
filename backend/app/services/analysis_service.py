@@ -115,7 +115,7 @@ class AnalysisService:
         )
         if missing:
             missing_without_cache = [s for s in missing if s not in prices_by_symbol or prices_by_symbol[s].empty]
-            from app.utils.errors import ProviderRateLimitError
+            from app.utils.errors import ProviderAuthError, ProviderRateLimitError
 
             try:
                 dl = await self.provider.download_daily_history(
@@ -146,6 +146,9 @@ class AnalysisService:
                             prices_by_symbol.setdefault(s, pd.DataFrame())
                     else:
                         raise ProviderRateLimitError("Provider returned no data (likely rate limit).")
+            except PermissionError as e:
+                # FMP returns 401/403 for invalid key or insufficient plan coverage.
+                raise ProviderAuthError(str(e) or "Provider auth failed.") from e
             except ProviderRateLimitError:
                 raise
             except Exception:
@@ -334,6 +337,7 @@ class AnalysisService:
         constituents = universe.constituents
         symbols = [c.symbol for c in constituents]
         name_map = {c.symbol: c.name for c in constituents}
+        universe_rank_by = {c.symbol: i for i, c in enumerate(constituents)}
         sector_map: Dict[str, Dict[str, str | None]] = {}
 
         # Pre-populate sector data from the universe (if present in JSON).
@@ -412,6 +416,7 @@ class AnalysisService:
                         name=display_name,
                         sector=c.sector,
                         sub_sector=c.sub_sector,
+                        universe_rank=universe_rank_by.get(s),
                         score_1=c.score_latest.get("score_1"),
                         score_2=c.score_latest.get("score_2"),
                         score_3=c.score_latest.get("score_3"),
@@ -449,7 +454,13 @@ class AnalysisService:
                 return (1, 0.0)
             return (0, -float(val))
 
-        rows.sort(key=_sort_key)
+        # Default ordering:
+        # - Most universes: score (desc)
+        # - global_indices: preserve the universe-defined order (continent blocks + within-block sequence)
+        if universe.name == "global_indices":
+            rows.sort(key=lambda r: (r.universe_rank if r.universe_rank is not None else 10**9))
+        else:
+            rows.sort(key=_sort_key)
 
         resp = RunAnalysisResponse(
             metadata={

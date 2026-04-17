@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectDivider,
+  SelectGroup,
+  SelectGroupLabel,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -42,7 +45,9 @@ const FALLBACK_INDICES: IndexInfo[] = [
   { name: "dow30", label: "Dow 30" },
   { name: "nifty50", label: "Nifty 50" },
   { name: "niftynext50", label: "Nifty Next 50" },
+  { name: "nifty500", label: "Nifty 500" },
   { name: "global_indices", label: "Global indices" },
+  { name: "commodities", label: "Commodities" },
   { name: "sector_indices", label: "Sector indices (GICS)" },
 ];
 
@@ -111,6 +116,45 @@ export default function Home() {
         setError("Backend API is not reachable. Start the backend to run analysis.");
       });
   }, []);
+
+  const indicesByName = React.useMemo(() => {
+    const m = new Map<string, IndexInfo>();
+    indices.forEach((i) => m.set(i.name, i));
+    return m;
+  }, [indices]);
+
+  const indexGroups = React.useMemo(() => {
+    const pick = (names: string[]) =>
+      names.map((n) => indicesByName.get(n)).filter(Boolean) as IndexInfo[];
+
+    const remaining = new Map(indicesByName);
+    const take = (names: string[]) => {
+      const got = pick(names);
+      names.forEach((n) => remaining.delete(n));
+      return got;
+    };
+
+    const groups: { label: string; items: IndexInfo[] }[] = [
+      { label: "US", items: take(["sp500", "nasdaq100", "dow30"]) },
+      { label: "India", items: take(["nifty50", "niftynext50", "nifty500"]) },
+      {
+        label: "Global indices",
+        items: take(["global_indices"]),
+      },
+      { label: "Commodities", items: take(["commodities"]) },
+      { label: "Sectors", items: take(["sector_indices"]) },
+    ].filter((g) => g.items.length > 0);
+
+    // Anything else we didn't explicitly group (e.g. future additions).
+    const leftovers = Array.from(remaining.values()).filter((i) => i.name !== "custom");
+    leftovers.sort((a, b) => a.label.localeCompare(b.label));
+    if (leftovers.length) groups.push({ label: "Other", items: leftovers });
+
+    const custom = indicesByName.get("custom");
+    if (custom) groups.push({ label: "Custom", items: [custom] });
+
+    return groups;
+  }, [indicesByName]);
 
   React.useEffect(() => {
     if (!indices.length) return;
@@ -306,10 +350,18 @@ export default function Home() {
                         <SelectValue placeholder="Select index" />
                       </SelectTrigger>
                       <SelectContent>
-                        {indices.map((i) => (
-                          <SelectItem key={i.name} value={i.name}>
-                            {i.label}
-                          </SelectItem>
+                        {indexGroups.map((g, idx) => (
+                          <React.Fragment key={g.label}>
+                            {idx > 0 ? <SelectDivider /> : null}
+                            <SelectGroup>
+                              <SelectGroupLabel>{g.label}</SelectGroupLabel>
+                              {g.items.map((i) => (
+                                <SelectItem key={i.name} value={i.name}>
+                                  {i.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </React.Fragment>
                         ))}
                       </SelectContent>
                     </Select>

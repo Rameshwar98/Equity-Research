@@ -38,8 +38,26 @@ def _coerce_mkt_cap(row: dict[str, Any]) -> float | None:
 
 
 def _to_fmp_symbol(symbol: str) -> str:
-    # FMP uses '-' for tickers like BRK.B -> BRK-B
-    return symbol.replace(".", "-")
+    """
+    Convert internal ticker to the FMP format.
+
+    - Keep exchange suffixes like `.NS`, `.T`, `.SS` intact (FMP expects the dot).
+    - Convert class-share tickers like `BRK.B` -> `BRK-B`.
+    """
+    s = (symbol or "").strip()
+    if not s:
+        return s
+
+    # Preserve exchange suffix symbols (e.g. RELIANCE.NS, 1306.T, 000001.SS).
+    # Heuristic: if the last token after '.' is 2-4 chars (exchange code),
+    # keep dots as-is.
+    if "." in s:
+        base, suffix = s.rsplit(".", 1)
+        if 2 <= len(suffix) <= 4:
+            return s
+
+    # Otherwise treat '.' as a class separator (e.g. BRK.B -> BRK-B).
+    return s.replace(".", "-")
 
 
 def _parse_period_to_range(period: str) -> tuple[str, str]:

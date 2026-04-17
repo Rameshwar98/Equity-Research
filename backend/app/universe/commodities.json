@@ -1,0 +1,12 @@
+{
+  "constituents": [
+    { "symbol": "USO", "name": "WTI Crude Oil (USO)" },
+    { "symbol": "BNO", "name": "Brent Crude Oil (BNO)" },
+    { "symbol": "UNG", "name": "Natural Gas (UNG)" },
+    { "symbol": "GLD", "name": "Gold (GLD)" },
+    { "symbol": "SLV", "name": "Silver (SLV)" },
+    { "symbol": "CPER", "name": "Copper (CPER)" },
+    { "symbol": "DBA", "name": "Agriculture basket (DBA)" }
+  ]
+}
+

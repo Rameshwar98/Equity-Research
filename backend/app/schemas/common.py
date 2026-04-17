@@ -46,6 +46,8 @@ class AnalysisRow(BaseModel):
     name: str | None = None
     sector: str | None = None
     sub_sector: str | None = None
+    # Order of this symbol in the universe definition (0-based). Used for stable layouts.
+    universe_rank: int | None = None
     score_1: float | None = None
     score_2: float | None = None
     score_3: float | None = None

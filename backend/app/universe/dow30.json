@@ -1,15 +1,35 @@
 {
   "constituents": [
     { "symbol": "AAPL", "name": "Apple Inc." },
-    { "symbol": "MSFT", "name": "Microsoft" },
+    { "symbol": "AMGN", "name": "Amgen Inc." },
+    { "symbol": "AXP", "name": "American Express" },
+    { "symbol": "BA", "name": "Boeing" },
+    { "symbol": "CAT", "name": "Caterpillar" },
+    { "symbol": "CRM", "name": "Salesforce" },
+    { "symbol": "CSCO", "name": "Cisco Systems" },
+    { "symbol": "CVX", "name": "Chevron" },
+    { "symbol": "DIS", "name": "The Walt Disney Company" },
+    { "symbol": "DOW", "name": "Dow Inc." },
+    { "symbol": "GS", "name": "Goldman Sachs" },
+    { "symbol": "HD", "name": "Home Depot" },
+    { "symbol": "HON", "name": "Honeywell" },
+    { "symbol": "IBM", "name": "IBM" },
+    { "symbol": "INTC", "name": "Intel" },
     { "symbol": "JNJ", "name": "Johnson & Johnson" },
     { "symbol": "JPM", "name": "JPMorgan Chase" },
-    { "symbol": "V", "name": "Visa" },
-    { "symbol": "PG", "name": "Procter & Gamble" },
     { "symbol": "KO", "name": "Coca-Cola" },
-    { "symbol": "DIS", "name": "Disney" },
-    { "symbol": "WMT", "name": "Walmart" },
-    { "symbol": "XOM", "name": "Exxon Mobil" }
+    { "symbol": "MCD", "name": "McDonald's" },
+    { "symbol": "MMM", "name": "3M" },
+    { "symbol": "MRK", "name": "Merck & Co." },
+    { "symbol": "MSFT", "name": "Microsoft" },
+    { "symbol": "NKE", "name": "Nike" },
+    { "symbol": "PG", "name": "Procter & Gamble" },
+    { "symbol": "TRV", "name": "The Travelers Companies" },
+    { "symbol": "UNH", "name": "UnitedHealth Group" },
+    { "symbol": "V", "name": "Visa" },
+    { "symbol": "VZ", "name": "Verizon" },
+    { "symbol": "WBA", "name": "Walgreens Boots Alliance" },
+    { "symbol": "WMT", "name": "Walmart" }
   ]
 }
 

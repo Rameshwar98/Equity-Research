@@ -1,142 +1,118 @@
 {
   "constituents": [
     {
-      "symbol": "SPY",
-      "name": "S&P 500",
-      "sector": "United States",
-      "sub_sector": "Large cap benchmark (500 companies)"
+      "symbol": "DIA",
+      "name": "DOW JONES",
+      "sector": "Americas",
+      "sub_sector": "Dow Jones Industrial Average (proxy)"
     },
     {
-      "symbol": "DIA",
-      "name": "Dow Jones Industrial Average",
-      "sector": "United States",
-      "sub_sector": "30 blue-chip companies"
+      "symbol": "SPY",
+      "name": "S&P 500",
+      "sector": "Americas",
+      "sub_sector": "Large cap benchmark (proxy)"
     },
     {
       "symbol": "QQQ",
-      "name": "NASDAQ Composite (proxy)",
-      "sector": "United States",
-      "sub_sector": "Tech-heavy index (tracks NASDAQ-100)"
+      "name": "NASDAQ",
+      "sector": "Americas",
+      "sub_sector": "NASDAQ-100 / NASDAQ proxy"
     },
     {
-      "symbol": "IWM",
-      "name": "Russell 2000",
-      "sector": "United States",
-      "sub_sector": "Small-cap index"
+      "symbol": "EWC",
+      "name": "S&P/TSX Comp",
+      "sector": "Americas",
+      "sub_sector": "Canada equity (proxy)"
     },
     {
-      "symbol": "EWU",
-      "name": "FTSE 100",
-      "sector": "Europe",
-      "sub_sector": "Top UK companies"
+      "symbol": "EWW",
+      "name": "S&P/BMV IPC",
+      "sector": "Americas",
+      "sub_sector": "Mexico equity (proxy)"
     },
     {
-      "symbol": "EWG",
-      "name": "DAX",
-      "sector": "Europe",
-      "sub_sector": "Major German companies"
+      "symbol": "EWZ",
+      "name": "IBOVESPA",
+      "sector": "Americas",
+      "sub_sector": "Brazil equity (proxy)"
     },
     {
-      "symbol": "EWQ",
-      "name": "CAC 40",
-      "sector": "Europe",
-      "sub_sector": "Leading French stocks"
+      "symbol": "ECH",
+      "name": "CHILE SCLT",
+      "sector": "Americas",
+      "sub_sector": "Chile equity (proxy)"
+    },
+    {
+      "symbol": "GXG",
+      "name": "Colom COLCAP",
+      "sector": "Americas",
+      "sub_sector": "Colombia equity (proxy)"
+    },
+    {
+      "symbol": "ARGT",
+      "name": "ARG MERVAL",
+      "sector": "Americas",
+      "sub_sector": "Argentina equity (proxy)"
+    },
+    {
+      "symbol": "EPU",
+      "name": "MSCI NUM Peru S...",
+      "sector": "Americas",
+      "sub_sector": "Peru equity (proxy)"
     },
     {
       "symbol": "FEZ",
       "name": "Euro Stoxx 50",
-      "sector": "Europe",
-      "sub_sector": "Pan-European blue chips"
+      "sector": "EMEA",
+      "sub_sector": "Eurozone large caps (proxy)"
+    },
+    {
+      "symbol": "EWU",
+      "name": "FTSE 100",
+      "sector": "EMEA",
+      "sub_sector": "United Kingdom large caps (proxy)"
+    },
+    {
+      "symbol": "EWQ",
+      "name": "CAC 40",
+      "sector": "EMEA",
+      "sub_sector": "France large caps (proxy)"
+    },
+    {
+      "symbol": "EWG",
+      "name": "DAX",
+      "sector": "EMEA",
+      "sub_sector": "Germany large caps (proxy)"
     },
     {
       "symbol": "EWJ",
-      "name": "Nikkei 225 (proxy)",
-      "sector": "Asia",
-      "sub_sector": "Japan flagship index"
+      "name": "NIKKEI",
+      "sector": "Asia/Pacific",
+      "sub_sector": "Japan equity (proxy)"
     },
     {
-      "symbol": "1306.T",
-      "name": "TOPIX",
-      "sector": "Asia",
-      "sub_sector": "Broad Japan market"
-    },
-    {
-      "symbol": "000001.SS",
-      "name": "Shanghai Composite",
-      "sector": "Asia",
-      "sub_sector": "Mainland China index"
+      "symbol": "EWH",
+      "name": "HANG SENG",
+      "sector": "Asia/Pacific",
+      "sub_sector": "Hong Kong equity (proxy)"
     },
     {
       "symbol": "ASHR",
       "name": "CSI 300",
-      "sector": "Asia",
-      "sub_sector": "Top Shanghai & Shenzhen stocks"
+      "sector": "Asia/Pacific",
+      "sub_sector": "China A-shares (proxy)"
     },
     {
-      "symbol": "EWH",
-      "name": "Hang Seng (proxy)",
-      "sector": "Asia",
-      "sub_sector": "Hong Kong benchmark"
-    },
-    {
-      "symbol": "INDA",
-      "name": "Nifty 50",
-      "sector": "Asia",
-      "sub_sector": "Top 50 NSE stocks"
-    },
-    {
-      "symbol": "INDY",
-      "name": "Sensex (proxy)",
-      "sector": "Asia",
-      "sub_sector": "Major Indian companies"
-    },
-    {
-      "symbol": "EEM",
-      "name": "MSCI Emerging Markets",
-      "sector": "Emerging Markets",
-      "sub_sector": "EM benchmark"
-    },
-    {
-      "symbol": "EWZ",
-      "name": "Bovespa",
-      "sector": "Emerging Markets",
-      "sub_sector": "Brazil index"
-    },
-    {
-      "symbol": "EZA",
-      "name": "FTSE/JSE All Share",
-      "sector": "Emerging Markets",
-      "sub_sector": "South Africa benchmark"
-    },
-    {
-      "symbol": "EWY",
-      "name": "KOSPI",
-      "sector": "Emerging Markets",
-      "sub_sector": "South Korea index"
-    },
-    {
-      "symbol": "KSA",
-      "name": "Tadawul All Share (TASI) (proxy)",
-      "sector": "GCC",
-      "sub_sector": "Saudi market"
-    },
-    {
-      "symbol": "UAE",
-      "name": "UAE equity (MSCI UAE)",
-      "sector": "GCC",
-      "sub_sector": "Dubai & Abu Dhabi markets (proxy)"
-    },
-    {
-      "symbol": "QAT",
-      "name": "Qatar (MSCI Qatar)",
-      "sector": "GCC",
-      "sub_sector": "Qatar market"
+      "symbol": "EWA",
+      "name": "S&P/ASX 200",
+      "sector": "Asia/Pacific",
+      "sub_sector": "Australia equity (proxy)"
     },
     {
       "symbol": "URTH",
-      "name": "MSCI World",
+      "name": "BBG World L/M",
       "sector": "Global",
-      "sub_sector": "Developed markets"
+      "sub_sector": "Broad developed world (proxy)"
     },
     {
       "symbol": "ACWI",

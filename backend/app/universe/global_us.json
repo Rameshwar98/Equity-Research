@@ -1,0 +1,29 @@
+{
+  "constituents": [
+    {
+      "symbol": "SPY",
+      "name": "S&P 500",
+      "sector": "United States",
+      "sub_sector": "Large cap benchmark (500 companies)"
+    },
+    {
+      "symbol": "DIA",
+      "name": "Dow Jones Industrial Average",
+      "sector": "United States",
+      "sub_sector": "30 blue-chip companies"
+    },
+    {
+      "symbol": "QQQ",
+      "name": "NASDAQ Composite (proxy)",
+      "sector": "United States",
+      "sub_sector": "Tech-heavy index (tracks NASDAQ-100)"
+    },
+    {
+      "symbol": "IWM",
+      "name": "Russell 2000",
+      "sector": "United States",
+      "sub_sector": "Small-cap index"
+    }
+  ]
+}
+

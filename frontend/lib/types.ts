@@ -9,6 +9,8 @@ export type AnalysisRow = {
   name?: string | null;
   sector?: string | null;
   sub_sector?: string | null;
+  /** 0-based order in the selected universe list (stable layout helper). */
+  universe_rank?: number | null;
   score_1?: number | null;
   score_2?: number | null;
   score_3?: number | null;
@@ -125,6 +127,8 @@ export type PeerRow = {
   symbol: string;
   name?: string | null;
   mkt_cap?: number | null;
+  /** Latest value of the selected score (score_1|score_2|score_3) for this peer. */
+  score?: number | null;
   signal: Signal;
   return_1d?: number | null;
   return_1w?: number | null;

@@ -1,0 +1,47 @@
+{
+  "constituents": [
+    {
+      "symbol": "EWJ",
+      "name": "Nikkei 225 (proxy)",
+      "sector": "Asia",
+      "sub_sector": "Japan flagship index"
+    },
+    {
+      "symbol": "1306.T",
+      "name": "TOPIX",
+      "sector": "Asia",
+      "sub_sector": "Broad Japan market"
+    },
+    {
+      "symbol": "000001.SS",
+      "name": "Shanghai Composite",
+      "sector": "Asia",
+      "sub_sector": "Mainland China index"
+    },
+    {
+      "symbol": "ASHR",
+      "name": "CSI 300",
+      "sector": "Asia",
+      "sub_sector": "Top Shanghai & Shenzhen stocks"
+    },
+    {
+      "symbol": "EWH",
+      "name": "Hang Seng (proxy)",
+      "sector": "Asia",
+      "sub_sector": "Hong Kong benchmark"
+    },
+    {
+      "symbol": "INDA",
+      "name": "Nifty 50",
+      "sector": "Asia",
+      "sub_sector": "Top 50 NSE stocks"
+    },
+    {
+      "symbol": "INDY",
+      "name": "Sensex (proxy)",
+      "sector": "Asia",
+      "sub_sector": "Major Indian companies"
+    }
+  ]
+}
+

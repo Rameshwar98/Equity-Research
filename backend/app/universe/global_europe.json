@@ -1,0 +1,29 @@
+{
+  "constituents": [
+    {
+      "symbol": "EWU",
+      "name": "FTSE 100",
+      "sector": "Europe",
+      "sub_sector": "Top UK companies"
+    },
+    {
+      "symbol": "EWG",
+      "name": "DAX",
+      "sector": "Europe",
+      "sub_sector": "Major German companies"
+    },
+    {
+      "symbol": "EWQ",
+      "name": "CAC 40",
+      "sector": "Europe",
+      "sub_sector": "Leading French stocks"
+    },
+    {
+      "symbol": "FEZ",
+      "name": "Euro Stoxx 50",
+      "sector": "Europe",
+      "sub_sector": "Pan-European blue chips"
+    }
+  ]
+}
+

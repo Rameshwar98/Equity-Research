@@ -19,6 +19,14 @@ function fmtPct(v?: number | null, digits = 2) {
   return `${sign}${v.toFixed(digits)}%`;
 }
 
+function fmtScore(v?: number | null) {
+  if (v == null || Number.isNaN(v)) return "—";
+  const abs = Math.abs(v);
+  if (abs >= 100) return v.toFixed(1);
+  if (abs >= 10) return v.toFixed(2);
+  return v.toFixed(3);
+}
+
 /** Return cells: solid-enough tints + dark text (light) / light text (dark) for WCAG-friendly contrast. */
 function retHeat(v?: number | null) {
   if (v == null || Number.isNaN(v)) {
@@ -78,6 +86,7 @@ export function PeerComparisonTable({
     { key: "name", label: "Name" },
     { key: "mkt", label: "Mkt cap" },
     { key: "sig", label: "Signal" },
+    { key: "score", label: "Score" },
     { key: "1d", label: "1D" },
     { key: "1w", label: "1W" },
     { key: "1m", label: "1M" },
@@ -106,6 +115,7 @@ export function PeerComparisonTable({
             <col className="w-[6.75rem]" />
             <col className="w-[2.85rem]" />
             <col className="w-[2.65rem]" />
+            <col className="w-[3.1rem]" />
             <col className="w-[2.5rem]" />
             <col className="w-[2.5rem]" />
             <col className="w-[2.5rem]" />
@@ -157,6 +167,9 @@ export function PeerComparisonTable({
                     signal={p.signal as Signal}
                     className="h-5 px-1 py-0 text-[9px] leading-none font-semibold"
                   />
+                </td>
+                <td className="px-1 py-1 text-right tabular-nums font-semibold text-foreground align-middle">
+                  {fmtScore(p.score)}
                 </td>
                 <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_1d))}>
                   {fmtPct(p.return_1d, 1)}
