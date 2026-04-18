@@ -53,6 +53,12 @@ const FALLBACK_INDICES: IndexInfo[] = [
 
 const ALL_VALUE = "__all__";
 
+/** Backend `/indices` may lag deploys; keep dropdown entries the UI supports. */
+function mergeIndicesWithFallback(api: IndexInfo[]): IndexInfo[] {
+  const apiNames = new Set(api.map((i) => i.name));
+  return [...api, ...FALLBACK_INDICES.filter((f) => !apiNames.has(f.name))];
+}
+
 /** Placeholder matching compact toolbar — avoids SSR/client hydration fights (Radix IDs, extension-injected attrs). */
 function ControlsSkeleton() {
   return (
@@ -110,7 +116,7 @@ export default function Home() {
 
   React.useEffect(() => {
     getIndices()
-      .then((d) => setIndices(d))
+      .then((d) => setIndices(mergeIndicesWithFallback(d)))
       .catch(() => {
         setIndices(FALLBACK_INDICES);
         setError("Backend API is not reachable. Start the backend to run analysis.");
