@@ -33,13 +33,14 @@ function monthTitle(ym: string) {
   return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
 
-type Entry = { date: string; signal: Signal; close: number | null };
+type Entry = { date: string; signal: Signal; close: number | null; score: number | null };
 type Group = { key: string; title: string; entries: Entry[] };
 
 function buildGroups(
   dates: string[],
   signals: Signal[],
-  closes?: (number | null)[]
+  closes?: (number | null)[],
+  scores?: (number | null)[]
 ): Group[] {
   const map = new Map<string, Group>();
   for (let i = 0; i < dates.length; i++) {
@@ -49,6 +50,7 @@ function buildGroups(
       date: dates[i],
       signal: signals[i],
       close: closes?.[i] ?? null,
+      score: scores?.[i] ?? null,
     });
   }
   const groups = Array.from(map.values());
@@ -61,16 +63,21 @@ export function SignalTimeline({
   dateLabels,
   signals,
   closes,
+  scores,
 }: {
   dateLabels: string[];
   signals: Signal[];
   closes?: (number | null)[];
+  scores?: (number | null)[];
 }) {
   const groups = React.useMemo(
-    () => buildGroups(dateLabels, signals, closes),
-    [dateLabels, signals, closes]
+    () => buildGroups(dateLabels, signals, closes, scores),
+    [dateLabels, signals, closes, scores]
   );
   const hasCloses = closes && closes.some((c) => c != null);
+  const hasScores =
+    !!scores && scores.length === dateLabels.length && dateLabels.length > 0;
+  const colCount = 2 + (hasCloses ? 1 : 0) + (hasScores ? 1 : 0) + 1;
 
   return (
     <div className="max-h-[520px] overflow-y-auto pr-1">
@@ -80,7 +87,7 @@ export function SignalTimeline({
             <React.Fragment key={g.key}>
               <tr>
                 <td
-                  colSpan={hasCloses ? 4 : 3}
+                  colSpan={colCount}
                   className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
                 >
                   {g.title}
@@ -97,6 +104,11 @@ export function SignalTimeline({
                   {hasCloses && (
                     <td className="py-1.5 tabular-nums text-muted-foreground text-right">
                       {e.close != null ? e.close.toFixed(2) : "—"}
+                    </td>
+                  )}
+                  {hasScores && (
+                    <td className="py-1.5 tabular-nums text-muted-foreground text-right font-medium">
+                      {e.score != null ? e.score.toFixed(4) : "—"}
                     </td>
                   )}
                   <td className={cn("py-1.5 text-right font-medium pr-1", TEXT[e.signal])}>

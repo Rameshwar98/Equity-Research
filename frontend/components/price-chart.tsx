@@ -374,6 +374,23 @@ export function PriceChart({
             />
           )}
 
+          {hoverPoint?.close != null && Number.isFinite(hoverPoint.close) && (
+            <ReferenceLine
+              yAxisId="price"
+              y={hoverPoint.close}
+              stroke="hsl(var(--primary))"
+              strokeWidth={1}
+              strokeDasharray="6 4"
+              strokeOpacity={0.9}
+              label={{
+                value: `$${hoverPoint.close.toFixed(2)}`,
+                position: "right",
+                fontSize: 10,
+                fill: "hsl(var(--primary))",
+              }}
+            />
+          )}
+
           <Tooltip
             content={tooltipBridge}
             cursor={cursorProps}

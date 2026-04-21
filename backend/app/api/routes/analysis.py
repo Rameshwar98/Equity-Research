@@ -1066,6 +1066,17 @@ async def stock_details(
     signals = list(reversed(signals))
     closes = list(reversed(closes))
 
+    def _timeline_score_cell(v: Any) -> float | None:
+        try:
+            if v is None or (hasattr(v, "__float__") and (v != v)):  # nan
+                return None
+            return round(float(v), 4)
+        except Exception:
+            return None
+
+    # Same order as date_labels / signals / closes (most-recent first): selected score per session
+    score_timeline = [_timeline_score_cell(v) for v in reversed(vals)]
+
     close_latest = float(close.iloc[-1])
     fib_52w = fib_service.compute(ind.high_52w, ind.low_52w, close_latest)
 
@@ -1081,6 +1092,8 @@ async def stock_details(
         "date_labels": date_labels,
         "signals": signals,
         "closes": closes,
+        "selected_score": selected,
+        "score_timeline": score_timeline,
         "close": close_latest,
         "chart_data": chart_data,
         "scores": {

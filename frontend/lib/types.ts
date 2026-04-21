@@ -68,6 +68,10 @@ export type StockDetailsResponse = {
   date_labels: string[];
   signals: Signal[];
   closes?: (number | null)[];
+  /** Which score formula the timeline + signals use (matches query param). */
+  selected_score?: ScoreKey;
+  /** Per-session values for `selected_score`, same order as `date_labels` (most-recent first). */
+  score_timeline?: (number | null)[];
   close?: number | null;
   scores: Record<ScoreKey, number | null>;
   emas: {

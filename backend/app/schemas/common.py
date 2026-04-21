@@ -116,6 +116,9 @@ class StockDetailsResponse(BaseModel):
     name: str | None = None
     date_labels: List[str]  # len=16 (most-recent first)
     signals: List[str]  # len=16
+    closes: List[float | None] | None = None
+    selected_score: str | None = None
+    score_timeline: List[float | None] | None = None
     close: float | None = None
     scores: Dict[str, float | None]
     emas: EmaValues

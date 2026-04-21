@@ -285,70 +285,81 @@ export function StockDrawer({
         ) : data ? (
           <div className="pr-1 sm:pr-0">
 
-            {/* ── Key metrics row ── */}
-            <div className="mt-5 flex flex-wrap items-end gap-6 gap-y-4">
-              <div>
-                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {/* ── Key metrics row (original layout), but aligned heights ── */}
+            <div className="mt-5 flex flex-wrap items-end gap-x-8 gap-y-4">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground leading-none">
                   Last
                 </div>
-                <div className="text-3xl font-semibold tabular-nums leading-none mt-1">
-                  {data.close?.toFixed(2) ?? "—"}
+                <div className="flex min-h-[3rem] items-end">
+                  <div className="text-3xl font-semibold tabular-nums leading-none">
+                    {data.close?.toFixed(2) ?? "—"}
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground leading-none">
                   Signal
                 </div>
-                <TrendBadge signal={data.signals?.[0] ?? "N/A"} />
+                <div className="flex min-h-[3rem] items-end">
+                  <TrendBadge
+                    signal={data.signals?.[0] ?? "N/A"}
+                    className="px-4 py-2 text-sm font-semibold"
+                  />
+                </div>
               </div>
 
-              <div>
-                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground leading-none">
                   View
                 </div>
-                <div
-                  className="inline-flex rounded-lg border border-border/80 bg-muted/40 p-1"
-                  role="tablist"
-                  aria-label="Drawer content"
-                >
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={drawerMainTab === "overview"}
-                    onClick={() => setDrawerMainTab("overview")}
-                    className={cn(
-                      "rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3",
-                      drawerMainTab === "overview"
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
+                <div className="flex min-h-[3rem] items-end">
+                  <div
+                    className="inline-flex rounded-lg border border-border/80 bg-muted/40 p-1"
+                    role="tablist"
+                    aria-label="Drawer content"
                   >
-                    Overview
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={drawerMainTab === "news"}
-                    onClick={() => setDrawerMainTab("news")}
-                    className={cn(
-                      "rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3",
-                      drawerMainTab === "news"
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    News
-                  </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={drawerMainTab === "overview"}
+                      onClick={() => setDrawerMainTab("overview")}
+                      className={cn(
+                        "rounded-md px-4 py-2 text-sm font-semibold transition-all",
+                        drawerMainTab === "overview"
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      Overview
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={drawerMainTab === "news"}
+                      onClick={() => setDrawerMainTab("news")}
+                      className={cn(
+                        "rounded-md px-4 py-2 text-sm font-semibold transition-all",
+                        drawerMainTab === "news"
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      News
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="ml-auto text-right min-w-[6rem]">
-                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <div className="ml-auto flex min-w-[6rem] flex-col gap-1.5 text-right">
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground leading-none">
                   {SCORE_LABELS[selectedScore]}
                 </div>
-                <div className="text-lg tabular-nums font-semibold leading-tight mt-1">
-                  {fmt4(data.scores[selectedScore])}
+                <div className="flex min-h-[3rem] items-end justify-end">
+                  <div className="text-lg tabular-nums font-semibold leading-none">
+                    {fmt4(data.scores[selectedScore])}
+                  </div>
                 </div>
               </div>
             </div>
@@ -484,7 +495,12 @@ export function StockDrawer({
                       onSyncHoverDate={setChartHeatSyncDate}
                     />
                   ) : (
-                    <SignalTimeline dateLabels={data.date_labels} signals={data.signals} closes={data.closes} />
+                    <SignalTimeline
+                      dateLabels={data.date_labels}
+                      signals={data.signals}
+                      closes={data.closes}
+                      scores={data.score_timeline}
+                    />
                   )}
                   <Divider />
                   <div className="text-sm">
