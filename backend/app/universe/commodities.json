@@ -1,12 +1,46 @@
 {
   "constituents": [
-    { "symbol": "USO", "name": "WTI Crude Oil (USO)" },
-    { "symbol": "BNO", "name": "Brent Crude Oil (BNO)" },
-    { "symbol": "UNG", "name": "Natural Gas (UNG)" },
-    { "symbol": "GLD", "name": "Gold (GLD)" },
-    { "symbol": "SLV", "name": "Silver (SLV)" },
-    { "symbol": "CPER", "name": "Copper (CPER)" },
-    { "symbol": "DBA", "name": "Agriculture basket (DBA)" }
+    {
+      "symbol": "USO",
+      "name": "WTI Crude Oil (USO)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "BNO",
+      "name": "Brent Crude Oil (BNO)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "UNG",
+      "name": "Natural Gas (UNG)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "GLD",
+      "name": "Gold (GLD)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "SLV",
+      "name": "Silver (SLV)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "CPER",
+      "name": "Copper (CPER)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "DBA",
+      "name": "Agriculture basket (DBA)",
+      "sector": null,
+      "sub_sector": null
+    }
   ]
 }
-

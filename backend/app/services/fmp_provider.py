@@ -433,6 +433,66 @@ class FMPProvider(DataProvider):
 
         return result
 
+    async def fetch_symbol_classification(
+        self, symbols: list[str], timeout_seconds: float = 30.0
+    ) -> Dict[str, Dict[str, str | None]]:
+        """
+        Per symbol (best-effort): sector + industry (as sub_sector).
+        Uses stable/profile (documented) then v3/profile.
+        """
+        out: Dict[str, Dict[str, str | None]] = {s: {"sector": None, "sub_sector": None} for s in symbols}
+        if not symbols:
+            return out
+
+        sem = asyncio.Semaphore(2)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        timeout = httpx.Timeout(timeout_seconds)
+
+        async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
+
+            async def one(sym: str) -> None:
+                async with sem:
+                    if self.config.symbol_delay_seconds > 0:
+                        await asyncio.sleep(self.config.symbol_delay_seconds)
+                    fmp = _to_fmp_symbol(sym)
+
+                    def _merge(row: dict[str, Any]) -> None:
+                        if out[sym]["sector"] is None:
+                            sec = row.get("sector")
+                            out[sym]["sector"] = str(sec).strip() if sec else None
+                        if out[sym]["sub_sector"] is None:
+                            ind = row.get("industry") or row.get("subSector") or row.get("sub_sector")
+                            out[sym]["sub_sector"] = str(ind).strip() if ind else None
+
+                    try:
+                        surl = f"{self.config.base_url}/stable/profile"
+                        sdata = await self._fetch_json(
+                            client,
+                            surl,
+                            params={"symbol": fmp, "apikey": self.config.api_key},
+                            timeout_seconds=timeout_seconds,
+                        )
+                        _merge(_profile_first_row(sdata))
+                    except Exception as e:
+                        logger.debug("classification stable %s: %s", sym, e)
+
+                    if out[sym]["sector"] is None or out[sym]["sub_sector"] is None:
+                        try:
+                            purl = f"{self.config.base_url}/api/v3/profile/{fmp}"
+                            pdata = await self._fetch_json(
+                                client,
+                                purl,
+                                params={"apikey": self.config.api_key},
+                                timeout_seconds=timeout_seconds,
+                            )
+                            _merge(_profile_first_row(pdata))
+                        except Exception as e:
+                            logger.debug("classification v3 %s: %s", sym, e)
+
+            await asyncio.gather(*(one(s) for s in symbols))
+
+        return out
+
     async def fetch_stock_profile_summary(
         self, symbol: str, timeout_seconds: float = 15.0
     ) -> dict[str, str | None]:

@@ -3,252 +3,302 @@
     {
       "symbol": "ADANIPOWER.NS",
       "name": "Adani Power Limited",
-      "sector": "Integrated Power Utilities"
+      "sector": "Power",
+      "sub_sector": "Integrated Power Utilities"
     },
     {
       "symbol": "VEDL.NS",
       "name": "Vedanta Limited",
-      "sector": "Diversified Metals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Diversified Metals"
     },
     {
       "symbol": "ADANIGREEN.NS",
       "name": "Adani Green Energy Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "MAZDOCK.NS",
       "name": "Mazagon Dock Shipbuilders Limited",
-      "sector": "Ship Building & Allied Services"
+      "sector": "Capital Goods",
+      "sub_sector": "Ship Building & Allied Services"
     },
     {
       "symbol": "DMART.NS",
       "name": "Avenue Supermarts Limited",
-      "sector": "Diversified Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Diversified Retail"
     },
     {
       "symbol": "HDFCAMC.NS",
       "name": "HDFC Asset Management Company Limited",
-      "sector": "Asset Management Company"
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management Company"
     },
     {
       "symbol": "ADANIENSOL.NS",
       "name": "Adani Energy Solutions Limited",
-      "sector": "Power Distribution"
+      "sector": "Power",
+      "sub_sector": "Power Distribution"
     },
     {
       "symbol": "VBL.NS",
       "name": "Varun Beverages Limited",
-      "sector": "Other Beverages"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Other Beverages"
     },
     {
       "symbol": "RECLTD.NS",
       "name": "REC Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "PFC.NS",
       "name": "Power Finance Corporation Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "HAL.NS",
       "name": "Hindustan Aeronautics Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "ABB.NS",
       "name": "ABB India Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "TMCV.NS",
       "name": "Tata Motors Limited",
-      "sector": "Commercial Vehicles"
+      "sector": "Capital Goods",
+      "sub_sector": "Commercial Vehicles"
     },
     {
       "symbol": "SIEMENS.NS",
       "name": "Siemens Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "UNITDSPR.NS",
       "name": "United Spirits Limited",
-      "sector": "Breweries & Distilleries"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Breweries & Distilleries"
     },
     {
       "symbol": "JINDALSTEL.NS",
       "name": "JINDAL STEEL LIMITED",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "IRFC.NS",
       "name": "Indian Railway Finance Corporation Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "BPCL.NS",
       "name": "Bharat Petroleum Corporation Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "CGPOWER.NS",
       "name": "CG Power and Industrial Solutions Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "HYUNDAI.NS",
       "name": "Hyundai Motor India Limited",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "TATAPOWER.NS",
       "name": "Tata Power Company Limited",
-      "sector": "Integrated Power Utilities"
+      "sector": "Power",
+      "sub_sector": "Integrated Power Utilities"
     },
     {
       "symbol": "CUMMINSIND.NS",
       "name": "Cummins India Limited",
-      "sector": "Compressors Pumps & Diesel Engines"
+      "sector": "Capital Goods",
+      "sub_sector": "Compressors Pumps & Diesel Engines"
     },
     {
       "symbol": "DLF.NS",
       "name": "DLF Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "PIDILITIND.NS",
       "name": "Pidilite Industries Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "MOTHERSON.NS",
       "name": "Samvardhana Motherson International Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "MUTHOOTFIN.NS",
       "name": "Muthoot Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "TVSMOTOR.NS",
       "name": "TVS Motor Company Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "GAIL.NS",
       "name": "GAIL (India) Limited",
-      "sector": "Gas Transmission/Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Gas Transmission/Marketing"
     },
     {
       "symbol": "LODHA.NS",
       "name": "Lodha Developers Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "BRITANNIA.NS",
       "name": "Britannia Industries Limited",
-      "sector": "Packaged Foods"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Packaged Foods"
     },
     {
       "symbol": "SOLARINDS.NS",
       "name": "Solar Industries India Limited",
-      "sector": "Explosives"
+      "sector": "Chemicals",
+      "sub_sector": "Explosives"
     },
     {
       "symbol": "CANBK.NS",
       "name": "Canara Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "BANKBARODA.NS",
       "name": "Bank of Baroda",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "GODREJCP.NS",
       "name": "Godrej Consumer Products Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "CHOLAFIN.NS",
       "name": "Cholamandalam Investment and Finance Company Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "HINDZINC.NS",
       "name": "Hindustan Zinc Limited",
-      "sector": "Zinc"
+      "sector": "Metals & Mining",
+      "sub_sector": "Zinc"
     },
     {
       "symbol": "INDHOTEL.NS",
       "name": "The Indian Hotels Company Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     },
     {
       "symbol": "IOC.NS",
       "name": "Indian Oil Corporation Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "UNIONBANK.NS",
       "name": "Union Bank of India",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "PNB.NS",
       "name": "Punjab National Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "LTM.NS",
       "name": "LTM Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "ENRIN.NS",
       "name": "Siemens Energy India Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "TORNTPHARM.NS",
       "name": "Torrent Pharmaceuticals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "BOSCHLTD.NS",
       "name": "Bosch Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "DIVISLAB.NS",
       "name": "Divi's Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "AMBUJACEM.NS",
       "name": "Ambuja Cements Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "TATACAP.NS",
       "name": "Tata Capital Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "BAJAJHLDNG.NS",
       "name": "Bajaj Holdings & Investment Limited",
-      "sector": "Holding Company"
+      "sector": "Financial Services",
+      "sub_sector": "Holding Company"
     },
     {
       "symbol": "ZYDUSLIFE.NS",
       "name": "Zydus Lifesciences Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "SHREECEM.NS",
       "name": "SHREE CEMENT LIMITED",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     }
   ]
 }

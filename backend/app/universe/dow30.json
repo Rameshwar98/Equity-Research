@@ -1,35 +1,184 @@
 {
   "constituents": [
-    { "symbol": "AAPL", "name": "Apple Inc." },
-    { "symbol": "AMGN", "name": "Amgen Inc." },
-    { "symbol": "AXP", "name": "American Express" },
-    { "symbol": "BA", "name": "Boeing" },
-    { "symbol": "CAT", "name": "Caterpillar" },
-    { "symbol": "CRM", "name": "Salesforce" },
-    { "symbol": "CSCO", "name": "Cisco Systems" },
-    { "symbol": "CVX", "name": "Chevron" },
-    { "symbol": "DIS", "name": "The Walt Disney Company" },
-    { "symbol": "DOW", "name": "Dow Inc." },
-    { "symbol": "GS", "name": "Goldman Sachs" },
-    { "symbol": "HD", "name": "Home Depot" },
-    { "symbol": "HON", "name": "Honeywell" },
-    { "symbol": "IBM", "name": "IBM" },
-    { "symbol": "INTC", "name": "Intel" },
-    { "symbol": "JNJ", "name": "Johnson & Johnson" },
-    { "symbol": "JPM", "name": "JPMorgan Chase" },
-    { "symbol": "KO", "name": "Coca-Cola" },
-    { "symbol": "MCD", "name": "McDonald's" },
-    { "symbol": "MMM", "name": "3M" },
-    { "symbol": "MRK", "name": "Merck & Co." },
-    { "symbol": "MSFT", "name": "Microsoft" },
-    { "symbol": "NKE", "name": "Nike" },
-    { "symbol": "PG", "name": "Procter & Gamble" },
-    { "symbol": "TRV", "name": "The Travelers Companies" },
-    { "symbol": "UNH", "name": "UnitedHealth Group" },
-    { "symbol": "V", "name": "Visa" },
-    { "symbol": "VZ", "name": "Verizon" },
-    { "symbol": "WBA", "name": "Walgreens Boots Alliance" },
-    { "symbol": "WMT", "name": "Walmart" }
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "sector": "Technology",
+      "sub_sector": "Consumer Electronics"
+    },
+    {
+      "symbol": "AMGN",
+      "name": "Amgen Inc.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "AXP",
+      "name": "American Express",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "BA",
+      "name": "Boeing",
+      "sector": "Industrials",
+      "sub_sector": "Aerospace & Defense"
+    },
+    {
+      "symbol": "CAT",
+      "name": "Caterpillar",
+      "sector": "Industrials",
+      "sub_sector": "Agricultural - Machinery"
+    },
+    {
+      "symbol": "CRM",
+      "name": "Salesforce",
+      "sector": "Technology",
+      "sub_sector": "Software - Application"
+    },
+    {
+      "symbol": "CSCO",
+      "name": "Cisco Systems",
+      "sector": "Technology",
+      "sub_sector": "Communication Equipment"
+    },
+    {
+      "symbol": "CVX",
+      "name": "Chevron",
+      "sector": "Energy",
+      "sub_sector": "Oil & Gas Integrated"
+    },
+    {
+      "symbol": "DIS",
+      "name": "The Walt Disney Company",
+      "sector": "Communication Services",
+      "sub_sector": "Entertainment"
+    },
+    {
+      "symbol": "DOW",
+      "name": "Dow Inc.",
+      "sector": "Basic Materials",
+      "sub_sector": "Chemicals"
+    },
+    {
+      "symbol": "GS",
+      "name": "Goldman Sachs",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Capital Markets"
+    },
+    {
+      "symbol": "HD",
+      "name": "Home Depot",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Home Improvement"
+    },
+    {
+      "symbol": "HON",
+      "name": "Honeywell",
+      "sector": "Industrials",
+      "sub_sector": "Conglomerates"
+    },
+    {
+      "symbol": "IBM",
+      "name": "IBM",
+      "sector": "Technology",
+      "sub_sector": "Information Technology Services"
+    },
+    {
+      "symbol": "INTC",
+      "name": "Intel",
+      "sector": "Technology",
+      "sub_sector": "Semiconductors"
+    },
+    {
+      "symbol": "JNJ",
+      "name": "Johnson & Johnson",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "JPM",
+      "name": "JPMorgan Chase",
+      "sector": "Financial Services",
+      "sub_sector": "Banks - Diversified"
+    },
+    {
+      "symbol": "KO",
+      "name": "Coca-Cola",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Beverages - Non-Alcoholic"
+    },
+    {
+      "symbol": "MCD",
+      "name": "McDonald's",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Restaurants"
+    },
+    {
+      "symbol": "MMM",
+      "name": "3M",
+      "sector": "Industrials",
+      "sub_sector": "Conglomerates"
+    },
+    {
+      "symbol": "MRK",
+      "name": "Merck & Co.",
+      "sector": "Healthcare",
+      "sub_sector": "Drug Manufacturers - General"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft",
+      "sector": "Technology",
+      "sub_sector": "Software - Infrastructure"
+    },
+    {
+      "symbol": "NKE",
+      "name": "Nike",
+      "sector": "Consumer Cyclical",
+      "sub_sector": "Apparel - Footwear & Accessories"
+    },
+    {
+      "symbol": "PG",
+      "name": "Procter & Gamble",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Household & Personal Products"
+    },
+    {
+      "symbol": "TRV",
+      "name": "The Travelers Companies",
+      "sector": "Financial Services",
+      "sub_sector": "Insurance - Property & Casualty"
+    },
+    {
+      "symbol": "UNH",
+      "name": "UnitedHealth Group",
+      "sector": "Healthcare",
+      "sub_sector": "Medical - Healthcare Plans"
+    },
+    {
+      "symbol": "V",
+      "name": "Visa",
+      "sector": "Financial Services",
+      "sub_sector": "Financial - Credit Services"
+    },
+    {
+      "symbol": "VZ",
+      "name": "Verizon",
+      "sector": "Communication Services",
+      "sub_sector": "Telecommunications Services"
+    },
+    {
+      "symbol": "WBA",
+      "name": "Walgreens Boots Alliance",
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceutical Retailers"
+    },
+    {
+      "symbol": "WMT",
+      "name": "Walmart",
+      "sector": "Consumer Defensive",
+      "sub_sector": "Discount Stores"
+    }
   ]
 }
-

@@ -2,7 +2,12 @@ export type Signal = "BUY" | "HOLD" | "SELL" | "N/A";
 export type ScoreKey = "score_1" | "score_2" | "score_3";
 
 export type IndexInfo = { name: string; label: string };
-export type Constituent = { symbol: string; name?: string | null };
+export type Constituent = {
+  symbol: string;
+  name?: string | null;
+  sector?: string | null;
+  sub_sector?: string | null;
+};
 
 export type AnalysisRow = {
   symbol: string;

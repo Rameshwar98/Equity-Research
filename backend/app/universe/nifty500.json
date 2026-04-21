@@ -3,2502 +3,3002 @@
     {
       "symbol": "SCI.NS",
       "name": "Shipping Corporation Of India Limited",
-      "sector": "Shipping"
+      "sector": "Services",
+      "sub_sector": "Shipping"
     },
     {
       "symbol": "HDFCBANK.NS",
       "name": "HDFC Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "ANGELONE.NS",
       "name": "Angel One Limited",
-      "sector": "Stockbroking & Allied"
+      "sector": "Financial Services",
+      "sub_sector": "Stockbroking & Allied"
     },
     {
       "symbol": "ICICIBANK.NS",
       "name": "ICICI Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "GMDCLTD.NS",
       "name": "Gujarat Mineral Development Corporation Limited",
-      "sector": "Industrial Minerals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Industrial Minerals"
     },
     {
       "symbol": "BSE.NS",
       "name": "BSE Limited",
-      "sector": "Exchange and Data Platform"
+      "sector": "Financial Services",
+      "sub_sector": "Exchange and Data Platform"
     },
     {
       "symbol": "RELIANCE.NS",
       "name": "Reliance Industries Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "ADANIPOWER.NS",
       "name": "Adani Power Limited",
-      "sector": "Integrated Power Utilities"
+      "sector": "Power",
+      "sub_sector": "Integrated Power Utilities"
     },
     {
       "symbol": "SBIN.NS",
       "name": "State Bank of India",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "NAVA.NS",
       "name": "NAVA LIMITED",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "SUZLON.NS",
       "name": "Suzlon Energy Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "WIPRO.NS",
       "name": "Wipro Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "INFY.NS",
       "name": "Infosys Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "GALLANTT.NS",
       "name": "Gallantt Ispat Limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "OLAELEC.NS",
       "name": "Ola Electric Mobility Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "GROWW.NS",
       "name": "Billionbrains Garage Ventures Limited",
-      "sector": "Stockbroking & Allied"
+      "sector": "Financial Services",
+      "sub_sector": "Stockbroking & Allied"
     },
     {
       "symbol": "BHARTIARTL.NS",
       "name": "Bharti Airtel Limited",
-      "sector": "Telecom - Cellular & Fixed line services"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Cellular & Fixed line services"
     },
     {
       "symbol": "WAAREEENER.NS",
       "name": "Waaree Energies Limited",
-      "sector": "Other Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Other Electrical Equipment"
     },
     {
       "symbol": "JIOFIN.NS",
       "name": "Jio Financial Services Limited",
-      "sector": "Investment Company"
+      "sector": "Financial Services",
+      "sub_sector": "Investment Company"
     },
     {
       "symbol": "RVNL.NS",
       "name": "Rail Vikas Nigam Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "LT.NS",
       "name": "Larsen & Toubro Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "MCX.NS",
       "name": "Multi Commodity Exchange of India Limited",
-      "sector": "Exchange and Data Platform"
+      "sector": "Financial Services",
+      "sub_sector": "Exchange and Data Platform"
     },
     {
       "symbol": "HINDUNILVR.NS",
       "name": "Hindustan Unilever Limited",
-      "sector": "Diversified FMCG"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Diversified FMCG"
     },
     {
       "symbol": "ITC.NS",
       "name": "ITC Limited",
-      "sector": "Diversified FMCG"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Diversified FMCG"
     },
     {
       "symbol": "TITAN.NS",
       "name": "Titan Company Limited",
-      "sector": "Gems Jewellery And Watches"
+      "sector": "Consumer Durables",
+      "sub_sector": "Gems Jewellery And Watches"
     },
     {
       "symbol": "ADANIPORTS.NS",
       "name": "Adani Ports and Special Economic Zone Limited",
-      "sector": "Port & Port services"
+      "sector": "Services",
+      "sub_sector": "Port & Port services"
     },
     {
       "symbol": "ETERNAL.NS",
       "name": "ETERNAL LIMITED",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "GSPL.NS",
       "name": "Gujarat State Petronet Limited",
-      "sector": "Gas Transmission/Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Gas Transmission/Marketing"
     },
     {
       "symbol": "DIXON.NS",
       "name": "Dixon Technologies (India) Limited",
-      "sector": "Consumer Electronics"
+      "sector": "Consumer Durables",
+      "sub_sector": "Consumer Electronics"
     },
     {
       "symbol": "BHEL.NS",
       "name": "Bharat Heavy Electricals Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "GODFRYPHLP.NS",
       "name": "Godfrey Phillips India Limited",
-      "sector": "Cigarettes & Tobacco Products"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Cigarettes & Tobacco Products"
     },
     {
       "symbol": "VEDL.NS",
       "name": "Vedanta Limited",
-      "sector": "Diversified Metals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Diversified Metals"
     },
     {
       "symbol": "PREMIERENE.NS",
       "name": "Premier Energies Limited",
-      "sector": "Other Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Other Electrical Equipment"
     },
     {
       "symbol": "MARUTI.NS",
       "name": "Maruti Suzuki India Limited",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "KALYANKJIL.NS",
       "name": "Kalyan Jewellers India Limited",
-      "sector": "Gems Jewellery And Watches"
+      "sector": "Consumer Durables",
+      "sub_sector": "Gems Jewellery And Watches"
     },
     {
       "symbol": "NETWEB.NS",
       "name": "Netweb Technologies India Limited",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "TCS.NS",
       "name": "Tata Consultancy Services Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "M&M.NS",
       "name": "Mahindra & Mahindra Limited",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "MMTC.NS",
       "name": "MMTC Limited",
-      "sector": "Trading & Distributors"
+      "sector": "Services",
+      "sub_sector": "Trading & Distributors"
     },
     {
       "symbol": "ADANIGREEN.NS",
       "name": "Adani Green Energy Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "MAZDOCK.NS",
       "name": "Mazagon Dock Shipbuilders Limited",
-      "sector": "Ship Building & Allied Services"
+      "sector": "Capital Goods",
+      "sub_sector": "Ship Building & Allied Services"
     },
     {
       "symbol": "BEL.NS",
       "name": "Bharat Electronics Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "IRCON.NS",
       "name": "Ircon International Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "DMART.NS",
       "name": "Avenue Supermarts Limited",
-      "sector": "Diversified Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Diversified Retail"
     },
     {
       "symbol": "HDFCAMC.NS",
       "name": "HDFC Asset Management Company Limited",
-      "sector": "Asset Management Company"
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management Company"
     },
     {
       "symbol": "ADANIENSOL.NS",
       "name": "Adani Energy Solutions Limited",
-      "sector": "Power Distribution"
+      "sector": "Power",
+      "sub_sector": "Power Distribution"
     },
     {
       "symbol": "ENGINERSIN.NS",
       "name": "Engineers India Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "POLICYBZR.NS",
       "name": "PB Fintech Limited",
-      "sector": "Financial Technology (Fintech)"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Technology (Fintech)"
     },
     {
       "symbol": "NTPC.NS",
       "name": "NTPC Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "GRSE.NS",
       "name": "Garden Reach Shipbuilders & Engineers Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "VBL.NS",
       "name": "Varun Beverages Limited",
-      "sector": "Other Beverages"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Other Beverages"
     },
     {
       "symbol": "RECLTD.NS",
       "name": "REC Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "POLYCAB.NS",
       "name": "Polycab India Limited",
-      "sector": "Cables - Electricals"
+      "sector": "Capital Goods",
+      "sub_sector": "Cables - Electricals"
     },
     {
       "symbol": "ATGL.NS",
       "name": "Adani Total Gas Limited",
-      "sector": "LPG/CNG/PNG/LNG Supplier"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "LPG/CNG/PNG/LNG Supplier"
     },
     {
       "symbol": "COCHINSHIP.NS",
       "name": "Cochin Shipyard Limited",
-      "sector": "Ship Building & Allied Services"
+      "sector": "Capital Goods",
+      "sub_sector": "Ship Building & Allied Services"
     },
     {
       "symbol": "AXISBANK.NS",
       "name": "Axis Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "BAJFINANCE.NS",
       "name": "Bajaj Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "HFCL.NS",
       "name": "HFCL Limited",
-      "sector": "Telecom - Infrastructure"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Infrastructure"
     },
     {
       "symbol": "ADANIENT.NS",
       "name": "Adani Enterprises Limited",
-      "sector": "Trading - Minerals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Trading - Minerals"
     },
     {
       "symbol": "COHANCE.NS",
       "name": "Cohance Lifesciences Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "SUNPHARMA.NS",
       "name": "Sun Pharmaceutical Industries Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "TRENT.NS",
       "name": "Trent Limited",
-      "sector": "Speciality Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Speciality Retail"
     },
     {
       "symbol": "ONGC.NS",
       "name": "Oil & Natural Gas Corporation Limited",
-      "sector": "Oil Exploration & Production"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Oil Exploration & Production"
     },
     {
       "symbol": "HDFCLIFE.NS",
       "name": "HDFC Life Insurance Company Limited",
-      "sector": "Life Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "Life Insurance"
     },
     {
       "symbol": "AEGISLOG.NS",
       "name": "Aegis Logistics Limited",
-      "sector": "Trading - Gas"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Trading - Gas"
     },
     {
       "symbol": "KAYNES.NS",
       "name": "Kaynes Technology India Limited",
-      "sector": "Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Industrial Products"
     },
     {
       "symbol": "TATASTEEL.NS",
       "name": "Tata Steel Limited",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "HCLTECH.NS",
       "name": "HCL Technologies Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "PFC.NS",
       "name": "Power Finance Corporation Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "COALINDIA.NS",
       "name": "Coal India Limited",
-      "sector": "Coal"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Coal"
     },
     {
       "symbol": "INOXWIND.NS",
       "name": "Inox Wind Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "PERSISTENT.NS",
       "name": "Persistent Systems Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "HAL.NS",
       "name": "Hindustan Aeronautics Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "SHRIRAMFIN.NS",
       "name": "Shriram Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "KOTAKBANK.NS",
       "name": "Kotak Mahindra Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "HINDALCO.NS",
       "name": "Hindalco Industries Limited",
-      "sector": "Aluminium"
+      "sector": "Metals & Mining",
+      "sub_sector": "Aluminium"
     },
     {
       "symbol": "COLPAL.NS",
       "name": "Colgate Palmolive (India) Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "INDUSTOWER.NS",
       "name": "Indus Towers Limited",
-      "sector": "Telecom - Infrastructure"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Infrastructure"
     },
     {
       "symbol": "SUPREMEIND.NS",
       "name": "Supreme Industries Limited",
-      "sector": "Plastic Products - Industrial"
+      "sector": "Capital Goods",
+      "sub_sector": "Plastic Products - Industrial"
     },
     {
       "symbol": "POWERGRID.NS",
       "name": "Power Grid Corporation of India Limited",
-      "sector": "Power - Transmission"
+      "sector": "Power",
+      "sub_sector": "Power - Transmission"
     },
     {
       "symbol": "SAIL.NS",
       "name": "Steel Authority of India Limited",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "EICHERMOT.NS",
       "name": "Eicher Motors Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "NHPC.NS",
       "name": "NHPC Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "ABB.NS",
       "name": "ABB India Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "JPPOWER.NS",
       "name": "Jaiprakash Power Ventures Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "TMCV.NS",
       "name": "Tata Motors Limited",
-      "sector": "Commercial Vehicles"
+      "sector": "Capital Goods",
+      "sub_sector": "Commercial Vehicles"
     },
     {
       "symbol": "FACT.NS",
       "name": "Fertilizers and Chemicals Travancore Limited",
-      "sector": "Fertilizers"
+      "sector": "Chemicals",
+      "sub_sector": "Fertilizers"
     },
     {
       "symbol": "ASHOKLEY.NS",
       "name": "Ashok Leyland Limited",
-      "sector": "Commercial Vehicles"
+      "sector": "Capital Goods",
+      "sub_sector": "Commercial Vehicles"
     },
     {
       "symbol": "CHENNPETRO.NS",
       "name": "Chennai Petroleum Corporation Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "SIEMENS.NS",
       "name": "Siemens Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "HINDCOPPER.NS",
       "name": "Hindustan Copper Limited",
-      "sector": "Copper"
+      "sector": "Metals & Mining",
+      "sub_sector": "Copper"
     },
     {
       "symbol": "RADICO.NS",
       "name": "Radico Khaitan Limited",
-      "sector": "Breweries & Distilleries"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Breweries & Distilleries"
     },
     {
       "symbol": "COFORGE.NS",
       "name": "Coforge Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "NTPCGREEN.NS",
       "name": "NTPC Green Energy Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "NMDC.NS",
       "name": "NMDC Limited",
-      "sector": "Industrial Minerals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Industrial Minerals"
     },
     {
       "symbol": "IDEA.NS",
       "name": "Vodafone Idea Limited",
-      "sector": "Telecom - Cellular & Fixed line services"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Cellular & Fixed line services"
     },
     {
       "symbol": "NATIONALUM.NS",
       "name": "National Aluminium Company Limited",
-      "sector": "Aluminium"
+      "sector": "Metals & Mining",
+      "sub_sector": "Aluminium"
     },
     {
       "symbol": "UNITDSPR.NS",
       "name": "United Spirits Limited",
-      "sector": "Breweries & Distilleries"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Breweries & Distilleries"
     },
     {
       "symbol": "VMM.NS",
       "name": "Vishal Mega Mart Limited",
-      "sector": "Diversified Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Diversified Retail"
     },
     {
       "symbol": "JINDALSTEL.NS",
       "name": "JINDAL STEEL LIMITED",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "INDIGO.NS",
       "name": "InterGlobe Aviation Limited",
-      "sector": "Airline"
+      "sector": "Services",
+      "sub_sector": "Airline"
     },
     {
       "symbol": "IRFC.NS",
       "name": "Indian Railway Finance Corporation Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "ATHERENERG.NS",
       "name": "Ather Energy Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "DATAPATTNS.NS",
       "name": "Data Patterns (India) Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "CDSL.NS",
       "name": "Central Depository Services (India) Limited",
-      "sector": "Depositories Clearing Houses and Other Intermediaries"
+      "sector": "Financial Services",
+      "sub_sector": "Depositories Clearing Houses and Other Intermediaries"
     },
     {
       "symbol": "BPCL.NS",
       "name": "Bharat Petroleum Corporation Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "TRITURBINE.NS",
       "name": "Triveni Turbine Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "CPPLUS.NS",
       "name": "Aditya Infotech Limited",
-      "sector": "Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Industrial Products"
     },
     {
       "symbol": "CGPOWER.NS",
       "name": "CG Power and Industrial Solutions Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "ASIANPAINT.NS",
       "name": "Asian Paints Limited",
-      "sector": "Paints"
+      "sector": "Consumer Durables",
+      "sub_sector": "Paints"
     },
     {
       "symbol": "HYUNDAI.NS",
       "name": "Hyundai Motor India Limited",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "TATAPOWER.NS",
       "name": "Tata Power Company Limited",
-      "sector": "Integrated Power Utilities"
+      "sector": "Power",
+      "sub_sector": "Integrated Power Utilities"
     },
     {
       "symbol": "DRREDDY.NS",
       "name": "Dr. Reddy's Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "AMBER.NS",
       "name": "Amber Enterprises India Limited",
-      "sector": "Household Appliances"
+      "sector": "Consumer Durables",
+      "sub_sector": "Household Appliances"
     },
     {
       "symbol": "POWERINDIA.NS",
       "name": "Hitachi Energy India Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "360ONE.NS",
       "name": "360 ONE WAM LIMITED",
-      "sector": "Stockbroking & Allied"
+      "sector": "Financial Services",
+      "sub_sector": "Stockbroking & Allied"
     },
     {
       "symbol": "HEROMOTOCO.NS",
       "name": "Hero MotoCorp Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "CIPLA.NS",
       "name": "Cipla Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "TECHM.NS",
       "name": "Tech Mahindra Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "REDINGTON.NS",
       "name": "Redington Limited",
-      "sector": "Trading & Distributors"
+      "sector": "Services",
+      "sub_sector": "Trading & Distributors"
     },
     {
       "symbol": "CUMMINSIND.NS",
       "name": "Cummins India Limited",
-      "sector": "Compressors Pumps & Diesel Engines"
+      "sector": "Capital Goods",
+      "sub_sector": "Compressors Pumps & Diesel Engines"
     },
     {
       "symbol": "FIRSTCRY.NS",
       "name": "Brainbees Solutions Limited",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "FEDERALBNK.NS",
       "name": "The Federal Bank  Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "GVT&D.NS",
       "name": "GE Vernova T&D India Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "APOLLOHOSP.NS",
       "name": "Apollo Hospitals Enterprise Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "TMPV.NS",
       "name": "Tata Motors Passenger Vehicles Limited",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "YESBANK.NS",
       "name": "Yes Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "ASTRAL.NS",
       "name": "Astral Limited",
-      "sector": "Plastic Products - Industrial"
+      "sector": "Capital Goods",
+      "sub_sector": "Plastic Products - Industrial"
     },
     {
       "symbol": "BAJAJ-AUTO.NS",
       "name": "Bajaj Auto Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "NESTLEIND.NS",
       "name": "Nestle India Limited",
-      "sector": "Packaged Foods"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Packaged Foods"
     },
     {
       "symbol": "LLOYDSME.NS",
       "name": "Lloyds Metals And Energy Limited",
-      "sector": "Industrial Minerals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Industrial Minerals"
     },
     {
       "symbol": "PAGEIND.NS",
       "name": "Page Industries Limited",
-      "sector": "Garments & Apparels"
+      "sector": "Textiles",
+      "sub_sector": "Garments & Apparels"
     },
     {
       "symbol": "DLF.NS",
       "name": "DLF Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "PIDILITIND.NS",
       "name": "Pidilite Industries Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "HEG.NS",
       "name": "HEG Limited",
-      "sector": "Electrodes & Refractories"
+      "sector": "Capital Goods",
+      "sub_sector": "Electrodes & Refractories"
     },
     {
       "symbol": "APARINDS.NS",
       "name": "Apar Industries Limited",
-      "sector": "Other Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Other Electrical Equipment"
     },
     {
       "symbol": "KEI.NS",
       "name": "KEI Industries Limited",
-      "sector": "Cables - Electricals"
+      "sector": "Capital Goods",
+      "sub_sector": "Cables - Electricals"
     },
     {
       "symbol": "NAM-INDIA.NS",
       "name": "Nippon Life India Asset Management Limited",
-      "sector": "Asset Management Company"
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management Company"
     },
     {
       "symbol": "HINDPETRO.NS",
       "name": "Hindustan Petroleum Corporation Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "LUPIN.NS",
       "name": "Lupin Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "JSWSTEEL.NS",
       "name": "JSW Steel Limited",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "DELHIVERY.NS",
       "name": "Delhivery Limited",
-      "sector": "Logistics Solution Provider"
+      "sector": "Services",
+      "sub_sector": "Logistics Solution Provider"
     },
     {
       "symbol": "IREDA.NS",
       "name": "Indian Renewable Energy Development Agency Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "MOTHERSON.NS",
       "name": "Samvardhana Motherson International Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "AUROPHARMA.NS",
       "name": "Aurobindo Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "NLCINDIA.NS",
       "name": "NLC India Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "DABUR.NS",
       "name": "Dabur India Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "MUTHOOTFIN.NS",
       "name": "Muthoot Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "ICICIAMC.NS",
       "name": "ICICI Prudential Asset Management Company Limited",
-      "sector": "Asset Management Company"
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management Company"
     },
     {
       "symbol": "TVSMOTOR.NS",
       "name": "TVS Motor Company Limited",
-      "sector": "2/3 Wheelers"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "2/3 Wheelers"
     },
     {
       "symbol": "RPOWER.NS",
       "name": "Reliance Power Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "SWIGGY.NS",
       "name": "Swiggy Limited",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "FORCEMOT.NS",
       "name": "FORCE MOTORS LTD",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "GAIL.NS",
       "name": "GAIL (India) Limited",
-      "sector": "Gas Transmission/Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Gas Transmission/Marketing"
     },
     {
       "symbol": "LENSKART.NS",
       "name": "Lenskart Solutions Limited",
-      "sector": "Speciality Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Speciality Retail"
     },
     {
       "symbol": "KFINTECH.NS",
       "name": "Kfin Technologies Limited",
-      "sector": "Depositories Clearing Houses and Other Intermediaries"
+      "sector": "Financial Services",
+      "sub_sector": "Depositories Clearing Houses and Other Intermediaries"
     },
     {
       "symbol": "ZENTEC.NS",
       "name": "Zen Technologies Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "LODHA.NS",
       "name": "Lodha Developers Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "PAYTM.NS",
       "name": "One 97 Communications Limited",
-      "sector": "Financial Technology (Fintech)"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Technology (Fintech)"
     },
     {
       "symbol": "MRPL.NS",
       "name": "Mangalore Refinery and Petrochemicals Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "INDIANB.NS",
       "name": "Indian Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "FSL.NS",
       "name": "Firstsource Solutions Limited",
-      "sector": "Business Process Outsourcing (BPO)/ Knowledge Process Outsourcing (KPO)"
+      "sector": "Services",
+      "sub_sector": "Business Process Outsourcing (BPO)/ Knowledge Process Outsourcing (KPO)"
     },
     {
       "symbol": "JINDALSAW.NS",
       "name": "Jindal Saw Limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "BRITANNIA.NS",
       "name": "Britannia Industries Limited",
-      "sector": "Packaged Foods"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Packaged Foods"
     },
     {
       "symbol": "JSWENERGY.NS",
       "name": "JSW Energy Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "ULTRACEMCO.NS",
       "name": "UltraTech Cement Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "PNBHOUSING.NS",
       "name": "PNB Housing Finance Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "SOLARINDS.NS",
       "name": "Solar Industries India Limited",
-      "sector": "Explosives"
+      "sector": "Chemicals",
+      "sub_sector": "Explosives"
     },
     {
       "symbol": "CANBK.NS",
       "name": "Canara Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "BHARATFORG.NS",
       "name": "Bharat Forge Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "CRISIL.NS",
       "name": "CRISIL Limited",
-      "sector": "Other Financial Services"
+      "sector": "Financial Services",
+      "sub_sector": "Other Financial Services"
     },
     {
       "symbol": "BANKBARODA.NS",
       "name": "Bank of Baroda",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "GODREJCP.NS",
       "name": "Godrej Consumer Products Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "ICICIPRULI.NS",
       "name": "ICICI Prudential Life Insurance Company Limited",
-      "sector": "Life Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "Life Insurance"
     },
     {
       "symbol": "CHOLAFIN.NS",
       "name": "Cholamandalam Investment and Finance Company Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "VOLTAS.NS",
       "name": "Voltas Limited",
-      "sector": "Household Appliances"
+      "sector": "Consumer Durables",
+      "sub_sector": "Household Appliances"
     },
     {
       "symbol": "HINDZINC.NS",
       "name": "Hindustan Zinc Limited",
-      "sector": "Zinc"
+      "sector": "Metals & Mining",
+      "sub_sector": "Zinc"
     },
     {
       "symbol": "SONACOMS.NS",
       "name": "Sona BLW Precision Forgings Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "INDHOTEL.NS",
       "name": "The Indian Hotels Company Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     },
     {
       "symbol": "IOC.NS",
       "name": "Indian Oil Corporation Limited",
-      "sector": "Refineries & Marketing"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Refineries & Marketing"
     },
     {
       "symbol": "BALKRISIND.NS",
       "name": "Balkrishna Industries Limited",
-      "sector": "Tyres & Rubber Products"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Tyres & Rubber Products"
     },
     {
       "symbol": "CAMS.NS",
       "name": "Computer Age Management Services Limited",
-      "sector": "Depositories Clearing Houses and Other Intermediaries"
+      "sector": "Financial Services",
+      "sub_sector": "Depositories Clearing Houses and Other Intermediaries"
     },
     {
       "symbol": "TATAELXSI.NS",
       "name": "Tata Elxsi Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "OIL.NS",
       "name": "Oil India Limited",
-      "sector": "Oil Exploration & Production"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Oil Exploration & Production"
     },
     {
       "symbol": "UNIONBANK.NS",
       "name": "Union Bank of India",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "TARIL.NS",
       "name": "Transformers And Rectifiers (India) Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "PNB.NS",
       "name": "Punjab National Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "MAXHEALTH.NS",
       "name": "Max Healthcare Institute Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "MOTILALOFS.NS",
       "name": "Motilal Oswal Financial Services Limited",
-      "sector": "Stockbroking & Allied"
+      "sector": "Financial Services",
+      "sub_sector": "Stockbroking & Allied"
     },
     {
       "symbol": "LTM.NS",
       "name": "LTM Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "SYRMA.NS",
       "name": "Syrma SGS Technology Limited",
-      "sector": "Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Industrial Products"
     },
     {
       "symbol": "PGEL.NS",
       "name": "PG Electroplast Limited",
-      "sector": "Consumer Electronics"
+      "sector": "Consumer Durables",
+      "sub_sector": "Consumer Electronics"
     },
     {
       "symbol": "INDUSINDBK.NS",
       "name": "IndusInd Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "BDL.NS",
       "name": "Bharat Dynamics Limited",
-      "sector": "Aerospace & Defense"
+      "sector": "Capital Goods",
+      "sub_sector": "Aerospace & Defense"
     },
     {
       "symbol": "MARICO.NS",
       "name": "Marico Limited",
-      "sector": "Edible Oil"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Edible Oil"
     },
     {
       "symbol": "JWL.NS",
       "name": "Jupiter Wagons Limited",
-      "sector": "Railway Wagons"
+      "sector": "Capital Goods",
+      "sub_sector": "Railway Wagons"
     },
     {
       "symbol": "ENRIN.NS",
       "name": "Siemens Energy India Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "APLAPOLLO.NS",
       "name": "APL Apollo Tubes Limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "BELRISE.NS",
       "name": "Belrise Industries Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "TORNTPOWER.NS",
       "name": "Torrent Power Limited",
-      "sector": "Integrated Power Utilities"
+      "sector": "Power",
+      "sub_sector": "Integrated Power Utilities"
     },
     {
       "symbol": "PIIND.NS",
       "name": "PI Industries Limited",
-      "sector": "Pesticides & Agrochemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Pesticides & Agrochemicals"
     },
     {
       "symbol": "RAILTEL.NS",
       "name": "Railtel Corporation Of India Limited",
-      "sector": "Other Telecom Services"
+      "sector": "Telecommunication",
+      "sub_sector": "Other Telecom Services"
     },
     {
       "symbol": "MFSL.NS",
       "name": "Max Financial Services Limited",
-      "sector": "Life Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "Life Insurance"
     },
     {
       "symbol": "TATACONSUM.NS",
       "name": "TATA CONSUMER PRODUCTS LIMITED",
-      "sector": "Tea & Coffee"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Tea & Coffee"
     },
     {
       "symbol": "IGL.NS",
       "name": "Indraprastha Gas Limited",
-      "sector": "LPG/CNG/PNG/LNG Supplier"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "LPG/CNG/PNG/LNG Supplier"
     },
     {
       "symbol": "ZEEL.NS",
       "name": "Zee Entertainment Enterprises Limited",
-      "sector": "TV Broadcasting & Software Production"
+      "sector": "Media Entertainment & Publication",
+      "sub_sector": "TV Broadcasting & Software Production"
     },
     {
       "symbol": "LAURUSLABS.NS",
       "name": "Laurus Labs Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "OFSS.NS",
       "name": "Oracle Financial Services Software Limited",
-      "sector": "Software Products"
+      "sector": "Information Technology",
+      "sub_sector": "Software Products"
     },
     {
       "symbol": "PARADEEP.NS",
       "name": "Paradeep Phosphates Limited",
-      "sector": "Fertilizers"
+      "sector": "Chemicals",
+      "sub_sector": "Fertilizers"
     },
     {
       "symbol": "IFCI.NS",
       "name": "IFCI Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "SAMMAANCAP.NS",
       "name": "Sammaan Capital Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "BANKINDIA.NS",
       "name": "Bank of India",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "TORNTPHARM.NS",
       "name": "Torrent Pharmaceuticals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "JUBLFOOD.NS",
       "name": "Jubilant Foodworks Limited",
-      "sector": "Restaurants"
+      "sector": "Consumer Services",
+      "sub_sector": "Restaurants"
     },
     {
       "symbol": "HUDCO.NS",
       "name": "Housing & Urban Development Corporation Limited",
-      "sector": "Financial Institution"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Institution"
     },
     {
       "symbol": "HSCL.NS",
       "name": "Himadri Speciality Chemical Limited",
-      "sector": "Carbon Black"
+      "sector": "Chemicals",
+      "sub_sector": "Carbon Black"
     },
     {
       "symbol": "PATANJALI.NS",
       "name": "Patanjali Foods Limited",
-      "sector": "Edible Oil"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Edible Oil"
     },
     {
       "symbol": "MAHABANK.NS",
       "name": "Bank of Maharashtra",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "TEJASNET.NS",
       "name": "Tejas Networks Limited",
-      "sector": "Telecom - Equipment & Accessories"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Equipment & Accessories"
     },
     {
       "symbol": "HDBFS.NS",
       "name": "HDB Financial Services Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "GODREJPROP.NS",
       "name": "Godrej Properties Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "BEML.NS",
       "name": "BEML Limited",
-      "sector": "Construction Vehicles"
+      "sector": "Capital Goods",
+      "sub_sector": "Construction Vehicles"
     },
     {
       "symbol": "AUBANK.NS",
       "name": "AU Small Finance Bank Limited",
-      "sector": "Other Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Other Bank"
     },
     {
       "symbol": "EMMVEE.NS",
       "name": "Emmvee Photovoltaic Power Limited",
-      "sector": "Other Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Other Electrical Equipment"
     },
     {
       "symbol": "NATCOPHARM.NS",
       "name": "Natco Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "MANKIND.NS",
       "name": "Mankind Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "GRASIM.NS",
       "name": "Grasim Industries Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "GESHIP.NS",
       "name": "The Great Eastern Shipping Company Limited",
-      "sector": "Shipping"
+      "sector": "Services",
+      "sub_sector": "Shipping"
     },
     {
       "symbol": "KPITTECH.NS",
       "name": "KPIT Technologies Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "CROMPTON.NS",
       "name": "Crompton Greaves Consumer Electricals Limited",
-      "sector": "Household Appliances"
+      "sector": "Consumer Durables",
+      "sub_sector": "Household Appliances"
     },
     {
       "symbol": "LICI.NS",
       "name": "Life Insurance Corporation Of India",
-      "sector": "Life Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "Life Insurance"
     },
     {
       "symbol": "IDFCFIRSTB.NS",
       "name": "IDFC First Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "ACMESOLAR.NS",
       "name": "Acme Solar Holdings Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "PWL.NS",
       "name": "Physicswallah Limited",
-      "sector": "E-Learning"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Learning"
     },
     {
       "symbol": "JKTYRE.NS",
       "name": "JK Tyre & Industries Limited",
-      "sector": "Tyres & Rubber Products"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Tyres & Rubber Products"
     },
     {
       "symbol": "GMRAIRPORT.NS",
       "name": "GMR AIRPORTS LIMITED",
-      "sector": "Airport & Airport services"
+      "sector": "Services",
+      "sub_sector": "Airport & Airport services"
     },
     {
       "symbol": "POONAWALLA.NS",
       "name": "Poonawalla Fincorp Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "NAUKRI.NS",
       "name": "Info Edge (India) Limited",
-      "sector": "Internet & Catalogue Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Internet & Catalogue Retail"
     },
     {
       "symbol": "UNOMINDA.NS",
       "name": "UNO Minda Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "WOCKPHARMA.NS",
       "name": "Wockhardt Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "AWL.NS",
       "name": "AWL Agri Business Limited",
-      "sector": "Edible Oil"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Edible Oil"
     },
     {
       "symbol": "BOSCHLTD.NS",
       "name": "Bosch Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "TITAGARH.NS",
       "name": "TITAGARH RAIL SYSTEMS LIMITED",
-      "sector": "Railway Wagons"
+      "sector": "Capital Goods",
+      "sub_sector": "Railway Wagons"
     },
     {
       "symbol": "DIVISLAB.NS",
       "name": "Divi's Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "IRCTC.NS",
       "name": "Indian Railway Catering And Tourism Corporation Limited",
-      "sector": "Tour Travel Related Services"
+      "sector": "Consumer Services",
+      "sub_sector": "Tour Travel Related Services"
     },
     {
       "symbol": "NBCC.NS",
       "name": "NBCC (India) Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "SBILIFE.NS",
       "name": "SBI Life Insurance Company Limited",
-      "sector": "Life Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "Life Insurance"
     },
     {
       "symbol": "COROMANDEL.NS",
       "name": "Coromandel International Limited",
-      "sector": "Fertilizers"
+      "sector": "Chemicals",
+      "sub_sector": "Fertilizers"
     },
     {
       "symbol": "PRESTIGE.NS",
       "name": "Prestige Estates Projects Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "MPHASIS.NS",
       "name": "MphasiS Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "LGEINDIA.NS",
       "name": "LG Electronics India Limited",
-      "sector": "Household Appliances"
+      "sector": "Consumer Durables",
+      "sub_sector": "Household Appliances"
     },
     {
       "symbol": "DEEPAKFERT.NS",
       "name": "Deepak Fertilizers and Petrochemicals Corporation Limited",
-      "sector": "Commodity Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Commodity Chemicals"
     },
     {
       "symbol": "GPIL.NS",
       "name": "Godawari Power And Ispat limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "RBLBANK.NS",
       "name": "RBL Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "HAVELLS.NS",
       "name": "Havells India Limited",
-      "sector": "Consumer Electronics"
+      "sector": "Consumer Durables",
+      "sub_sector": "Consumer Electronics"
     },
     {
       "symbol": "JYOTICNC.NS",
       "name": "Jyoti CNC Automation Limited",
-      "sector": "Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Industrial Products"
     },
     {
       "symbol": "ECLERX.NS",
       "name": "eClerx Services Limited",
-      "sector": "Business Process Outsourcing (BPO)/ Knowledge Process Outsourcing (KPO)"
+      "sector": "Services",
+      "sub_sector": "Business Process Outsourcing (BPO)/ Knowledge Process Outsourcing (KPO)"
     },
     {
       "symbol": "NYKAA.NS",
       "name": "FSN E-Commerce Ventures Limited",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "LTF.NS",
       "name": "L&T Finance Limited",
-      "sector": "Investment Company"
+      "sector": "Financial Services",
+      "sub_sector": "Investment Company"
     },
     {
       "symbol": "ANANDRATHI.NS",
       "name": "Anand Rathi Wealth Limited",
-      "sector": "Financial Products Distributor"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Products Distributor"
     },
     {
       "symbol": "KEC.NS",
       "name": "KEC International Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "ITI.NS",
       "name": "ITI Limited",
-      "sector": "Telecom - Equipment & Accessories"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Equipment & Accessories"
     },
     {
       "symbol": "HBLENGINE.NS",
       "name": "HBL Engineering Limited",
-      "sector": "Other Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Other Industrial Products"
     },
     {
       "symbol": "TTML.NS",
       "name": "Tata Teleservices (Maharashtra) Limited",
-      "sector": "Telecom - Cellular & Fixed line services"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Cellular & Fixed line services"
     },
     {
       "symbol": "GRAPHITE.NS",
       "name": "Graphite India Limited",
-      "sector": "Electrodes & Refractories"
+      "sector": "Capital Goods",
+      "sub_sector": "Electrodes & Refractories"
     },
     {
       "symbol": "CARTRADE.NS",
       "name": "Cartrade Tech Limited",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "BAJAJFINSV.NS",
       "name": "Bajaj Finserv Limited",
-      "sector": "Holding Company"
+      "sector": "Financial Services",
+      "sub_sector": "Holding Company"
     },
     {
       "symbol": "CUB.NS",
       "name": "City Union Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "THERMAX.NS",
       "name": "Thermax Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "TATACOMM.NS",
       "name": "Tata Communications Limited",
-      "sector": "Telecom - Cellular & Fixed line services"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Cellular & Fixed line services"
     },
     {
       "symbol": "AMBUJACEM.NS",
       "name": "Ambuja Cements Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "OBEROIRLTY.NS",
       "name": "Oberoi Realty Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "AFFLE.NS",
       "name": "Affle 3i Limited",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "BIOCON.NS",
       "name": "Biocon Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "ABCAPITAL.NS",
       "name": "Aditya Birla Capital Limited",
-      "sector": "Investment Company"
+      "sector": "Financial Services",
+      "sub_sector": "Investment Company"
     },
     {
       "symbol": "CONCOR.NS",
       "name": "Container Corporation of India Limited",
-      "sector": "Logistics Solution Provider"
+      "sector": "Services",
+      "sub_sector": "Logistics Solution Provider"
     },
     {
       "symbol": "CONCORDBIO.NS",
       "name": "Concord Biotech Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "GLENMARK.NS",
       "name": "Glenmark Pharmaceuticals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "BLUESTARCO.NS",
       "name": "Blue Star Limited",
-      "sector": "Household Appliances"
+      "sector": "Consumer Durables",
+      "sub_sector": "Household Appliances"
     },
     {
       "symbol": "BAJAJHFL.NS",
       "name": "Bajaj Housing Finance Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "CARBORUNIV.NS",
       "name": "Carborundum Universal Limited",
-      "sector": "Abrasives & Bearings"
+      "sector": "Capital Goods",
+      "sub_sector": "Abrasives & Bearings"
     },
     {
       "symbol": "FORTIS.NS",
       "name": "Fortis Healthcare Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "KAJARIACER.NS",
       "name": "Kajaria Ceramics Limited",
-      "sector": "Ceramics"
+      "sector": "Consumer Durables",
+      "sub_sector": "Ceramics"
     },
     {
       "symbol": "ICICIGI.NS",
       "name": "ICICI Lombard General Insurance Company Limited",
-      "sector": "General Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "General Insurance"
     },
     {
       "symbol": "ACUTAAS.NS",
       "name": "Acutaas Chemicals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "RRKABEL.NS",
       "name": "R R Kabel Limited",
-      "sector": "Cables - Electricals"
+      "sector": "Capital Goods",
+      "sub_sector": "Cables - Electricals"
     },
     {
       "symbol": "SJVN.NS",
       "name": "SJVN Limited",
-      "sector": "Power Generation"
+      "sector": "Power",
+      "sub_sector": "Power Generation"
     },
     {
       "symbol": "NCC.NS",
       "name": "NCC Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "TIINDIA.NS",
       "name": "Tube Investments of India Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "ANANTRAJ.NS",
       "name": "Anant Raj Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "KARURVYSYA.NS",
       "name": "Karur Vysya Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "BANDHANBNK.NS",
       "name": "Bandhan Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "GRANULES.NS",
       "name": "Granules India Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "ACC.NS",
       "name": "ACC Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "IEX.NS",
       "name": "Indian Energy Exchange Limited",
-      "sector": "Exchange and Data Platform"
+      "sector": "Financial Services",
+      "sub_sector": "Exchange and Data Platform"
     },
     {
       "symbol": "ALKEM.NS",
       "name": "Alkem Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "SRF.NS",
       "name": "SRF Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "CESC.NS",
       "name": "CESC Limited",
-      "sector": "Integrated Power Utilities"
+      "sector": "Power",
+      "sub_sector": "Integrated Power Utilities"
     },
     {
       "symbol": "MEESHO.NS",
       "name": "Meesho Limited",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "UPL.NS",
       "name": "UPL Limited",
-      "sector": "Pesticides & Agrochemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Pesticides & Agrochemicals"
     },
     {
       "symbol": "OLECTRA.NS",
       "name": "Olectra Greentech Limited",
-      "sector": "Passenger Cars & Utility Vehicles"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Passenger Cars & Utility Vehicles"
     },
     {
       "symbol": "LATENTVIEW.NS",
       "name": "Latent View Analytics Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "KPRMILL.NS",
       "name": "K.P.R. Mill Limited",
-      "sector": "Other Textile Products"
+      "sector": "Textiles",
+      "sub_sector": "Other Textile Products"
     },
     {
       "symbol": "M&MFIN.NS",
       "name": "Mahindra & Mahindra Financial Services Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "MRF.NS",
       "name": "MRF Limited",
-      "sector": "Tyres & Rubber Products"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Tyres & Rubber Products"
     },
     {
       "symbol": "PHOENIXLTD.NS",
       "name": "The Phoenix Mills Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "FINCABLES.NS",
       "name": "Finolex Cables Limited",
-      "sector": "Cables - Electricals"
+      "sector": "Capital Goods",
+      "sub_sector": "Cables - Electricals"
     },
     {
       "symbol": "WELCORP.NS",
       "name": "Welspun Corp Limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "EMAMILTD.NS",
       "name": "Emami Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "BRIGADE.NS",
       "name": "Brigade Enterprises Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "MANAPPURAM.NS",
       "name": "Manappuram Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "LICHSGFIN.NS",
       "name": "LIC Housing Finance Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "J&KBANK.NS",
       "name": "The Jammu & Kashmir Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "ITCHOTELS.NS",
       "name": "ITC Hotels Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     },
     {
       "symbol": "ABDL.NS",
       "name": "Allied Blenders and Distillers Limited",
-      "sector": "Breweries & Distilleries"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Breweries & Distilleries"
     },
     {
       "symbol": "NH.NS",
       "name": "Narayana Hrudayalaya Ltd.",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "AFCONS.NS",
       "name": "Afcons Infrastructure Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "DEEPAKNTR.NS",
       "name": "Deepak Nitrite Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "PIRAMALFIN.NS",
       "name": "Piramal Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "TATACAP.NS",
       "name": "Tata Capital Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "NAVINFLUOR.NS",
       "name": "Navin Fluorine International Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "WHIRLPOOL.NS",
       "name": "Whirlpool of India Limited",
-      "sector": "Household Appliances"
+      "sector": "Consumer Durables",
+      "sub_sector": "Household Appliances"
     },
     {
       "symbol": "SWANCORP.NS",
       "name": "SWAN CORP LIMITED",
-      "sector": "Petrochemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Petrochemicals"
     },
     {
       "symbol": "RAMCOCEM.NS",
       "name": "The Ramco Cements Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "ONESOURCE.NS",
       "name": "Onesource Specialty Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "SAGILITY.NS",
       "name": "SAGILITY LIMITED",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "SBICARD.NS",
       "name": "SBI Cards and Payment Services Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "IDBI.NS",
       "name": "IDBI Bank Limited",
-      "sector": "Private Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Private Sector Bank"
     },
     {
       "symbol": "UBL.NS",
       "name": "United Breweries Limited",
-      "sector": "Breweries & Distilleries"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Breweries & Distilleries"
     },
     {
       "symbol": "NUVAMA.NS",
       "name": "Nuvama Wealth Management Limited",
-      "sector": "Stockbroking & Allied"
+      "sector": "Financial Services",
+      "sub_sector": "Stockbroking & Allied"
     },
     {
       "symbol": "SARDAEN.NS",
       "name": "Sarda Energy & Minerals Limited",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "IKS.NS",
       "name": "Inventurus Knowledge Solutions Limited",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "LEMONTREE.NS",
       "name": "Lemon Tree Hotels Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     },
     {
       "symbol": "BAJAJHLDNG.NS",
       "name": "Bajaj Holdings & Investment Limited",
-      "sector": "Holding Company"
+      "sector": "Financial Services",
+      "sub_sector": "Holding Company"
     },
     {
       "symbol": "PETRONET.NS",
       "name": "Petronet LNG Limited",
-      "sector": "LPG/CNG/PNG/LNG Supplier"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "LPG/CNG/PNG/LNG Supplier"
     },
     {
       "symbol": "CHOICEIN.NS",
       "name": "Choice International Limited",
-      "sector": "Holding Company"
+      "sector": "Financial Services",
+      "sub_sector": "Holding Company"
     },
     {
       "symbol": "TATAINVEST.NS",
       "name": "Tata Investment Corporation Limited",
-      "sector": "Investment Company"
+      "sector": "Financial Services",
+      "sub_sector": "Investment Company"
     },
     {
       "symbol": "ZYDUSLIFE.NS",
       "name": "Zydus Lifesciences Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "EXIDEIND.NS",
       "name": "Exide Industries Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "MGL.NS",
       "name": "Mahanagar Gas Limited",
-      "sector": "LPG/CNG/PNG/LNG Supplier"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "LPG/CNG/PNG/LNG Supplier"
     },
     {
       "symbol": "KIRLOSENG.NS",
       "name": "Kirloskar Oil Engines Limited",
-      "sector": "Compressors Pumps & Diesel Engines"
+      "sector": "Capital Goods",
+      "sub_sector": "Compressors Pumps & Diesel Engines"
     },
     {
       "symbol": "FIVESTAR.NS",
       "name": "Five-Star Business Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "IIFL.NS",
       "name": "IIFL Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "ZYDUSWELL.NS",
       "name": "Zydus Wellness Limited",
-      "sector": "Packaged Foods"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Packaged Foods"
     },
     {
       "symbol": "MSUMI.NS",
       "name": "Motherson Sumi Wiring India Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "PVRINOX.NS",
       "name": "PVR INOX Limited",
-      "sector": "Film Production Distribution & Exhibition"
+      "sector": "Media Entertainment & Publication",
+      "sub_sector": "Film Production Distribution & Exhibition"
     },
     {
       "symbol": "ARE&M.NS",
       "name": "Amara Raja Energy & Mobility Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "MINDACORP.NS",
       "name": "Minda Corporation Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "SONATSOFTW.NS",
       "name": "Sonata Software Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "TENNIND.NS",
       "name": "Tenneco Clean Air India Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "SHREECEM.NS",
       "name": "SHREE CEMENT LIMITED",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "PINELABS.NS",
       "name": "Pine Labs Limited",
-      "sector": "Financial Technology (Fintech)"
+      "sector": "Financial Services",
+      "sub_sector": "Financial Technology (Fintech)"
     },
     {
       "symbol": "RITES.NS",
       "name": "RITES Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "NEWGEN.NS",
       "name": "Newgen Software Technologies Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "DALBHARAT.NS",
       "name": "Dalmia Bharat Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "NIACL.NS",
       "name": "The New India Assurance Company Limited",
-      "sector": "General Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "General Insurance"
     },
     {
       "symbol": "ABSLAMC.NS",
       "name": "Aditya Birla Sun Life AMC Limited",
-      "sector": "Asset Management Company"
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management Company"
     },
     {
       "symbol": "JMFINANCIL.NS",
       "name": "JM Financial Limited",
-      "sector": "Holding Company"
+      "sector": "Financial Services",
+      "sub_sector": "Holding Company"
     },
     {
       "symbol": "JSL.NS",
       "name": "Jindal Stainless Limited",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "ABBOTINDIA.NS",
       "name": "Abbott India Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "FLUOROCHEM.NS",
       "name": "Gujarat Fluorochemicals Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "GRAVITA.NS",
       "name": "Gravita India Limited",
-      "sector": "Industrial Minerals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Industrial Minerals"
     },
     {
       "symbol": "HONAUT.NS",
       "name": "Honeywell Automation India Limited",
-      "sector": "Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Industrial Products"
     },
     {
       "symbol": "NEULANDLAB.NS",
       "name": "Neuland Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "JKCEMENT.NS",
       "name": "JK Cement Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "TATACHEM.NS",
       "name": "Tata Chemicals Limited",
-      "sector": "Commodity Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Commodity Chemicals"
     },
     {
       "symbol": "ABFRL.NS",
       "name": "Aditya Birla Fashion and Retail Limited",
-      "sector": "Speciality Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Speciality Retail"
     },
     {
       "symbol": "CYIENT.NS",
       "name": "Cyient Limited",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "JSWINFRA.NS",
       "name": "JSW Infrastructure Limited",
-      "sector": "Port & Port services"
+      "sector": "Services",
+      "sub_sector": "Port & Port services"
     },
     {
       "symbol": "BLS.NS",
       "name": "BLS International Services Limited",
-      "sector": "Tour Travel Related Services"
+      "sector": "Consumer Services",
+      "sub_sector": "Tour Travel Related Services"
     },
     {
       "symbol": "CREDITACC.NS",
       "name": "CREDITACCESS GRAMEEN LIMITED",
-      "sector": "Microfinance Institutions"
+      "sector": "Financial Services",
+      "sub_sector": "Microfinance Institutions"
     },
     {
       "symbol": "AARTIIND.NS",
       "name": "Aarti Industries Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "TATATECH.NS",
       "name": "Tata Technologies Limited",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "CEATLTD.NS",
       "name": "CEAT Limited",
-      "sector": "Tyres & Rubber Products"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Tyres & Rubber Products"
     },
     {
       "symbol": "APTUS.NS",
       "name": "Aptus Value Housing Finance India Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "JAINREC.NS",
       "name": "Jain Resource Recycling Limited",
-      "sector": "Diversified Metals"
+      "sector": "Metals & Mining",
+      "sub_sector": "Diversified Metals"
     },
     {
       "symbol": "APOLLOTYRE.NS",
       "name": "Apollo Tyres Limited",
-      "sector": "Tyres & Rubber Products"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Tyres & Rubber Products"
     },
     {
       "symbol": "UTIAMC.NS",
       "name": "UTI Asset Management Company Limited",
-      "sector": "Asset Management Company"
+      "sector": "Financial Services",
+      "sub_sector": "Asset Management Company"
     },
     {
       "symbol": "AJANTPHARM.NS",
       "name": "Ajanta Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "PPLPHARMA.NS",
       "name": "Piramal Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "ZENSARTECH.NS",
       "name": "Zensar Technologies Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "PCBL.NS",
       "name": "PCBL Chemical Limited",
-      "sector": "Carbon Black"
+      "sector": "Chemicals",
+      "sub_sector": "Carbon Black"
     },
     {
       "symbol": "ASTERDM.NS",
       "name": "Aster DM Healthcare Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "CASTROLIND.NS",
       "name": "Castrol India Limited",
-      "sector": "Lubricants"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Lubricants"
     },
     {
       "symbol": "CHAMBLFERT.NS",
       "name": "Chambal Fertilizers & Chemicals Limited",
-      "sector": "Fertilizers"
+      "sector": "Chemicals",
+      "sub_sector": "Fertilizers"
     },
     {
       "symbol": "EMCURE.NS",
       "name": "Emcure Pharmaceuticals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "SAILIFE.NS",
       "name": "Sai Life Sciences Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "INDIAMART.NS",
       "name": "Indiamart Intermesh Limited",
-      "sector": "Internet & Catalogue Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Internet & Catalogue Retail"
     },
     {
       "symbol": "TECHNOE.NS",
       "name": "Techno Electric & Engineering Company Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "BHARTIHEXA.NS",
       "name": "Bharti Hexacom Limited",
-      "sector": "Telecom - Cellular & Fixed line services"
+      "sector": "Telecommunication",
+      "sub_sector": "Telecom - Cellular & Fixed line services"
     },
     {
       "symbol": "IRB.NS",
       "name": "IRB Infrastructure Developers Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "GABRIEL.NS",
       "name": "Gabriel India Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "ELECON.NS",
       "name": "Elecon Engineering Company Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "JBMA.NS",
       "name": "JBM Auto Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "ELGIEQUIP.NS",
       "name": "Elgi Equipments Limited",
-      "sector": "Compressors Pumps & Diesel Engines"
+      "sector": "Capital Goods",
+      "sub_sector": "Compressors Pumps & Diesel Engines"
     },
     {
       "symbol": "MAPMYINDIA.NS",
       "name": "C.E. Info Systems Limited",
-      "sector": "Software Products"
+      "sector": "Information Technology",
+      "sub_sector": "Software Products"
     },
     {
       "symbol": "DEVYANI.NS",
       "name": "Devyani International Limited",
-      "sector": "Restaurants"
+      "sector": "Consumer Services",
+      "sub_sector": "Restaurants"
     },
     {
       "symbol": "URBANCO.NS",
       "name": "Urban Company Limited",
-      "sector": "E-Retail/ E-Commerce"
+      "sector": "Consumer Services",
+      "sub_sector": "E-Retail/ E-Commerce"
     },
     {
       "symbol": "CHOLAHLDNG.NS",
       "name": "Cholamandalam Financial Holdings Limited",
-      "sector": "Investment Company"
+      "sector": "Financial Services",
+      "sub_sector": "Investment Company"
     },
     {
       "symbol": "GILLETTE.NS",
       "name": "Gillette India Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "GICRE.NS",
       "name": "General Insurance Corporation of India",
-      "sector": "General Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "General Insurance"
     },
     {
       "symbol": "ESCORTS.NS",
       "name": "Escorts Kubota Limited",
-      "sector": "Tractors"
+      "sector": "Capital Goods",
+      "sub_sector": "Tractors"
     },
     {
       "symbol": "LTTS.NS",
       "name": "L&T Technology Services Limited",
-      "sector": "IT Enabled Services"
+      "sector": "Information Technology",
+      "sub_sector": "IT Enabled Services"
     },
     {
       "symbol": "SAPPHIRE.NS",
       "name": "Sapphire Foods India Limited",
-      "sector": "Restaurants"
+      "sector": "Consumer Services",
+      "sub_sector": "Restaurants"
     },
     {
       "symbol": "BSOFT.NS",
       "name": "BIRLASOFT LIMITED",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "ANURAS.NS",
       "name": "Anupam Rasayan India Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "CAPLIPOINT.NS",
       "name": "Caplin Point Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "RKFORGE.NS",
       "name": "Ramkrishna Forgings Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "STARHEALTH.NS",
       "name": "Star Health and Allied Insurance Company Limited",
-      "sector": "General Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "General Insurance"
     },
     {
       "symbol": "LALPATHLAB.NS",
       "name": "Dr. Lal Path Labs Ltd.",
-      "sector": "Healthcare Service Provider"
+      "sector": "Healthcare",
+      "sub_sector": "Healthcare Service Provider"
     },
     {
       "symbol": "SCHAEFFLER.NS",
       "name": "Schaeffler India Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "GLAND.NS",
       "name": "Gland Pharma Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "NUVOCO.NS",
       "name": "Nuvoco Vistas Corporation Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "SIGNATURE.NS",
       "name": "Signatureglobal (India) Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "SCHNEIDER.NS",
       "name": "Schneider Electric Infrastructure Limited",
-      "sector": "Heavy Electrical Equipment"
+      "sector": "Capital Goods",
+      "sub_sector": "Heavy Electrical Equipment"
     },
     {
       "symbol": "SYNGENE.NS",
       "name": "Syngene International Limited",
-      "sector": "Healthcare Research Analytics & Technology"
+      "sector": "Healthcare",
+      "sub_sector": "Healthcare Research Analytics & Technology"
     },
     {
       "symbol": "ASAHIINDIA.NS",
       "name": "Asahi India Glass Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "INTELLECT.NS",
       "name": "Intellect Design Arena Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "TBOTEK.NS",
       "name": "TBO Tek Limited",
-      "sector": "Tour Travel Related Services"
+      "sector": "Consumer Services",
+      "sub_sector": "Tour Travel Related Services"
     },
     {
       "symbol": "IGIL.NS",
       "name": "International Gemmological Institute (India) Limited",
-      "sector": "Diversified Commercial Services"
+      "sector": "Services",
+      "sub_sector": "Diversified Commercial Services"
     },
     {
       "symbol": "KIMS.NS",
       "name": "Krishna Institute of Medical Sciences Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "BLUEJET.NS",
       "name": "Blue Jet Healthcare Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "AEGISVOPAK.NS",
       "name": "Aegis Vopak Terminals Limited",
-      "sector": "Oil Storage & Transportation"
+      "sector": "Oil Gas & Consumable Fuels",
+      "sub_sector": "Oil Storage & Transportation"
     },
     {
       "symbol": "ACE.NS",
       "name": "Action Construction Equipment Limited",
-      "sector": "Construction Vehicles"
+      "sector": "Capital Goods",
+      "sub_sector": "Construction Vehicles"
     },
     {
       "symbol": "HONASA.NS",
       "name": "Honasa Consumer Limited",
-      "sector": "Personal Care"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Personal Care"
     },
     {
       "symbol": "NSLNISP.NS",
       "name": "NMDC Steel Limited",
-      "sector": "Iron & Steel"
+      "sector": "Metals & Mining",
+      "sub_sector": "Iron & Steel"
     },
     {
       "symbol": "MEDANTA.NS",
       "name": "Global Health Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "CRAFTSMAN.NS",
       "name": "Craftsman Automation Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "PTCIL.NS",
       "name": "PTC Industries Limited",
-      "sector": "Other Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Other Industrial Products"
     },
     {
       "symbol": "EIDPARRY.NS",
       "name": "EID Parry India Limited",
-      "sector": "Other Food Products"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Other Food Products"
     },
     {
       "symbol": "LINDEINDIA.NS",
       "name": "Linde India Limited",
-      "sector": "Industrial Gases"
+      "sector": "Chemicals",
+      "sub_sector": "Industrial Gases"
     },
     {
       "symbol": "SUNDARMFIN.NS",
       "name": "Sundaram Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "IPCALAB.NS",
       "name": "IPCA Laboratories Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "CENTRALBK.NS",
       "name": "Central Bank of India",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "ANTHEM.NS",
       "name": "Anthem Biosciences Limited",
-      "sector": "Biotechnology"
+      "sector": "Healthcare",
+      "sub_sector": "Biotechnology"
     },
     {
       "symbol": "LTFOODS.NS",
       "name": "LT Foods Limited",
-      "sector": "Other Agricultural Products"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Other Agricultural Products"
     },
     {
       "symbol": "BALRAMCHIN.NS",
       "name": "Balrampur Chini Mills Limited",
-      "sector": "Sugar"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Sugar"
     },
     {
       "symbol": "ENDURANCE.NS",
       "name": "Endurance Technologies Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "SHYAMMETL.NS",
       "name": "Shyam Metalics and Energy Limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "TRIDENT.NS",
       "name": "Trident Limited",
-      "sector": "Other Textile Products"
+      "sector": "Textiles",
+      "sub_sector": "Other Textile Products"
     },
     {
       "symbol": "AADHARHFC.NS",
       "name": "Aadhar Housing Finance Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "CLEAN.NS",
       "name": "Clean Science and Technology Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "AIIL.NS",
       "name": "Authum Investment & Infrastructure Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "BIKAJI.NS",
       "name": "Bikaji Foods International Limited",
-      "sector": "Packaged Foods"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Packaged Foods"
     },
     {
       "symbol": "HEXT.NS",
       "name": "Hexaware Technologies Limited",
-      "sector": "Computers - Software & Consulting"
+      "sector": "Information Technology",
+      "sub_sector": "Computers - Software & Consulting"
     },
     {
       "symbol": "SUNTV.NS",
       "name": "Sun TV Network Limited",
-      "sector": "TV Broadcasting & Software Production"
+      "sector": "Media Entertainment & Publication",
+      "sub_sector": "TV Broadcasting & Software Production"
     },
     {
       "symbol": "CGCL.NS",
       "name": "Capri Global Capital Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "JBCHEPHARM.NS",
       "name": "JB Chemicals & Pharmaceuticals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "VTL.NS",
       "name": "Vardhman Textiles Limited",
-      "sector": "Other Textile Products"
+      "sector": "Textiles",
+      "sub_sector": "Other Textile Products"
     },
     {
       "symbol": "CCL.NS",
       "name": "CCL Products (India) Limited",
-      "sector": "Tea & Coffee"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Tea & Coffee"
     },
     {
       "symbol": "WELSPUNLIV.NS",
       "name": "Welspun Living Limited",
-      "sector": "Other Textile Products"
+      "sector": "Textiles",
+      "sub_sector": "Other Textile Products"
     },
     {
       "symbol": "TIMKEN.NS",
       "name": "Timken India Limited",
-      "sector": "Abrasives & Bearings"
+      "sector": "Capital Goods",
+      "sub_sector": "Abrasives & Bearings"
     },
     {
       "symbol": "IOB.NS",
       "name": "Indian Overseas Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "UCOBANK.NS",
       "name": "UCO Bank",
-      "sector": "Public Sector Bank"
+      "sector": "Financial Services",
+      "sub_sector": "Public Sector Bank"
     },
     {
       "symbol": "KPIL.NS",
       "name": "Kalpataru Projects International Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "BBTC.NS",
       "name": "The Bombay Burmah Trading Corporation Limited",
-      "sector": "Packaged Foods"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Packaged Foods"
     },
     {
       "symbol": "ATUL.NS",
       "name": "Atul Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "SUMICHEM.NS",
       "name": "Sumitomo Chemical India Limited",
-      "sector": "Pesticides & Agrochemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Pesticides & Agrochemicals"
     },
     {
       "symbol": "JSWCEMENT.NS",
       "name": "JSW Cement Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "POLYMED.NS",
       "name": "Poly Medicure Limited",
-      "sector": "Medical Equipment & Supplies"
+      "sector": "Healthcare",
+      "sub_sector": "Medical Equipment & Supplies"
     },
     {
       "symbol": "USHAMART.NS",
       "name": "Usha Martin Limited",
-      "sector": "Iron & Steel Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Iron & Steel Products"
     },
     {
       "symbol": "CEMPRO.NS",
       "name": "Cemindia Projects Limited",
-      "sector": "Civil Construction"
+      "sector": "Construction",
+      "sub_sector": "Civil Construction"
     },
     {
       "symbol": "BATAINDIA.NS",
       "name": "Bata India Limited",
-      "sector": "Footwear"
+      "sector": "Consumer Durables",
+      "sub_sector": "Footwear"
     },
     {
       "symbol": "ZFCVINDIA.NS",
       "name": "ZF Commercial Vehicle Control Systems India Limited",
-      "sector": "Auto Components & Equipments"
+      "sector": "Automobile and Auto Components",
+      "sub_sector": "Auto Components & Equipments"
     },
     {
       "symbol": "ABREL.NS",
       "name": "Aditya Birla Real Estate Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "VIJAYA.NS",
       "name": "Vijaya Diagnostic Centre Limited",
-      "sector": "Healthcare Service Provider"
+      "sector": "Healthcare",
+      "sub_sector": "Healthcare Service Provider"
     },
     {
       "symbol": "DOMS.NS",
       "name": "DOMS Industries Limited",
-      "sector": "Stationary"
+      "sector": "Fast Moving Consumer Goods",
+      "sub_sector": "Stationary"
     },
     {
       "symbol": "HOMEFIRST.NS",
       "name": "Home First Finance Company India Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "AAVAS.NS",
       "name": "Aavas Financiers Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "GLAXO.NS",
       "name": "GlaxoSmithKline Pharmaceuticals Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "JUBLINGREA.NS",
       "name": "Jubilant Ingrevia Limited",
-      "sector": "Specialty Chemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Specialty Chemicals"
     },
     {
       "symbol": "SAREGAMA.NS",
       "name": "Saregama India Limited",
-      "sector": "Media & Entertainment"
+      "sector": "Media Entertainment & Publication",
+      "sub_sector": "Media & Entertainment"
     },
     {
       "symbol": "INDIACEM.NS",
       "name": "The India Cements Limited",
-      "sector": "Cement & Cement Products"
+      "sector": "Construction Materials",
+      "sub_sector": "Cement & Cement Products"
     },
     {
       "symbol": "3MINDIA.NS",
       "name": "3M India Limited",
-      "sector": "Diversified"
+      "sector": "Diversified",
+      "sub_sector": "Diversified"
     },
     {
       "symbol": "TRAVELFOOD.NS",
       "name": "Travel Food Services Limited",
-      "sector": "Restaurants"
+      "sector": "Consumer Services",
+      "sub_sector": "Restaurants"
     },
     {
       "symbol": "ERIS.NS",
       "name": "Eris Lifesciences Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "CANFINHOME.NS",
       "name": "Can Fin Homes Limited",
-      "sector": "Housing Finance Company"
+      "sector": "Financial Services",
+      "sub_sector": "Housing Finance Company"
     },
     {
       "symbol": "RAINBOW.NS",
       "name": "Rainbow Childrens Medicare Limited",
-      "sector": "Hospital"
+      "sector": "Healthcare",
+      "sub_sector": "Hospital"
     },
     {
       "symbol": "NIVABUPA.NS",
       "name": "Niva Bupa Health Insurance Company Limited",
-      "sector": "General Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "General Insurance"
     },
     {
       "symbol": "AIAENG.NS",
       "name": "AIA Engineering Limited",
-      "sector": "Castings & Forgings"
+      "sector": "Capital Goods",
+      "sub_sector": "Castings & Forgings"
     },
     {
       "symbol": "BLUEDART.NS",
       "name": "Blue Dart Express Limited",
-      "sector": "Logistics Solution Provider"
+      "sector": "Services",
+      "sub_sector": "Logistics Solution Provider"
     },
     {
       "symbol": "SPLPETRO.NS",
       "name": "Supreme Petrochem Limited",
-      "sector": "Petrochemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Petrochemicals"
     },
     {
       "symbol": "RHIM.NS",
       "name": "RHI MAGNESITA INDIA LIMITED",
-      "sector": "Electrodes & Refractories"
+      "sector": "Capital Goods",
+      "sub_sector": "Electrodes & Refractories"
     },
     {
       "symbol": "DCMSHRIRAM.NS",
       "name": "DCM Shriram Limited",
-      "sector": "Diversified"
+      "sector": "Diversified",
+      "sub_sector": "Diversified"
     },
     {
       "symbol": "SOBHA.NS",
       "name": "Sobha Limited",
-      "sector": "Residential Commercial Projects"
+      "sector": "Realty",
+      "sub_sector": "Residential Commercial Projects"
     },
     {
       "symbol": "BERGEPAINT.NS",
       "name": "Berger Paints (I) Limited",
-      "sector": "Paints"
+      "sector": "Consumer Durables",
+      "sub_sector": "Paints"
     },
     {
       "symbol": "CANHLIFE.NS",
       "name": "Canara HSBC Life Insurance Company Limited",
-      "sector": "Life Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "Life Insurance"
     },
     {
       "symbol": "SBFC.NS",
       "name": "SBFC Finance Limited",
-      "sector": "Non Banking Financial Company (NBFC)"
+      "sector": "Financial Services",
+      "sub_sector": "Non Banking Financial Company (NBFC)"
     },
     {
       "symbol": "JUBLPHARMA.NS",
       "name": "Jubilant Pharmova Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "EIHOTEL.NS",
       "name": "EIH Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     },
     {
       "symbol": "TEGA.NS",
       "name": "Tega Industries Limited",
-      "sector": "Industrial Products"
+      "sector": "Capital Goods",
+      "sub_sector": "Industrial Products"
     },
     {
       "symbol": "CHALET.NS",
       "name": "Chalet Hotels Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     },
     {
       "symbol": "GODREJIND.NS",
       "name": "Godrej Industries Limited",
-      "sector": "Diversified"
+      "sector": "Diversified",
+      "sub_sector": "Diversified"
     },
     {
       "symbol": "PFIZER.NS",
       "name": "Pfizer Limited",
-      "sector": "Pharmaceuticals"
+      "sector": "Healthcare",
+      "sub_sector": "Pharmaceuticals"
     },
     {
       "symbol": "ABLBL.NS",
       "name": "Aditya Birla Lifestyle Brands Limited",
-      "sector": "Speciality Retail"
+      "sector": "Consumer Services",
+      "sub_sector": "Speciality Retail"
     },
     {
       "symbol": "BAYERCROP.NS",
       "name": "Bayer Cropscience Limited",
-      "sector": "Pesticides & Agrochemicals"
+      "sector": "Chemicals",
+      "sub_sector": "Pesticides & Agrochemicals"
     },
     {
       "symbol": "JSWDULUX.NS",
       "name": "JSW Dulux Limited",
-      "sector": "Paints"
+      "sector": "Consumer Durables",
+      "sub_sector": "Paints"
     },
     {
       "symbol": "INDGN.NS",
       "name": "Indegene Limited",
-      "sector": "Healthcare Research Analytics & Technology"
+      "sector": "Healthcare",
+      "sub_sector": "Healthcare Research Analytics & Technology"
     },
     {
       "symbol": "GODIGIT.NS",
       "name": "Go Digit General Insurance Limited",
-      "sector": "General Insurance"
+      "sector": "Financial Services",
+      "sub_sector": "General Insurance"
     },
     {
       "symbol": "THELEELA.NS",
       "name": "Leela Palaces Hotels & Resorts Limited",
-      "sector": "Hotels & Resorts"
+      "sector": "Consumer Services",
+      "sub_sector": "Hotels & Resorts"
     }
   ]
 }
