@@ -29,6 +29,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { AnalysisRow, RunAnalysisResponse, ScoreKey, Signal } from "@/lib/types";
 
+type ColMeta = { thClassName?: string; tdClassName?: string };
+
 function fmtScore(v?: number | null) {
   if (v === null || v === undefined || Number.isNaN(v)) return "—";
   return v.toFixed(4);
@@ -51,6 +53,99 @@ function fmtCap(v?: number | null) {
   if (v >= 1e9) return `${(v / 1e9).toFixed(1)}B`;
   if (v >= 1e6) return `${(v / 1e6).toFixed(0)}M`;
   return v.toFixed(0);
+}
+
+function isoToUtcDate(iso: string): Date | null {
+  const parts = iso.split("-");
+  if (parts.length !== 3) return null;
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!y || !m || !d) return null;
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+function TrendMiniChart({
+  dates,
+  closes,
+  months,
+}: {
+  dates?: string[];
+  closes?: (number | null)[];
+  months: number;
+}) {
+  if (!dates?.length || !closes?.length || dates.length !== closes.length) return <div className="text-muted-foreground">—</div>;
+
+  const pts = dates
+    .map((d, i) => ({ d, t: isoToUtcDate(d)?.getTime() ?? null, v: closes[i] }))
+    .filter((p) => p.t != null && p.v != null) as { d: string; t: number; v: number }[];
+  if (pts.length < 8) return <div className="text-muted-foreground">—</div>;
+
+  const end = pts[pts.length - 1]!;
+  const startCutoff = end.t - months * 30 * 24 * 3600 * 1000;
+  const win = pts.filter((p) => p.t >= startCutoff);
+  if (win.length < 6) return <div className="text-muted-foreground">—</div>;
+
+  // Sparkline scale
+  const w = 92;
+  const h = 26;
+  const pad = 2;
+  const minV = Math.min(...win.map((p) => p.v));
+  const maxV = Math.max(...win.map((p) => p.v));
+  const dv = Math.max(1e-9, maxV - minV);
+
+  const xFor = (i: number) => pad + (i * (w - pad * 2)) / Math.max(1, win.length - 1);
+  const yFor = (v: number) => pad + (h - pad * 2) * (1 - (v - minV) / dv);
+  const line = win.map((p, i) => `${xFor(i).toFixed(1)},${yFor(p.v).toFixed(1)}`).join(" ");
+
+  // Monthly return bars (last X months)
+  const byMonth = new Map<string, { t: number; v: number }>();
+  for (const p of win) {
+    const ym = p.d.slice(0, 7);
+    // keep last close in month
+    const cur = byMonth.get(ym);
+    if (!cur || p.t > cur.t) byMonth.set(ym, { t: p.t, v: p.v });
+  }
+  const monthsSorted = Array.from(byMonth.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .slice(-months);
+  const rets: number[] = [];
+  for (let i = 1; i < monthsSorted.length; i++) {
+    const prev = monthsSorted[i - 1]![1].v;
+    const cur = monthsSorted[i]![1].v;
+    rets.push(prev ? ((cur - prev) / prev) * 100 : 0);
+  }
+  const barCount = Math.max(1, rets.length);
+  const maxAbs = Math.max(1, ...rets.map((r) => Math.abs(r)));
+
+  return (
+    <div className="flex justify-center">
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
+        {/* Baseline for returns */}
+        <line x1="0" y1={h - 1} x2={w} y2={h - 1} stroke="hsl(var(--border))" strokeWidth="0.5" opacity="0.6" />
+
+        {/* Bars (bottom-aligned) */}
+        {rets.map((r, i) => {
+          const bw = (w - pad * 2) / barCount;
+          const bh = Math.max(1, Math.round(((Math.abs(r) / maxAbs) * (h - 8))));
+          const x = pad + i * bw;
+          const y = h - 1 - bh;
+          const fill = r >= 0 ? "rgb(16,185,129)" : "rgb(244,63,94)";
+          return <rect key={i} x={x + 0.5} y={y} width={Math.max(1, bw - 1)} height={bh} fill={fill} opacity="0.25" />;
+        })}
+
+        {/* Line */}
+        <polyline
+          points={line}
+          fill="none"
+          stroke="hsl(var(--foreground))"
+          strokeWidth="1.3"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
 }
 
 function pctColor(v?: number | null) {
@@ -195,6 +290,7 @@ export function AnalysisTable({
   const [sorting, setSorting] = React.useState<SortingState>(() => defaultSorting);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [tableView, setTableView] = React.useState<"stocks" | "sectors" | "weekly_totals">("stocks");
+  const [trendMonths, setTrendMonths] = React.useState<number>(6);
 
   React.useEffect(() => {
     setSorting(defaultSorting);
@@ -232,6 +328,10 @@ export function AnalysisTable({
 
     const heatmapCol: ColumnDef<AnalysisRow> = {
       id: "sig_1y",
+      meta: {
+        thClassName: "sticky right-0 z-20 bg-card shadow-[-1px_0_0_0_hsl(var(--border))]",
+        tdClassName: "sticky right-0 z-10 bg-card shadow-[-1px_0_0_0_hsl(var(--border))]",
+      } satisfies ColMeta,
       header: () => (
         <div className="whitespace-nowrap text-[11px] leading-snug text-center min-w-[6rem]">
           <div className="font-semibold text-foreground">1Y</div>
@@ -240,7 +340,11 @@ export function AnalysisTable({
       ),
       cell: ({ row }) => {
         const { signals: hs, dates: hd } = heatmapFromRow(row.original, data.date_labels);
-        return <DashboardSignalHeatmap signals={hs} dates={hd} />;
+        return (
+          <div className="flex justify-center">
+            <DashboardSignalHeatmap signals={hs} dates={hd} />
+          </div>
+        );
       },
     };
 
@@ -269,7 +373,7 @@ export function AnalysisTable({
         header: "Stock Name",
         cell: ({ row }) => (
           <div
-            className="max-w-[7.75rem] sm:max-w-[9rem] truncate text-[13px] font-medium leading-snug"
+            className="max-w-[6.5rem] sm:max-w-[7.25rem] truncate text-[13px] font-medium leading-snug"
             title={row.original.name ?? ""}
           >
             {row.original.name ?? "—"}
@@ -307,6 +411,22 @@ export function AnalysisTable({
         ),
       },
       {
+        id: "trend",
+        header: () => (
+          <div className="whitespace-nowrap text-[11px] leading-snug text-center min-w-[6.5rem]">
+            <div className="font-semibold text-foreground">Trend</div>
+            <div className="text-muted-foreground font-normal">{trendMonths}M</div>
+          </div>
+        ),
+        cell: ({ row }) => (
+          <TrendMiniChart
+            dates={row.original.trend_1y_dates}
+            closes={row.original.trend_1y_closes}
+            months={trendMonths}
+          />
+        ),
+      },
+      {
         accessorKey: "sector",
         header: "Sector",
         sortingFn: isGlobalIndices
@@ -318,7 +438,7 @@ export function AnalysisTable({
             }
           : "alphanumeric",
         cell: ({ row }) => (
-          <div className="max-w-[120px] truncate text-xs text-muted-foreground" title={row.original.sector ?? ""}>
+          <div className="max-w-[88px] truncate text-xs text-muted-foreground" title={row.original.sector ?? ""}>
             {row.original.sector ?? "—"}
           </div>
         ),
@@ -328,7 +448,7 @@ export function AnalysisTable({
         header: "Sub-sector",
         cell: ({ row }) => (
           <div
-            className="max-w-[5rem] sm:max-w-[5.75rem] truncate text-xs text-muted-foreground"
+            className="max-w-[4.5rem] sm:max-w-[5.25rem] truncate text-xs text-muted-foreground"
             title={row.original.sub_sector ?? ""}
           >
             {row.original.sub_sector ?? "—"}
@@ -418,7 +538,7 @@ export function AnalysisTable({
       },
       ...signalCols,
     ];
-  }, [data.date_labels, data.rows, selectedScore]);
+  }, [data.date_labels, data.rows, selectedScore, trendMonths]);
 
   const table = useReactTable({
     data: data.rows,
@@ -542,6 +662,18 @@ export function AnalysisTable({
             </Select>
           </div>
         )}
+        <div className="w-[110px] shrink-0">
+          <Select value={String(trendMonths)} onValueChange={(v) => setTrendMonths(Number(v))}>
+            <SelectTrigger className="h-8 text-xs">
+              <SelectValue placeholder="Trend months" />
+            </SelectTrigger>
+            <SelectContent>
+              {[1, 2, 3, 6, 9, 12].map((m) => (
+                <SelectItem key={m} value={String(m)}>{`Trend ${m}M`}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {hasActiveFilter && onSectorChange && onSubSectorChange && onSignalChange && (
           <Button
             variant="ghost"
@@ -691,6 +823,7 @@ export function AnalysisTable({
                     key={h.id}
                     className={cn(
                       "px-2 py-2 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap",
+                      ((h.column.columnDef.meta as ColMeta | undefined)?.thClassName ?? ""),
                       h.column.getCanSort() ? "cursor-pointer select-none hover:text-foreground" : ""
                     )}
                     onClick={h.column.getToggleSortingHandler()}
@@ -718,7 +851,13 @@ export function AnalysisTable({
                   role="button"
                 >
                   {r.getVisibleCells().map((c) => (
-                    <td key={c.id} className="px-2 py-1.5 align-middle">
+                    <td
+                      key={c.id}
+                      className={cn(
+                        "px-2 py-1.5 align-middle",
+                        ((c.column.columnDef.meta as ColMeta | undefined)?.tdClassName ?? "")
+                      )}
+                    >
                       {flexRender(c.column.columnDef.cell, c.getContext())}
                     </td>
                   ))}

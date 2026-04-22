@@ -65,6 +65,9 @@ class AnalysisRow(BaseModel):
     # ~52 weeks (1y) Fri-week signals, oldest → newest (dashboard strip)
     signals_1y: List[str] = Field(default_factory=list)
     signals_1y_dates: List[str] = Field(default_factory=list)
+    # ~52 weeks (1y) Fri-week closes aligned to signals_1y_dates, oldest → newest
+    trend_1y_closes: List[float | None] = Field(default_factory=list)
+    trend_1y_dates: List[str] = Field(default_factory=list)
 
     @model_validator(mode="before")
     @classmethod

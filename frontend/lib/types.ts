@@ -34,6 +34,9 @@ export type AnalysisRow = {
   /** ~52 weekly signals (1y), oldest → newest (Fri weeks) */
   signals_1y?: Signal[];
   signals_1y_dates?: string[];
+  /** ~52 weekly closes aligned to signals_1y_dates (oldest → newest) */
+  trend_1y_closes?: (number | null)[];
+  trend_1y_dates?: string[];
   /** Legacy cached payloads (~26w) */
   signals_6m?: Signal[];
   signals_6m_dates?: string[];

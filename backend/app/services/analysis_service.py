@@ -63,6 +63,8 @@ class StockComputed:
     return_ytd: float | None = None
     signals_1y: tuple[str, ...] = ()
     signals_1y_dates: tuple[str, ...] = ()
+    trend_1y_closes: tuple[float | None, ...] = ()
+    trend_1y_dates: tuple[str, ...] = ()
     # ISO calendar date (YYYY-MM-DD) of the EOD bar used for last_price / returns
     last_price_date: str | None = None
 
@@ -223,20 +225,31 @@ class AnalysisService:
 
         weekly_dates: list[str] = []
         weekly_signals: list[str] = []
+        weekly_closes: list[float | None] = []
         fri_grouper = pd.Grouper(freq="W-FRI", label="right", closed="right")
+        # We also align weekly closes to the same week-ending buckets using the Close series.
+        close_ser = close.sort_index()
         for _week_end, grp in ser.groupby(fri_grouper):
             if grp.empty:
                 continue
             last_dt = grp.index[-1]
             weekly_dates.append(last_dt.date().isoformat())
             weekly_signals.append(_classify(_safe_float(grp.iloc[-1])))
+            try:
+                c = close_ser.loc[last_dt]
+                weekly_closes.append(_safe_float(c))
+            except Exception:
+                weekly_closes.append(None)
 
         # ~1 year of weekly signals for dashboard heatmap (chronological: oldest first)
         n_1y = 52
         tail_d = weekly_dates[-n_1y:] if weekly_dates else []
         tail_s = weekly_signals[-n_1y:] if weekly_signals else []
+        tail_c = weekly_closes[-n_1y:] if weekly_closes else []
         signals_1y_tuple = tuple(tail_s)
         signals_1y_dates_tuple = tuple(tail_d)
+        trend_1y_closes_tuple = tuple(tail_c)
+        trend_1y_dates_tuple = tuple(tail_d)
 
         # Most recent 16 weeks, most-recent first for the table columns
         n_table = 16
@@ -310,6 +323,8 @@ class AnalysisService:
             signals=signals,
             signals_1y=signals_1y_tuple,
             signals_1y_dates=signals_1y_dates_tuple,
+            trend_1y_closes=trend_1y_closes_tuple,
+            trend_1y_dates=trend_1y_dates_tuple,
             score_latest=score_latest,
             close_latest=close_latest,
             ema_latest=ema_latest,
@@ -433,6 +448,8 @@ class AnalysisService:
                         signals=list(c.signals),
                         signals_1y=list(c.signals_1y),
                         signals_1y_dates=list(c.signals_1y_dates),
+                        trend_1y_closes=list(c.trend_1y_closes),
+                        trend_1y_dates=list(c.trend_1y_dates),
                     )
                     rows.append(row)
 
