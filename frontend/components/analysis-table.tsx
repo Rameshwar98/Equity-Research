@@ -194,7 +194,7 @@ export function AnalysisTable({
 
   const [sorting, setSorting] = React.useState<SortingState>(() => defaultSorting);
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const [tableView, setTableView] = React.useState<"stocks" | "sectors">("stocks");
+  const [tableView, setTableView] = React.useState<"stocks" | "sectors" | "weekly_totals">("stocks");
 
   React.useEffect(() => {
     setSorting(defaultSorting);
@@ -284,6 +284,29 @@ export function AnalysisTable({
         ),
       },
       {
+        accessorKey: "last_price",
+        header: () => (
+          <div className="whitespace-nowrap text-[11px] leading-snug text-right">
+            <div className="font-semibold text-foreground">Last Price</div>
+            <div className="font-normal text-muted-foreground" title={eodIso ? `EOD as of ${eodIso}` : undefined}>
+              {lastPriceSubheader}
+            </div>
+          </div>
+        ),
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className="tabular-nums text-xs font-semibold text-right">{fmtPrice(row.original.last_price)}</div>
+        ),
+      },
+      {
+        accessorKey: "mkt_cap",
+        header: () => <div className="text-right whitespace-nowrap">Mkt Cap</div>,
+        sortingFn: "basic",
+        cell: ({ row }) => (
+          <div className="tabular-nums text-xs text-right">{fmtCap(row.original.mkt_cap)}</div>
+        ),
+      },
+      {
         accessorKey: "sector",
         header: "Sector",
         sortingFn: isGlobalIndices
@@ -316,30 +339,7 @@ export function AnalysisTable({
         accessorKey: selectedScore,
         header: SCORE_LABELS[selectedScore],
         cell: ({ row }) => (
-          <div className="tabular-nums text-xs">{fmtScore(row.original[selectedScore])}</div>
-        ),
-      },
-      {
-        accessorKey: "last_price",
-        header: () => (
-          <div className="whitespace-nowrap text-[11px] leading-snug">
-            <div className="font-semibold text-foreground">Last Price</div>
-            <div className="font-normal text-muted-foreground" title={eodIso ? `EOD as of ${eodIso}` : undefined}>
-              {lastPriceSubheader}
-            </div>
-          </div>
-        ),
-        sortingFn: "basic",
-        cell: ({ row }) => (
-          <div className="tabular-nums text-xs font-semibold">{fmtPrice(row.original.last_price)}</div>
-        ),
-      },
-      {
-        accessorKey: "mkt_cap",
-        header: "Mkt Cap",
-        sortingFn: "basic",
-        cell: ({ row }) => (
-          <div className="tabular-nums text-xs">{fmtCap(row.original.mkt_cap)}</div>
+          <div className="tabular-nums text-xs text-right">{fmtScore(row.original[selectedScore])}</div>
         ),
       },
       {
@@ -453,6 +453,38 @@ export function AnalysisTable({
     [data.rows]
   );
 
+  const weeklyTotals = React.useMemo(() => {
+    // Prefer the dedicated 1Y weekly series (Fri weeks) when present.
+    const firstWithDates = data.rows.find((r) => (r.signals_1y_dates?.length ?? 0) >= 8);
+    const baseDates = firstWithDates?.signals_1y_dates ?? [];
+    const weeks = baseDates.slice(-8);
+    if (weeks.length === 0) return [];
+
+    const totals = weeks.map((iso) => ({ iso, BUY: 0, HOLD: 0, SELL: 0, NA: 0 }));
+    const idxByIso = new Map(weeks.map((d, i) => [d, i] as const));
+
+    for (const r of data.rows) {
+      const { signals: hs, dates: hd } = heatmapFromRow(r, data.date_labels);
+      if (!hd.length || !hs.length) continue;
+      const m = new Map<string, Signal>();
+      for (let i = 0; i < Math.min(hd.length, hs.length); i++) {
+        m.set(hd[i]!, hs[i]!);
+      }
+      for (const iso of weeks) {
+        const i = idxByIso.get(iso);
+        if (i == null) continue;
+        const sig = m.get(iso) ?? "N/A";
+        if (sig === "BUY") totals[i]!.BUY += 1;
+        else if (sig === "SELL") totals[i]!.SELL += 1;
+        else if (sig === "HOLD") totals[i]!.HOLD += 1;
+        else totals[i]!.NA += 1;
+      }
+    }
+
+    // Most-recent week first
+    return [...totals].reverse();
+  }, [data.date_labels, data.rows]);
+
   return (
     <div className="rounded-xl border bg-card shadow-sm">
       <div
@@ -560,15 +592,32 @@ export function AnalysisTable({
           >
             Sector based
           </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className={cn(
+              "h-7 shrink-0 rounded-sm px-2.5 text-xs",
+              tableView === "weekly_totals" && "bg-background text-foreground shadow-sm"
+            )}
+            onClick={() => setTableView("weekly_totals")}
+            role="tab"
+            aria-selected={tableView === "weekly_totals"}
+          >
+            8W totals
+          </Button>
         </div>
         <span className="ml-auto shrink-0 whitespace-nowrap pl-2 text-xs font-medium text-muted-foreground tabular-nums">
           {tableView === "stocks" ? (
             <>
               Showing {table.getRowModel().rows.length} of {data.rows.length}
             </>
-          ) : (
+          ) : tableView === "sectors" ? (
             <>
               {sectorAggregates.length} sectors · {sectorPortfolioTotals.stockCount} stocks
+            </>
+          ) : (
+            <>
+              8 weeks · {data.rows.length} stocks
             </>
           )}
         </span>
@@ -576,6 +625,59 @@ export function AnalysisTable({
 
       {tableView === "sectors" ? (
         <SectorAggregateTable aggregates={sectorAggregates} totals={sectorPortfolioTotals} />
+      ) : null}
+
+      {tableView === "weekly_totals" ? (
+        <div className="p-4">
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+            Weekly totals (Fri close) — last 8 weeks
+          </div>
+          <div className="overflow-auto">
+            <table className="w-full text-xs">
+              <thead className="sticky top-0 z-10 bg-card shadow-[0_1px_0_0_hsl(var(--border))]">
+                <tr className="border-b border-border/80">
+                  <th className="px-2 py-2 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                    Week ending
+                  </th>
+                  <th className="px-2 py-2 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                    BUY
+                  </th>
+                  <th className="px-2 py-2 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                    HOLD
+                  </th>
+                  <th className="px-2 py-2 text-right text-xs font-semibold text-muted-foreground whitespace-nowrap">
+                    SELL
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {weeklyTotals.map((w) => (
+                  <tr key={w.iso} className="border-b hover:bg-muted/40 transition-colors">
+                    <td className="px-2 py-2 tabular-nums text-muted-foreground">
+                      {formatCalendarYmd(w.iso)}
+                    </td>
+                    <td className="px-2 py-2 text-right tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
+                      {w.BUY}
+                    </td>
+                    <td className="px-2 py-2 text-right tabular-nums font-semibold text-amber-600 dark:text-amber-300">
+                      {w.HOLD}
+                    </td>
+                    <td className="px-2 py-2 text-right tabular-nums font-semibold text-rose-600 dark:text-rose-400">
+                      {w.SELL}
+                    </td>
+                  </tr>
+                ))}
+                {weeklyTotals.length === 0 ? (
+                  <tr>
+                    <td className="px-2 py-6 text-sm text-muted-foreground" colSpan={4}>
+                      No weekly signal history found yet. Run analysis on an equity index to populate 1Y weekly heatmap.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+        </div>
       ) : null}
 
       {tableView === "stocks" ? (

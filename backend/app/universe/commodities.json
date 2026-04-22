@@ -37,6 +37,24 @@
       "sub_sector": null
     },
     {
+      "symbol": "JJN",
+      "name": "Nickel (JJN)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "JJU",
+      "name": "Aluminum (JJU)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
+      "symbol": "PPLT",
+      "name": "Platinum (PPLT)",
+      "sector": null,
+      "sub_sector": null
+    },
+    {
       "symbol": "DBA",
       "name": "Agriculture basket (DBA)",
       "sector": null,

@@ -130,7 +130,7 @@ export function PeerComparisonTable({
                   key={c.key}
                   className={cn(
                     "px-1 py-1.5 font-semibold text-left whitespace-nowrap text-foreground",
-                    c.key !== "name" && c.key !== "sig" && "text-center",
+                    c.key !== "name" && "text-center",
                     c.key === "hm" && "text-center"
                   )}
                 >
@@ -159,7 +159,7 @@ export function PeerComparisonTable({
                     {p.symbol}
                   </div>
                 </td>
-                <td className="px-1 py-1 tabular-nums text-right font-medium text-foreground align-middle">
+                <td className="px-1 py-1 tabular-nums text-center font-medium text-foreground align-middle">
                   {fmtCap(p.mkt_cap)}
                 </td>
                 <td className="px-0.5 py-1 text-center align-middle">
@@ -168,7 +168,7 @@ export function PeerComparisonTable({
                     className="h-5 px-1 py-0 text-[9px] leading-none font-semibold"
                   />
                 </td>
-                <td className="px-1 py-1 text-right tabular-nums font-semibold text-foreground align-middle">
+                <td className="px-1 py-1 text-center tabular-nums font-semibold text-foreground align-middle">
                   {fmtScore(p.score)}
                 </td>
                 <td className={cn("px-0.5 py-1 text-center tabular-nums", retHeat(p.return_1d))}>
