@@ -3,7 +3,6 @@
 import * as React from "react";
 
 import { AnalysisTable } from "@/components/analysis-table";
-import { ModeToggle } from "@/components/mode-toggle";
 import { StockDrawer } from "@/components/stock-drawer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -318,215 +317,174 @@ export default function Home() {
     : null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-[1480px] px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
-        <div className="mb-4 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1">
-            <div className="text-3xl font-semibold tracking-tight text-foreground">
-              Equity Analysis Dashboard
-            </div>
-            <div className="text-base text-muted-foreground leading-snug max-w-xl">
-              Index scoring, trend states, and Fibonacci levels for universe screening.
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <ModeToggle />
-          </div>
+    <div className="mx-auto max-w-[1480px] px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
+      <div className="mb-4 space-y-1">
+        <div className="text-base text-muted-foreground leading-snug max-w-xl">
+          Index scoring, trend states, and Fibonacci levels for universe screening.
         </div>
+      </div>
 
-        <Card className="mb-4 shadow-sm">
-          <CardContent className="p-3">
-            {!controlsMounted ? (
-              <ControlsSkeleton />
-            ) : (
-              <div
-                className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
-                role="toolbar"
-                aria-label="Analysis controls and summary"
-              >
-                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:flex-nowrap sm:overflow-x-auto sm:py-0.5 [scrollbar-width:thin]">
-                  <span className="shrink-0 text-xs font-medium text-muted-foreground">Index</span>
-                  <div className="w-[min(152px,42vw)] shrink-0">
-                    <Select
-                      value={indexName}
-                      onValueChange={setIndexName}
-                      disabled={!indices.length}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Select index" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {indexGroups.map((g, idx) => (
-                          <React.Fragment key={g.label}>
-                            {idx > 0 ? <SelectDivider /> : null}
-                            <SelectGroup>
-                              <SelectGroupLabel>{g.label}</SelectGroupLabel>
-                              {g.items.map((i) => (
-                                <SelectItem key={i.name} value={i.name}>
-                                  {i.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </React.Fragment>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <span className="shrink-0 text-xs font-medium text-muted-foreground">Score</span>
-                  <div className="min-w-[min(220px,55vw)] max-w-[min(320px,70vw)] shrink-0">
-                    <Select
-                      value={selectedScore}
-                      onValueChange={(v) => setSelectedScore(v as ScoreKey)}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Select score" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SCORE_OPTIONS.map((s) => (
-                          <SelectItem key={s.key} value={s.key}>
-                            {s.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Input
-                    className="h-8 w-[min(140px,28vw)] shrink-0 text-xs"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search…"
-                    aria-label="Search symbol or name"
-                  />
-
-                  <Button
-                    className="h-8 shrink-0 px-3 text-xs"
-                    onClick={() => onRun(false)}
-                    disabled={loading}
-                  >
-                    {loading ? "Running…" : "Run"}
-                  </Button>
-                  <Button
-                    className="h-8 shrink-0 px-3 text-xs"
-                    variant="outline"
-                    onClick={() => onRun(true)}
-                    disabled={loading}
-                  >
-                    Refresh
-                  </Button>
+      <Card className="mb-4 shadow-sm">
+        <CardContent className="p-3">
+          {!controlsMounted ? (
+            <ControlsSkeleton />
+          ) : (
+            <div
+              className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+              role="toolbar"
+              aria-label="Analysis controls and summary"
+            >
+              <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:flex-nowrap sm:overflow-x-auto sm:py-0.5 [scrollbar-width:thin]">
+                <span className="shrink-0 text-xs font-medium text-muted-foreground">Index</span>
+                <div className="w-[min(152px,42vw)] shrink-0">
+                  <Select value={indexName} onValueChange={setIndexName} disabled={!indices.length}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Select index" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {indexGroups.map((g, idx) => (
+                        <React.Fragment key={g.label}>
+                          {idx > 0 ? <SelectDivider /> : null}
+                          <SelectGroup>
+                            <SelectGroupLabel>{g.label}</SelectGroupLabel>
+                            {g.items.map((i) => (
+                              <SelectItem key={i.name} value={i.name}>
+                                {i.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </React.Fragment>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                {runProgress && runProgress.status === "running" ? (
-                  <div className="flex min-w-0 max-w-full items-center gap-2 border-t border-border pt-2 sm:min-w-[12rem] sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0">
-                    <div className="hidden h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-muted sm:block sm:w-20">
-                      <div
-                        className="h-full rounded-full bg-primary transition-[width] duration-300"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            Math.max(0, runProgress.progressPercent ?? 0)
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                    <span
-                      className="min-w-0 truncate text-xs text-muted-foreground tabular-nums"
-                      title={
-                        [
-                          runProgress.message ?? "Processing",
-                          runProgress.total > 0
-                            ? `${runProgress.processed}/${runProgress.total}`
-                            : null,
-                          runProgress.progressPercent !== null
-                            ? `${runProgress.progressPercent.toFixed(1)}%`
-                            : null,
-                          runProgress.etaSeconds !== null
-                            ? `~${Math.max(0, Math.round(runProgress.etaSeconds))}s`
-                            : null,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")
-                      }
-                    >
-                      <span className="font-medium text-foreground">
-                        {runProgress.message ?? "Processing"}
-                      </span>
-                      {runProgress.total > 0
-                        ? ` (${runProgress.processed}/${runProgress.total})`
-                        : null}
-                      {runProgress.progressPercent === null
-                        ? ""
-                        : ` · ${runProgress.progressPercent.toFixed(1)}%`}
-                      {runProgress.etaSeconds === null
-                        ? ""
-                        : ` · ~${Math.max(0, Math.round(runProgress.etaSeconds))}s`}
-                    </span>
-                  </div>
-                ) : null}
+                <span className="shrink-0 text-xs font-medium text-muted-foreground">Score</span>
+                <div className="min-w-[min(220px,55vw)] max-w-[min(320px,70vw)] shrink-0">
+                  <Select value={selectedScore} onValueChange={(v) => setSelectedScore(v as ScoreKey)}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Select score" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SCORE_OPTIONS.map((s) => (
+                        <SelectItem key={s.key} value={s.key}>
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                {resp && !(runProgress && runProgress.status === "running") ? (
-                  <div className="flex min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2 text-xs tabular-nums sm:flex-nowrap sm:overflow-x-auto sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0 [scrollbar-width:thin]">
-                    <span className="shrink-0 text-muted-foreground">
-                      Total{" "}
-                      <span className="font-semibold text-foreground">{resp.summary.total}</span>
-                    </span>
-                    <span className="text-muted-foreground/50" aria-hidden>
-                      ·
-                    </span>
-                    <span className="shrink-0 text-emerald-700 dark:text-emerald-400">
-                      BUY <span className="font-semibold">{resp.summary.buy}</span>
-                    </span>
-                    <span className="text-muted-foreground/50" aria-hidden>
-                      ·
-                    </span>
-                    <span className="shrink-0 text-amber-700 dark:text-amber-400">
-                      HOLD <span className="font-semibold">{resp.summary.hold}</span>
-                    </span>
-                    <span className="text-muted-foreground/50" aria-hidden>
-                      ·
-                    </span>
-                    <span className="shrink-0 text-rose-700 dark:text-rose-400">
-                      SELL <span className="font-semibold">{resp.summary.sell}</span>
-                    </span>
-                    <span className="text-muted-foreground/50" aria-hidden>
-                      ·
-                    </span>
-                    <span
-                      className="min-w-0 shrink text-muted-foreground sm:shrink-0"
-                      title={`${new Date(resp.cached_at).toLocaleString("en-US", {
+                <Input
+                  className="h-8 w-[min(140px,28vw)] shrink-0 text-xs"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search…"
+                  aria-label="Search symbol or name"
+                />
+
+                <Button className="h-8 shrink-0 px-3 text-xs" onClick={() => onRun(false)} disabled={loading}>
+                  {loading ? "Running…" : "Run"}
+                </Button>
+                <Button
+                  className="h-8 shrink-0 px-3 text-xs"
+                  variant="outline"
+                  onClick={() => onRun(true)}
+                  disabled={loading}
+                >
+                  Refresh
+                </Button>
+              </div>
+
+              {runProgress && runProgress.status === "running" ? (
+                <div className="flex min-w-0 max-w-full items-center gap-2 border-t border-border pt-2 sm:min-w-[12rem] sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0">
+                  <div className="hidden h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-muted sm:block sm:w-20">
+                    <div
+                      className="h-full rounded-full bg-primary transition-[width] duration-300"
+                      style={{
+                        width: `${Math.min(100, Math.max(0, runProgress.progressPercent ?? 0))}%`,
+                      }}
+                    />
+                  </div>
+                  <span
+                    className="min-w-0 truncate text-xs text-muted-foreground tabular-nums"
+                    title={
+                      [
+                        runProgress.message ?? "Processing",
+                        runProgress.total > 0 ? `${runProgress.processed}/${runProgress.total}` : null,
+                        runProgress.progressPercent !== null ? `${runProgress.progressPercent.toFixed(1)}%` : null,
+                        runProgress.etaSeconds !== null ? `~${Math.max(0, Math.round(runProgress.etaSeconds))}s` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")
+                    }
+                  >
+                    <span className="font-medium text-foreground">{runProgress.message ?? "Processing"}</span>
+                    {runProgress.total > 0 ? ` (${runProgress.processed}/${runProgress.total})` : null}
+                    {runProgress.progressPercent === null ? "" : ` · ${runProgress.progressPercent.toFixed(1)}%`}
+                    {runProgress.etaSeconds === null ? "" : ` · ~${Math.max(0, Math.round(runProgress.etaSeconds))}s`}
+                  </span>
+                </div>
+              ) : null}
+
+              {resp && !(runProgress && runProgress.status === "running") ? (
+                <div className="flex min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2 text-xs tabular-nums sm:flex-nowrap sm:overflow-x-auto sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0 [scrollbar-width:thin]">
+                  <span className="shrink-0 text-muted-foreground">
+                    Total <span className="font-semibold text-foreground">{resp.summary.total}</span>
+                  </span>
+                  <span className="text-muted-foreground/50" aria-hidden>
+                    ·
+                  </span>
+                  <span className="shrink-0 text-emerald-700 dark:text-emerald-400">
+                    BUY <span className="font-semibold">{resp.summary.buy}</span>
+                  </span>
+                  <span className="text-muted-foreground/50" aria-hidden>
+                    ·
+                  </span>
+                  <span className="shrink-0 text-amber-700 dark:text-amber-400">
+                    HOLD <span className="font-semibold">{resp.summary.hold}</span>
+                  </span>
+                  <span className="text-muted-foreground/50" aria-hidden>
+                    ·
+                  </span>
+                  <span className="shrink-0 text-rose-700 dark:text-rose-400">
+                    SELL <span className="font-semibold">{resp.summary.sell}</span>
+                  </span>
+                  <span className="text-muted-foreground/50" aria-hidden>
+                    ·
+                  </span>
+                  <span
+                    className="min-w-0 shrink text-muted-foreground sm:shrink-0"
+                    title={`${new Date(resp.cached_at).toLocaleString("en-US", {
+                      timeZone: "UTC",
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })} UTC · ${resp.metadata.index_name} · ${resp.metadata.selected_score}`}
+                  >
+                    <span className="hidden lg:inline">Updated </span>
+                    <span className="sm:whitespace-nowrap">
+                      {new Date(resp.cached_at).toLocaleString("en-US", {
                         timeZone: "UTC",
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })} UTC · ${resp.metadata.index_name} · ${resp.metadata.selected_score}`}
-                    >
-                      <span className="hidden lg:inline">Updated </span>
-                      <span className="sm:whitespace-nowrap">
-                        {new Date(resp.cached_at).toLocaleString("en-US", {
-                          timeZone: "UTC",
-                          month: "short",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}{" "}
-                        UTC · {resp.metadata.index_name} · {resp.metadata.selected_score}
-                      </span>
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}{" "}
+                      UTC · {resp.metadata.index_name} · {resp.metadata.selected_score}
                     </span>
-                  </div>
-                ) : null}
-              </div>
-            )}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          )}
 
-            {error ? (
-              <div
-                className="mt-2 truncate text-xs font-medium text-destructive"
-                title={error}
-              >
-                {error}
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
+          {error ? (
+            <div className="mt-2 truncate text-xs font-medium text-destructive" title={error}>
+              {error}
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
 
         {resp && resp.rows.length === 0 ? (
           <div
@@ -581,7 +539,6 @@ export default function Home() {
             to load the universe.
           </div>
         )}
-      </div>
 
       <StockDrawer
         open={drawerOpen}

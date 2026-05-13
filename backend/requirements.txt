@@ -8,4 +8,5 @@ pandas>=2.2,<3
 numpy>=1.26,<3
 aiosqlite>=0.20,<1
 tenacity>=9,<10
+exchange_calendars>=4.6,<5
 

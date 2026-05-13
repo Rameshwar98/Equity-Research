@@ -175,3 +175,306 @@ export type StockNewsResponse = {
   items: StockNewsItem[];
 };
 
+export type StrategyType = "MomentumIQ";
+export type RebalanceMode = "manual" | "auto" | "both";
+
+export type PortfolioParams = {
+  universe: string;
+  universe_size_cap?: number | null;
+  momentum_screen_size: number;
+  final_portfolio_size: number;
+  ma_exit_override: boolean;
+  rebalance_mode: RebalanceMode;
+  benchmark?: string | null;
+};
+
+export type Portfolio = {
+  id: string;
+  name: string;
+  strategy: StrategyType;
+  params: PortfolioParams;
+  chart_prefs: Record<string, boolean>;
+  /** True when seeded via dev "Generate Test History" — not real performance data */
+  is_test_mode?: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PortfolioListItem = {
+  id: string;
+  name: string;
+  strategy: StrategyType;
+  universe: string;
+  momentum_screen_size: number;
+  final_portfolio_size: number;
+  is_test_mode?: boolean;
+  last_run_at?: string | null;
+  holdings_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+/** Response from POST /api/test/seed-portfolio/:id (UI test mode seed) */
+export type GenerateTestHistoryResponse = {
+  ok: boolean;
+  portfolio_id: string;
+  snapshots_created: number;
+  inception_date: string | null;
+  daily_series_points: number;
+};
+
+export type MomentumScoreBand = "BUY" | "HOLD" | "WATCH" | "EXIT";
+export type MomentumActionType = "HOLD" | "HOLD_WITH_WATCH" | "EXIT" | "BUY";
+export type MomentumExitReason =
+  | "score_breach"
+  | "ma_breach"
+  | "score_and_ma_breach"
+  | "dropped_out_of_top100";
+
+export type MomentumComputedRow = {
+  symbol: string;
+  name?: string | null;
+  sector?: string | null;
+  last_price: number;
+  price_date: string;
+  return_1y: number;
+  annualized_sd: number;
+  mkt_cap?: number | null;
+  high_52w?: number | null;
+  low_52w?: number | null;
+  return_1w?: number | null;
+  return_1m?: number | null;
+  return_3m?: number | null;
+  return_ytd?: number | null;
+  signals_1y?: Signal[];
+  signals_1y_dates?: string[];
+  /** Screener score_3: close / avg(all EMAs). */
+  score_3?: number | null;
+  return_rank: number;
+  sd_rank: number;
+  combined_score: number;
+  combined_rank: number;
+  price_vs_50ma: "above" | "below";
+  ma50: number;
+  ma_override_active: boolean;
+  band: MomentumScoreBand;
+  action: MomentumActionType;
+  exit_reason?: MomentumExitReason | null;
+  target_weight: number;
+  months_held: number;
+  rank_change_vs_last_month?: number | null;
+};
+
+export type MomentumSnapshot = {
+  snapshot_id: string;
+  portfolio_id: string;
+  created_at: string;
+  holdings: MomentumComputedRow[];
+  top100_ranks: Record<string, number>;
+  incoming: MomentumComputedRow[];
+  outgoing: MomentumComputedRow[];
+  hold: MomentumComputedRow[];
+  watch: MomentumComputedRow[];
+  degree_of_improvement_watchlist: {
+    symbol: string;
+    name?: string | null;
+    sector?: string | null;
+    rank_delta: number;
+    previous_rank: number;
+    current_rank: number;
+    combined_score: number;
+  }[];
+  skipped_symbols: string[];
+  top100_rows: MomentumComputedRow[];
+  on_deck?: MomentumComputedRow[];
+};
+
+export type MomentumPreview = {
+  run_id: string;
+  portfolio_id: string;
+  created_at: string;
+  current_holdings: MomentumComputedRow[];
+  incoming: MomentumComputedRow[];
+  outgoing: MomentumComputedRow[];
+  hold: MomentumComputedRow[];
+  watch: MomentumComputedRow[];
+  degree_of_improvement_watchlist: {
+    symbol: string;
+    name?: string | null;
+    sector?: string | null;
+    rank_delta: number;
+    previous_rank: number;
+    current_rank: number;
+    combined_score: number;
+  }[];
+  skipped_symbols: string[];
+};
+
+export type HoldingsView = {
+  portfolio_id: string;
+  last_snapshot?: MomentumSnapshot | null;
+  previous_snapshot?: MomentumSnapshot | null;
+  incoming: MomentumComputedRow[];
+  outgoing: MomentumComputedRow[];
+  degree_of_improvement_watchlist: {
+    symbol: string;
+    rank_delta: number;
+    previous_rank: number;
+    current_rank: number;
+  }[];
+};
+
+export type AnalyticsKpis = {
+  sharpe?: number | null;
+  sortino?: number | null;
+  sharpe_rf_assumption: string;
+  sortino_rf_assumption: string;
+  quality_score?: number | null; // 0..1
+  avg_1y_return?: number | null;
+  avg_annualized_sd?: number | null;
+  spread_1m?: number | null;
+  spread_3m?: number | null;
+  spread_ytd?: number | null;
+  spread_1y?: number | null;
+};
+
+export type AnalyticsSeriesPoint = {
+  date: string;
+  portfolio: number | null;
+  benchmark: number | null;
+};
+
+export type AnalyticsSectorOverTimePoint = {
+  date: string;
+  sectors: Record<string, number>;
+};
+
+export type AnalyticsRankMovementItem = {
+  symbol: string;
+  name?: string | null;
+  sector?: string | null;
+  delta: number;
+  prev_rank: number;
+  cur_rank: number;
+};
+
+export type AnalyticsConcentrationCard = {
+  herfindahl?: number | null;
+  max_sector_weight?: number | null;
+  distinct_sectors: number;
+};
+
+export type PortfolioAnalyticsResponse = {
+  portfolio_id: string;
+  benchmark_symbol: string;
+  inception_date?: string | null;
+  snapshots: number;
+  kpis: AnalyticsKpis;
+  charts: {
+    cumulative: AnalyticsSeriesPoint[];
+    drawdown: AnalyticsSeriesPoint[];
+    rolling_sharpe: AnalyticsSeriesPoint[];
+    scatter_holdings: MomentumComputedRow[];
+    scatter_top100: MomentumComputedRow[];
+    scatter_median_return_1y?: number | null;
+    scatter_median_sd?: number | null;
+    sector_over_time: AnalyticsSectorOverTimePoint[];
+    contributors_detractors: {
+      contributors: MomentumComputedRow[];
+      detractors: MomentumComputedRow[];
+    };
+    rank_movement: {
+      improved: AnalyticsRankMovementItem[];
+      deteriorated: AnalyticsRankMovementItem[];
+    };
+    concentration: AnalyticsConcentrationCard;
+  };
+  chart_prefs: Record<string, boolean>;
+};
+
+export type PortfolioHistoryResponse = {
+  portfolio_id: string;
+  snapshots: {
+    snapshot_id: string;
+    created_at: string;
+    effective_date: string;
+    holdings_count: number;
+  }[];
+  movements: {
+    snapshot_id: string;
+    effective_date: string;
+    entries: number;
+    exits: number;
+    turnover_pct: number;
+  }[];
+  events: {
+    effective_date: string;
+    created_at: string;
+    type: "entry" | "exit";
+    symbol: string;
+    name?: string | null;
+    sector?: string | null;
+    rank?: number | null;
+  }[];
+  charts: {
+    turnover: { effective_date: string; turnover_pct: number }[];
+    duration_histogram: { label: string; count: number }[];
+    heatmap_columns: { key: string; label: string }[];
+    rank_heatmap: {
+      symbol: string;
+      name?: string | null;
+      sector?: string | null;
+      ranks_by_snapshot: Record<string, number | null>;
+    }[];
+    most_stable_holdings: {
+      symbol: string;
+      name?: string | null;
+      sector?: string | null;
+      total_snapshots_held: number;
+      longest_streak: number;
+    }[];
+  };
+  holdings_by_snapshot: Record<string, MomentumComputedRow[]>;
+};
+
+export type PortfolioScheduleResponse = {
+  portfolio_id: string;
+  rebalance_mode: "manual" | "auto" | "both";
+  market: "US" | "IN";
+  next_auto_rebalance: string;
+  enabled: boolean;
+};
+
+export type PortfolioDailySeriesPoint = {
+  date: string;
+  portfolio_value: number;
+  benchmark_value: number;
+};
+
+export type HoldingsPnlRow = {
+  symbol: string;
+  name?: string | null;
+  sector?: string | null;
+  entry_price: number;
+  entry_date: string;
+  current_price?: number | null;
+  pnl_pct?: number | null;
+  pnl_abs?: number | null;
+  days_held: number;
+};
+
+export type PortfolioPriceHistoryResponse = {
+  daily_series: PortfolioDailySeriesPoint[];
+  holdings_pnl: HoldingsPnlRow[];
+  summary: {
+    total_return_pct?: number | null;
+    benchmark_return_pct?: number | null;
+    alpha?: number | null;
+    best_performer?: string | null;
+    worst_performer?: string | null;
+    inception_date?: string | null;
+    days_tracked: number;
+  };
+  rebalance_dates: string[];
+};
+

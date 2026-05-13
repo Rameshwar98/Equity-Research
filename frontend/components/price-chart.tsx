@@ -191,8 +191,7 @@ export function PriceChart({
   /** Called when the chart tooltip active date changes (for heatmap highlight). */
   onSyncHoverDate?: (date: string | null) => void;
 }) {
-  const chartData = data.chart_data;
-  if (!chartData || chartData.length === 0) return null;
+  const chartData = data.chart_data ?? [];
 
   const [emaOverlays, setEmaOverlays] = React.useState<Set<EmaKey>>(new Set(["ema20"]));
   const [showVolume, setShowVolume] = React.useState(true);
@@ -216,7 +215,8 @@ export function PriceChart({
   const toggleEma = (key: EmaKey) => {
     setEmaOverlays((prev) => {
       const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   };
@@ -269,6 +269,8 @@ export function PriceChart({
     ),
     [onHoverPoint, onSyncHoverDate]
   );
+
+  if (chartData.length === 0) return null;
 
   const showSyncRefLine =
     !!syncHoverDate && chartData.some((d) => d.date === syncHoverDate);
