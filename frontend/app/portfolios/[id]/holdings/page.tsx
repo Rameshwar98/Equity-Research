@@ -444,6 +444,7 @@ export default function PortfolioHoldingsPage() {
   }, [refresh]);
 
   async function onRun() {
+    if (!portfolioId) return;
     setPreview(null);
     setPreviewOpen(false);
     setProgress({
@@ -480,13 +481,14 @@ export default function PortfolioHoldingsPage() {
   }, []);
 
   React.useEffect(() => {
-    if (!runId) return;
+    if (!runId || !portfolioId) return;
     const rid: string = runId;
+    const pid = portfolioId;
     let cancelled = false;
     async function loop() {
       while (!cancelled) {
         try {
-          const p = await getPortfolioRebalanceProgress(portfolioId, rid);
+          const p = await getPortfolioRebalanceProgress(pid, rid);
           if (cancelled) return;
           setProgress({
             status: p.status,
@@ -498,7 +500,7 @@ export default function PortfolioHoldingsPage() {
             error: p.error,
           });
           if (p.status === "done") {
-            const pv = await getPortfolioRebalancePreview(portfolioId, rid);
+            const pv = await getPortfolioRebalancePreview(pid, rid);
             if (cancelled) return;
             setPreview(pv);
             setPreviewOpen(true);
@@ -524,7 +526,7 @@ export default function PortfolioHoldingsPage() {
   }, [portfolioId, runId]);
 
   async function onCommit() {
-    if (!runId) return;
+    if (!runId || !portfolioId) return;
     try {
       await commitPortfolioRebalance(portfolioId, runId);
       setPreviewOpen(false);
@@ -536,7 +538,7 @@ export default function PortfolioHoldingsPage() {
   }
 
   async function onDiscard() {
-    if (!runId) return;
+    if (!runId || !portfolioId) return;
     try {
       await discardPortfolioRebalance(portfolioId, runId);
       setPreviewOpen(false);
@@ -573,7 +575,7 @@ export default function PortfolioHoldingsPage() {
 
   const canExportCsv = filteredHoldings.length > 0;
   const onExportCsv = React.useCallback(() => {
-    if (!canExportCsv) return;
+    if (!canExportCsv || !portfolioId) return;
     const rows = filteredHoldings.map((r) => ({
       symbol: r.symbol,
       name: r.name || "",

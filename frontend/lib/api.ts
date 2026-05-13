@@ -7,6 +7,7 @@ import type {
   MomentumSnapshot,
   PortfolioAnalyticsResponse,
   PortfolioHistoryResponse,
+  PortfolioPriceHistoryResponse,
   PortfolioScheduleResponse,
   Portfolio,
   PortfolioListItem,
