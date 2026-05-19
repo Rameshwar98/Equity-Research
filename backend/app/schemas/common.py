@@ -14,6 +14,9 @@ class ApiError(BaseModel):
 class HealthResponse(BaseModel):
     status: str = "ok"
     timestamp: datetime
+    data_dir: str | None = None
+    cache_dir: str | None = None
+    storage_ephemeral: bool | None = None
 
 
 class IndexInfo(BaseModel):

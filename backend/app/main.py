@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
+
+_log = logging.getLogger(__name__)
 
 # Resolve `.env` next to the `backend/` package root so the API key loads even if
 # uvicorn is started from the monorepo root (cwd != backend/).
@@ -37,6 +40,9 @@ class Settings(BaseSettings):
 
     app_env: str = "development"
     cache_dir: str = "./cache"
+    # Durable data root (portfolios, snapshots, daily tracking). On Render, set to a persistent
+    # disk mount (e.g. /var/data/equity). Defaults to CACHE_DIR when unset.
+    data_dir: str = ""
     db_path: str = "./cache/equity.db"
     # When False, backend does not create/read/write SQLite cache.
     # Useful for "fetch -> compute -> respond" local runs.
@@ -63,6 +69,8 @@ class Settings(BaseSettings):
 
         object.__setattr__(self, "cache_dir", anchored(self.cache_dir))
         object.__setattr__(self, "db_path", anchored(self.db_path))
+        dd = (self.data_dir or "").strip()
+        object.__setattr__(self, "data_dir", anchored(dd if dd else self.cache_dir))
         return self
 
 
@@ -70,6 +78,7 @@ settings = Settings()
 setup_logging(settings.app_env)
 
 Path(settings.cache_dir).mkdir(parents=True, exist_ok=True)
+Path(settings.data_dir).mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="Equity Analysis Backend", version="0.1.0")
 
@@ -119,16 +128,35 @@ analysis_service = AnalysisService(
 
 # Durable portfolio store (Phase 1 foundation) — persists regardless of persist_cache.
 portfolio_store = PortfolioStore(
-    PortfolioStoreConfig(data_path=Path(settings.cache_dir) / "portfolios.json")
+    PortfolioStoreConfig(data_path=Path(settings.data_dir) / "portfolios.json")
 )
 
 # Phase 7: Daily tracking store/service (always-on, independent of persist_cache)
-price_tracking_store = PriceTrackingStore(Path(settings.cache_dir) / "portfolio_tracking.db")
+price_tracking_store = PriceTrackingStore(Path(settings.data_dir) / "portfolio_tracking.db")
 price_tracking_service = PriceTrackingService(price_tracking_store, provider=provider, cache=cache_service)
+
+
+def _storage_is_ephemeral(path: str) -> bool:
+    p = path.replace("\\", "/").lower()
+    return p == "/tmp" or p.startswith("/tmp/")
 
 
 @app.on_event("startup")
 async def _startup() -> None:
+    if settings.app_env.strip().lower() == "production":
+        if _storage_is_ephemeral(settings.data_dir):
+            _log.warning(
+                "DATA_DIR=%s is ephemeral — portfolios and snapshots will be lost on redeploy. "
+                "Attach a Render persistent disk and set DATA_DIR to its mount path (e.g. /var/data/equity).",
+                settings.data_dir,
+            )
+        _log.info(
+            "storage data_dir=%s cache_dir=%s portfolios=%s",
+            settings.data_dir,
+            settings.cache_dir,
+            Path(settings.data_dir) / "portfolios.json",
+        )
+
     if settings.persist_cache:
         await ensure_db(settings.db_path)
 
@@ -153,7 +181,7 @@ async def _startup() -> None:
         Checks every 15 minutes; on the 1st trading day of the month for each market,
         auto-commits a rebalance for portfolios with rebalance_mode in {auto, both}.
         """
-        state_path = Path(settings.cache_dir) / "auto_scheduler_state.json"
+        state_path = Path(settings.data_dir) / "auto_scheduler_state.json"
 
         def load_state() -> dict:
             try:

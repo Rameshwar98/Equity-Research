@@ -70,6 +70,30 @@ function fmtScore3(v?: number | null) {
   return v.toFixed(4);
 }
 
+function holdingsLoadHint(error: string | null): string {
+  if (!error) {
+    return "The request failed before we could read snapshots. Try again in a moment.";
+  }
+  const lower = error.toLowerCase();
+  if (lower.includes("404") || lower.includes("not found")) {
+    return (
+      "This portfolio is not on the server. That often happens after a Render redeploy when storage was under /tmp, " +
+      "or when opening an old bookmark. Go to Portfolios, pick a portfolio from the list, or create a new one. " +
+      "For production, attach a Render persistent disk and set DATA_DIR (see README)."
+    );
+  }
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") {
+      return (
+        "Check that the API on Render is running and NEXT_PUBLIC_API_BASE_URL points to it. " +
+        "Open /api/health on the API host — storage_ephemeral should be false if portfolios are persisted."
+      );
+    }
+  }
+  return "If this keeps happening locally, confirm uvicorn is running on port 8000.";
+}
+
 function fmtCap(v?: number | null) {
   if (v === null || v === undefined || Number.isNaN(v)) return "—";
   if (v >= 1e12) return `${(v / 1e12).toFixed(1)}T`;
@@ -641,8 +665,7 @@ export default function PortfolioHoldingsPage() {
           <div className="text-lg font-semibold text-foreground">Couldn’t load holdings</div>
           <div className="mt-2 text-xs text-destructive break-words">{error}</div>
           <div className="mt-2 text-sm">
-            The request failed before we could read snapshots. This is often a temporary network issue or the API
-            being busy — try again. If it keeps happening, confirm uvicorn is running on port 8000.
+            {holdingsLoadHint(error)}
           </div>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             <Button onClick={() => void refresh(() => false)}>Retry</Button>

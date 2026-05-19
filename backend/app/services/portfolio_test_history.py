@@ -58,7 +58,7 @@ async def run_generate_portfolio_test_history(portfolio_id: str) -> GenerateTest
     if not p:
         raise HTTPException(status_code=404, detail="Portfolio not found")
 
-    track_db = PriceTrackingStore(Path(settings.cache_dir) / "portfolio_tracking.db")
+    track_db = PriceTrackingStore(Path(settings.data_dir) / "portfolio_tracking.db")
 
     await track_db.delete_portfolio_tracking(portfolio_id=portfolio_id)
     try:

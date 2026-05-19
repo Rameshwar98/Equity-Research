@@ -76,7 +76,7 @@ async def dev_backfill_from_inception(portfolio_id: str) -> dict:
         )
 
         # Return counts from tracking DB for quick verification
-        track_db = PriceTrackingStore(Path(settings.cache_dir) / "portfolio_tracking.db")
+        track_db = PriceTrackingStore(Path(settings.data_dir) / "portfolio_tracking.db")
         await track_db.ensure_schema()
         entries = await track_db.get_entries(portfolio_id=portfolio_id)
         series = await track_db.get_daily_series(portfolio_id=portfolio_id)
