@@ -38,6 +38,24 @@ _LAST_PREVIEW_STARTED_AT: Dict[str, float] = {}  # portfolio_id -> epoch seconds
 _COMMITTED: Dict[str, MomentumSnapshot] = {}
 
 
+def _schedule_price_backfill(*, portfolio_id: str, universe: str, benchmark_symbol: str | None) -> None:
+    """Run inception→today backfill off the request thread so commit returns quickly."""
+
+    async def _run() -> None:
+        try:
+            from app.main import price_tracking_service
+
+            await price_tracking_service.backfill_from_inception(
+                portfolio_id=portfolio_id,
+                universe=universe,
+                benchmark_symbol=benchmark_symbol,
+            )
+        except Exception:
+            _log.exception("background backfill failed portfolio_id=%s", portfolio_id)
+
+    asyncio.create_task(_run())
+
+
 @router.post("/portfolios/{portfolio_id}/backfill")
 async def dev_backfill_from_inception(portfolio_id: str) -> dict:
     """
@@ -340,16 +358,20 @@ async def commit_preview(portfolio_id: str, run_id: str) -> MomentumSnapshot:
             raise HTTPException(status_code=404, detail="Preview not found")
 
     await store.append_snapshot(portfolio_id, snap)
-    # Phase 7: persist entry prices on commit
     try:
-        from app.main import price_tracking_service
+        from app.api.routes.portfolio_analytics import _ANALYTICS_CACHE
+
+        _ANALYTICS_CACHE.pop(portfolio_id, None)
+    except Exception:
+        pass
+    # Phase 7: persist entry prices on commit (fast); backfill daily series in background.
+    try:
+        from app.main import price_tracking_service, portfolio_store
 
         await price_tracking_service.on_snapshot_committed(portfolio_id=portfolio_id, snapshot=snap)
-        # Phase 7: first-commit backfill (inception -> today)
-        from app.main import portfolio_store
         p0 = await portfolio_store.get(portfolio_id)
         if p0:
-            await price_tracking_service.backfill_from_inception(
+            _schedule_price_backfill(
                 portfolio_id=portfolio_id,
                 universe=p0.params.universe,
                 benchmark_symbol=p0.params.benchmark,
@@ -385,16 +407,15 @@ async def rebalance_auto_commit(portfolio_id: str) -> MomentumSnapshot:
         progress_cb=None,
     )
     await store.append_snapshot(portfolio_id, result.snapshot_candidate)
-    # Phase 7: persist entry prices on commit
+    # Phase 7: persist entry prices on commit (fast); backfill daily series in background.
     try:
         from app.main import price_tracking_service
 
         await price_tracking_service.on_snapshot_committed(
             portfolio_id=portfolio_id, snapshot=result.snapshot_candidate
         )
-        # Phase 7: first-commit backfill (inception -> today)
         if p:
-            await price_tracking_service.backfill_from_inception(
+            _schedule_price_backfill(
                 portfolio_id=portfolio_id,
                 universe=p.params.universe,
                 benchmark_symbol=p.params.benchmark,

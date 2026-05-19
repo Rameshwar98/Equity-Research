@@ -128,17 +128,27 @@ class AnalyticsService:
         self.cache = cache
         self.config = config
 
-    async def _ensure_prices(self, symbols: Iterable[str], timeout_seconds: float = 60.0) -> None:
+    async def _ensure_prices(
+        self,
+        symbols: Iterable[str],
+        *,
+        timeout_seconds: float = 45.0,
+        min_rows: int = 120,
+    ) -> None:
+        """Warm cache for analytics; skip provider when we already have enough bars."""
         unique = sorted({s for s in symbols if s})
         if not unique:
             return
         missing: List[str] = []
         for s in unique:
             df = await self.cache.get_price_history(s)
-            if df is None or df.empty:
+            if df is None or df.empty or len(df) < min_rows:
                 missing.append(s)
         if not missing:
             return
+        # Avoid multi-minute page loads: cap how many symbols we fetch per request.
+        if len(missing) > 40:
+            missing = missing[:40]
         dl = await self.provider.download_daily_history(
             symbols=missing,
             period=self.config.fmp_period,
@@ -197,7 +207,7 @@ class AnalyticsService:
         for s in snapshots:
             for h in s.holdings:
                 syms.add(h.symbol)
-        await self._ensure_prices(syms, timeout_seconds=90.0)
+        await self._ensure_prices(syms, timeout_seconds=45.0)
 
         # Build monthly return series from snapshot-to-snapshot returns.
         points: List[SeriesPoint] = []
@@ -350,6 +360,7 @@ class AnalyticsService:
         # Scatter payloads (for frontend chart)
         out.charts.scatter_holdings = latest.holdings
         out.charts.scatter_top100 = latest.top100_rows
+        out.charts.on_deck = latest.on_deck or []
 
         # Sector allocation over time
         sector_points: List[SectorOverTimePoint] = []

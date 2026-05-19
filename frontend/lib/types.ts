@@ -376,6 +376,7 @@ export type PortfolioAnalyticsResponse = {
     rolling_sharpe: AnalyticsSeriesPoint[];
     scatter_holdings: MomentumComputedRow[];
     scatter_top100: MomentumComputedRow[];
+    on_deck?: MomentumComputedRow[];
     scatter_median_return_1y?: number | null;
     scatter_median_sd?: number | null;
     sector_over_time: AnalyticsSectorOverTimePoint[];

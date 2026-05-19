@@ -66,6 +66,7 @@ class AnalyticsCharts(BaseModel):
 
     scatter_holdings: List[MomentumComputedRow] = Field(default_factory=list)
     scatter_top100: List[MomentumComputedRow] = Field(default_factory=list)
+    on_deck: List[MomentumComputedRow] = Field(default_factory=list)
     scatter_median_return_1y: Optional[float] = None
     scatter_median_sd: Optional[float] = None
 

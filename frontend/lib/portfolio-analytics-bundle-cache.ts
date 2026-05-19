@@ -1,5 +1,4 @@
 import type {
-  HoldingsView,
   Portfolio,
   PortfolioAnalyticsResponse,
   PortfolioPriceHistoryResponse,
@@ -9,7 +8,6 @@ import type {
 export type AnalyticsPageBundle = {
   portfolio: Portfolio;
   analytics: PortfolioAnalyticsResponse;
-  holdingsView: HoldingsView;
   priceHistory: PortfolioPriceHistoryResponse;
   updatedAt: number;
 };
@@ -39,7 +37,6 @@ export function setAnalyticsPageBundle(
   bundle: {
     portfolio: Portfolio;
     analytics: PortfolioAnalyticsResponse;
-    holdingsView: HoldingsView;
     priceHistory: PortfolioPriceHistoryResponse;
   }
 ): void {

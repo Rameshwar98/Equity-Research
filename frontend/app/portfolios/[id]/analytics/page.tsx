@@ -17,7 +17,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   getPortfolio,
   getPortfolioAnalytics,
-  getPortfolioHoldings,
   getPortfolioPriceHistory,
   updatePortfolioPrefs,
 } from "@/lib/api";
@@ -29,7 +28,6 @@ import {
 } from "@/lib/portfolio-analytics-bundle-cache";
 import { downloadCsv, toCsv } from "@/lib/csv";
 import type {
-  HoldingsView,
   Portfolio,
   PortfolioAnalyticsResponse,
   PortfolioPriceHistoryResponse,
@@ -42,7 +40,6 @@ export default function PortfolioAnalyticsPage() {
 
   const [portfolio, setPortfolio] = React.useState<Portfolio | null>(null);
   const [analytics, setAnalytics] = React.useState<PortfolioAnalyticsResponse | null>(null);
-  const [holdingsView, setHoldingsView] = React.useState<HoldingsView | null>(null);
   const [priceHistory, setPriceHistory] = React.useState<PortfolioPriceHistoryResponse | null>(null);
   const [err, setErr] = React.useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -78,7 +75,6 @@ export default function PortfolioAnalyticsPage() {
     if (cached && !isCancelled()) {
       setPortfolio(cached.portfolio);
       setAnalytics(cached.analytics);
-      setHoldingsView(cached.holdingsView);
       setPriceHistory(cached.priceHistory);
       setLoading(false);
     } else {
@@ -86,8 +82,7 @@ export default function PortfolioAnalyticsPage() {
     }
     setErr("");
     try {
-      // Load holdings after the other calls: /holdings is a large payload; parallel with
-      // three other requests + React Strict double-mount can exhaust connections → "Failed to fetch".
+      // Analytics response already includes holdings/top-100/on-deck rows — skip /holdings (large JSON).
       const [p, a, ph] = await Promise.all([
         getPortfolio(portfolioId),
         getPortfolioAnalytics(portfolioId),
@@ -97,13 +92,9 @@ export default function PortfolioAnalyticsPage() {
       setPortfolio(p);
       setAnalytics(a);
       setPriceHistory(ph);
-      const hv = await getPortfolioHoldings(portfolioId);
-      if (isCancelled()) return;
-      setHoldingsView(hv);
       setAnalyticsPageBundle(portfolioId, {
         portfolio: p,
         analytics: a,
-        holdingsView: hv,
         priceHistory: ph,
       });
     } catch (e) {
@@ -129,9 +120,9 @@ export default function PortfolioAnalyticsPage() {
   const k = a?.kpis;
   const charts = a?.charts;
   const benchmarkLabel = a?.benchmark_symbol || portfolio?.params.benchmark || null;
-  const holdings = holdingsView?.last_snapshot?.holdings || [];
-  const onDeck = holdingsView?.last_snapshot?.on_deck || [];
-  const top100 = holdingsView?.last_snapshot?.top100_rows || [];
+  const holdings = charts?.scatter_holdings || [];
+  const onDeck = charts?.on_deck || [];
+  const top100 = charts?.scatter_top100 || [];
   const heldSymbols = React.useMemo(() => new Set(holdings.map((h) => h.symbol)), [holdings]);
   const dailySeries = React.useMemo(() => {
     const pts = priceHistory?.daily_series || [];
@@ -221,7 +212,6 @@ export default function PortfolioAnalyticsPage() {
                 if (portfolioId) invalidateAnalyticsPageBundle(portfolioId);
                 setAnalytics(null);
                 setPortfolio(null);
-                setHoldingsView(null);
                 setPriceHistory(null);
                 void loadData(() => false);
               }}

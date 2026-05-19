@@ -33,6 +33,7 @@ import {
   getStockDetails,
   startPortfolioRebalance,
 } from "@/lib/api";
+import { invalidateAnalyticsPageBundle } from "@/lib/portfolio-analytics-bundle-cache";
 import type {
   HoldingsView,
   HoldingsPnlRow,
@@ -376,6 +377,7 @@ export default function PortfolioHoldingsPage() {
 
   const [preview, setPreview] = React.useState<MomentumPreview | null>(null);
   const [previewOpen, setPreviewOpen] = React.useState(false);
+  const [commitBusy, setCommitBusy] = React.useState(false);
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [detailsLoading, setDetailsLoading] = React.useState(false);
@@ -526,14 +528,19 @@ export default function PortfolioHoldingsPage() {
   }, [portfolioId, runId]);
 
   async function onCommit() {
-    if (!runId || !portfolioId) return;
+    if (!runId || !portfolioId || commitBusy) return;
+    setCommitBusy(true);
     try {
       await commitPortfolioRebalance(portfolioId, runId);
+      invalidateAnalyticsPageBundle(portfolioId);
       setPreviewOpen(false);
       setPreview(null);
+      setRunId(null);
       await refresh(() => false);
     } catch (e: unknown) {
       alert(e instanceof Error ? e.message : "Commit failed");
+    } finally {
+      setCommitBusy(false);
     }
   }
 
@@ -806,10 +813,12 @@ export default function PortfolioHoldingsPage() {
               <RowTable title="Watch" rows={preview.watch} onSymbolClick={onSymbolClick} />
             </div>
             <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
-              <Button variant="outline" onClick={onDiscard}>
+              <Button variant="outline" onClick={onDiscard} disabled={commitBusy}>
                 Discard
               </Button>
-              <Button onClick={onCommit}>Commit</Button>
+              <Button onClick={onCommit} disabled={commitBusy}>
+                {commitBusy ? "Committing…" : "Commit"}
+              </Button>
             </div>
           </div>
         </div>
