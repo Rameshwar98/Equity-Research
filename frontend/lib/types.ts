@@ -336,6 +336,34 @@ export type AnalyticsKpis = {
   spread_3m?: number | null;
   spread_ytd?: number | null;
   spread_1y?: number | null;
+
+  // Client "Dashboard" metric set (monthly periods)
+  periods?: number;
+  periods_per_year?: number;
+  rf_annual?: number | null;
+  mar_annual?: number | null;
+
+  cumulative_return?: number | null;
+  cagr?: number | null;
+  avg_periodic_return?: number | null;
+  benchmark_cumulative?: number | null;
+  excess_return_cum?: number | null;
+  best_period?: number | null;
+  worst_period?: number | null;
+  win_rate?: number | null;
+
+  volatility_annualized?: number | null;
+  downside_deviation?: number | null;
+  beta?: number | null;
+  tracking_error?: number | null;
+  max_drawdown?: number | null;
+  var_95?: number | null;
+  r_squared?: number | null;
+
+  treynor?: number | null;
+  information_ratio?: number | null;
+  calmar?: number | null;
+  jensens_alpha?: number | null;
 };
 
 export type AnalyticsSeriesPoint = {

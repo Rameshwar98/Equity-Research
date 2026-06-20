@@ -22,6 +22,38 @@ class AnalyticsKpis(BaseModel):
     spread_ytd: Optional[float] = None
     spread_1y: Optional[float] = None
 
+    # --- Client "Dashboard" metric set (monthly periods, RF + MAR assumptions below) ---
+    # Assumptions used (echoed for display)
+    periods: int = 0  # number of monthly return periods used
+    periods_per_year: int = 12
+    rf_annual: Optional[float] = None  # risk-free rate (annual) used
+    mar_annual: Optional[float] = None  # target / minimum acceptable return (annual)
+
+    # Return metrics
+    cumulative_return: Optional[float] = None
+    cagr: Optional[float] = None  # annualized (geometric)
+    avg_periodic_return: Optional[float] = None
+    benchmark_cumulative: Optional[float] = None
+    excess_return_cum: Optional[float] = None
+    best_period: Optional[float] = None
+    worst_period: Optional[float] = None
+    win_rate: Optional[float] = None
+
+    # Risk metrics (annualized where applicable)
+    volatility_annualized: Optional[float] = None
+    downside_deviation: Optional[float] = None
+    beta: Optional[float] = None
+    tracking_error: Optional[float] = None
+    max_drawdown: Optional[float] = None
+    var_95: Optional[float] = None  # periodic 5th-percentile return
+    r_squared: Optional[float] = None
+
+    # Risk-adjusted ratios (sharpe + sortino above)
+    treynor: Optional[float] = None
+    information_ratio: Optional[float] = None
+    calmar: Optional[float] = None
+    jensens_alpha: Optional[float] = None  # annualized
+
 
 class SeriesPoint(BaseModel):
     date: str  # ISO yyyy-mm-dd (snapshot effective date)
