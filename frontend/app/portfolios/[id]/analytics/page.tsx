@@ -133,6 +133,31 @@ export default function PortfolioAnalyticsPage() {
     }));
   }, [priceHistory]);
 
+  // Cumulative return since inception (%), each line rebased to its own first finite value so
+  // both start at 0%. Keeps dailySeries (raw values) intact for the drawdown calc below.
+  const cumulativeSeries = React.useMemo(() => {
+    const firstFinite = (key: "portfolio" | "benchmark") => {
+      for (const d of dailySeries) {
+        const v = d[key];
+        if (typeof v === "number" && Number.isFinite(v) && v !== 0) return v;
+      }
+      return null;
+    };
+    const baseP = firstFinite("portfolio");
+    const baseB = firstFinite("benchmark");
+    return dailySeries.map((d) => ({
+      date: d.date,
+      portfolio:
+        baseP != null && typeof d.portfolio === "number" && Number.isFinite(d.portfolio)
+          ? d.portfolio / baseP - 1
+          : null,
+      benchmark:
+        baseB != null && typeof d.benchmark === "number" && Number.isFinite(d.benchmark)
+          ? d.benchmark / baseB - 1
+          : null,
+    }));
+  }, [dailySeries]);
+
   const drawdownSeries = React.useMemo(() => {
     const pts = dailySeries.filter((d) => typeof d.portfolio === "number" && Number.isFinite(d.portfolio));
     if (!pts.length) return [];
@@ -334,11 +359,12 @@ export default function PortfolioAnalyticsPage() {
 
             {show("analytics_cumulative", true) ? (
               <TwoLineIndexedChart
-                title="Cumulative (indexed)"
-                subtitle="Daily equity curve (indexed to 100 at inception)"
-                data={dailySeries}
+                title="Cumulative return"
+                subtitle="Cumulative % since inception (both start at 0%)"
+                data={cumulativeSeries}
                 markers={priceHistory?.rebalance_dates || []}
                 benchmarkLabel={benchmarkLabel}
+                percent
                 onHide={() => setChartPref("analytics_cumulative", false)}
               />
             ) : null}
