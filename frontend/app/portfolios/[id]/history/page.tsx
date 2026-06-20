@@ -86,6 +86,13 @@ export default function PortfolioHistoryPage() {
 
   const heatmapColumns = data?.charts?.heatmap_columns || [];
 
+  // Symbols held in the most recent snapshot = the portfolio's current holdings.
+  const currentHeld = React.useMemo(() => {
+    const latestId = snapshots[snapshots.length - 1]?.snapshot_id;
+    const rows = latestId ? data?.holdings_by_snapshot[latestId] || [] : [];
+    return new Set(rows.map((h) => h.symbol));
+  }, [data, snapshots]);
+
   return (
     <PortfolioShell>
       <div className="space-y-4">
@@ -339,19 +346,32 @@ export default function PortfolioHistoryPage() {
                           <tr>
                             <th className="px-3 py-2 text-left">Symbol</th>
                             <th className="px-3 py-2 text-left">Sector</th>
+                            <th className="px-3 py-2 text-center">Held now</th>
                             <th className="px-3 py-2 text-right">Total held</th>
                             <th className="px-3 py-2 text-right">Longest streak</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {(charts?.most_stable_holdings || []).map((r) => (
-                            <tr key={r.symbol} className="border-t border-border">
-                              <td className="px-3 py-2 font-semibold text-foreground">{r.symbol}</td>
-                              <td className="px-3 py-2 text-muted-foreground">{r.sector || ""}</td>
-                              <td className="px-3 py-2 text-right">{r.total_snapshots_held}</td>
-                              <td className="px-3 py-2 text-right">{r.longest_streak}</td>
-                            </tr>
-                          ))}
+                          {(charts?.most_stable_holdings || []).map((r) => {
+                            const held = currentHeld.has(r.symbol);
+                            return (
+                              <tr key={r.symbol} className="border-t border-border">
+                                <td className="px-3 py-2 font-semibold text-foreground">{r.symbol}</td>
+                                <td className="px-3 py-2 text-muted-foreground">{r.sector || ""}</td>
+                                <td className="px-3 py-2 text-center">
+                                  {held ? (
+                                    <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                                      ✓ Held
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground">—</span>
+                                  )}
+                                </td>
+                                <td className="px-3 py-2 text-right">{r.total_snapshots_held}</td>
+                                <td className="px-3 py-2 text-right">{r.longest_streak}</td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
