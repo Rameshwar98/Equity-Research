@@ -140,17 +140,26 @@ function rowAccentClass(band: MomentumComputedRow["band"]) {
   }
 }
 
+function fmtScoreVal(v?: number | null) {
+  if (v == null || Number.isNaN(v) || v >= 1e9) return "—";
+  return `${v}`;
+}
+
 function RowTable({
   title,
   rows,
   onSymbolClick,
   showRanks,
+  prevScoreBySymbol,
 }: {
   title: string;
   rows: MomentumComputedRow[];
   onSymbolClick: (sym: string) => void;
   showRanks?: boolean;
+  /** symbol -> previous-month combined_score. When provided, a "Prev" column is shown. */
+  prevScoreBySymbol?: Map<string, number>;
 }) {
+  const showPrev = !!prevScoreBySymbol;
   return (
     <Card className="shadow-sm">
       <CardContent className="p-4">
@@ -181,6 +190,14 @@ function RowTable({
                 <th className="sticky top-0 w-[76px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Mkt Cap</th>
                 <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Score 3</th>
                 <th className="sticky top-0 w-[64px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Score</th>
+                {showPrev ? (
+                  <th
+                    className="sticky top-0 w-[96px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium"
+                    title="Previous month combined Score (↑ = improved / lower score)"
+                  >
+                    Prev (Δ)
+                  </th>
+                ) : null}
                 <th className="sticky top-0 w-[82px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium">Band</th>
                 <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">MA50</th>
                 <th className="sticky top-0 w-[58px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Mo</th>
@@ -223,6 +240,35 @@ function RowTable({
                   </td>
                   <td className="py-2 pr-2 text-right tabular-nums text-muted-foreground">{fmtScore3(r.score_3 ?? null)}</td>
                   <td className="py-2 pr-2 text-right tabular-nums">{r.combined_score >= 1e9 ? "∞" : r.combined_score}</td>
+                  {showPrev
+                    ? (() => {
+                        const prev = prevScoreBySymbol!.get(r.symbol);
+                        const cur = r.combined_score;
+                        // combined_score: lower is better, so a decrease = improvement.
+                        const delta =
+                          prev != null && cur < 1e9 ? prev - cur : null;
+                        return (
+                          <td className="py-2 pr-2 text-right tabular-nums">
+                            <span className="text-muted-foreground">{fmtScoreVal(prev)}</span>
+                            {delta != null && delta !== 0 ? (
+                              <span
+                                className={cn(
+                                  "ml-1",
+                                  delta > 0
+                                    ? "text-emerald-600 dark:text-emerald-400"
+                                    : "text-rose-600 dark:text-rose-400"
+                                )}
+                              >
+                                {delta > 0 ? "↑" : "↓"}
+                                {Math.abs(delta)}
+                              </span>
+                            ) : prev != null && delta === 0 ? (
+                              <span className="ml-1 text-muted-foreground">→</span>
+                            ) : null}
+                          </td>
+                        );
+                      })()
+                    : null}
                   <td className="py-2 pr-2">
                     <BandBadge band={r.band} />
                   </td>
@@ -268,7 +314,7 @@ function RowTable({
               ))}
               {!rows.length ? (
                 <tr>
-                  <td colSpan={18} className="py-8 text-center text-muted-foreground">
+                  <td colSpan={showPrev ? 19 : 18} className="py-8 text-center text-muted-foreground">
                     No rows.
                   </td>
                 </tr>
@@ -598,6 +644,27 @@ export default function PortfolioHoldingsPage() {
   const top100 = React.useMemo(() => view?.last_snapshot?.top100_rows || [], [view]);
   const heldSymbols = React.useMemo(() => new Set(holdings.map((h) => h.symbol)), [holdings]);
 
+  // Previous-month combined Score per symbol (from the prior committed snapshot), used to show
+  // month-over-month score change in the holdings tables.
+  const prevScoreBySymbol = React.useMemo(() => {
+    const m = new Map<string, number>();
+    const prev = view?.previous_snapshot;
+    if (!prev) return m;
+    const add = (rows?: MomentumComputedRow[]) => {
+      for (const r of rows || []) {
+        if (typeof r.combined_score === "number" && r.combined_score < 1e9 && !m.has(r.symbol)) {
+          m.set(r.symbol, r.combined_score);
+        }
+      }
+    };
+    add(prev.holdings);
+    add(prev.top100_rows);
+    add(prev.incoming);
+    add(prev.outgoing);
+    add(prev.hold);
+    return m;
+  }, [view]);
+
   // No search/filter controls: keep tables "first glance" with full lists.
   const filteredHoldings = holdings;
   const filteredIncoming = view?.last_snapshot?.incoming || [];
@@ -733,6 +800,7 @@ export default function PortfolioHoldingsPage() {
               title="Current Holdings"
               rows={filteredHoldings}
               onSymbolClick={onSymbolClick}
+              prevScoreBySymbol={prevScoreBySymbol}
             />
           ) : null}
 
@@ -741,6 +809,7 @@ export default function PortfolioHoldingsPage() {
               title="Incoming (BUY candidates)"
               rows={filteredIncoming}
               onSymbolClick={onSymbolClick}
+              prevScoreBySymbol={prevScoreBySymbol}
             />
           ) : null}
 
@@ -749,6 +818,7 @@ export default function PortfolioHoldingsPage() {
               title="Outgoing (EXIT queue)"
               rows={filteredOutgoing}
               onSymbolClick={onSymbolClick}
+              prevScoreBySymbol={prevScoreBySymbol}
             />
           ) : null}
 
@@ -757,6 +827,7 @@ export default function PortfolioHoldingsPage() {
               title="On Deck (Ranks 26–50)"
               rows={filteredOnDeck}
               onSymbolClick={onSymbolClick}
+              prevScoreBySymbol={prevScoreBySymbol}
             />
           ) : null}
 
