@@ -109,6 +109,15 @@ function pctColor(v?: number | null) {
   return "";
 }
 
+// Score 3 = close / avg(EMA10..EMA200). Same thresholds as the screener's signal
+// classifier (analysis_service._classify): >1.08 BUY (green), <0.95 SELL (red), else HOLD (amber).
+function score3Color(v?: number | null) {
+  if (v == null || Number.isNaN(v)) return "text-muted-foreground";
+  if (v > 1.08) return "text-emerald-600 dark:text-emerald-400";
+  if (v < 0.95) return "text-rose-600 dark:text-rose-400";
+  return "text-amber-600 dark:text-amber-400";
+}
+
 function BandBadge({ band }: { band: MomentumComputedRow["band"] }) {
   const base = "px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide";
   if (band === "BUY") return <Badge variant="buy" className={base}>BUY</Badge>;
@@ -238,7 +247,7 @@ function RowTable({
                   <td className="py-2 pr-2 text-right tabular-nums text-muted-foreground">
                     {fmtCap(r.mkt_cap ?? null)}
                   </td>
-                  <td className="py-2 pr-2 text-right tabular-nums text-muted-foreground">{fmtScore3(r.score_3 ?? null)}</td>
+                  <td className={cn("py-2 pr-2 text-right tabular-nums font-medium", score3Color(r.score_3 ?? null))}>{fmtScore3(r.score_3 ?? null)}</td>
                   <td className="py-2 pr-2 text-right tabular-nums">{r.combined_score >= 1e9 ? "∞" : r.combined_score}</td>
                   {showPrev
                     ? (() => {
@@ -331,6 +340,7 @@ function ImprovementTable({
   title,
   rows,
   onSymbolClick,
+  heldSymbols,
 }: {
   title: string;
   rows: {
@@ -343,6 +353,7 @@ function ImprovementTable({
     combined_score: number;
   }[];
   onSymbolClick: (sym: string) => void;
+  heldSymbols?: Set<string>;
 }) {
   const sorted = [...rows].sort((a, b) => {
     const da = a.rank_delta;
@@ -370,6 +381,7 @@ function ImprovementTable({
                 <th className="sticky top-0 bg-card/95 backdrop-blur text-left py-2 pr-3">Symbol</th>
                 <th className="sticky top-0 bg-card/95 backdrop-blur text-left py-2 pr-3">Name</th>
                 <th className="sticky top-0 bg-card/95 backdrop-blur text-left py-2 pr-3">Sector</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 pr-3">Held</th>
                 <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2 pr-3">Δ rank</th>
                 <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2 pr-3">Prev</th>
                 <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2 pr-3">Now</th>
@@ -386,6 +398,15 @@ function ImprovementTable({
                   </td>
                   <td className="py-2 pr-3 text-muted-foreground">{r.name || "—"}</td>
                   <td className="py-2 pr-3 text-muted-foreground">{r.sector || "—"}</td>
+                  <td className="py-2 pr-3 text-center">
+                    {heldSymbols?.has(r.symbol) ? (
+                      <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300">
+                        ✓ Held
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </td>
                   <td className="py-2 pr-3 text-right tabular-nums">
                     <span className="inline-flex items-center gap-1">
                       <Arrow delta={r.rank_delta} />
@@ -409,13 +430,74 @@ function ImprovementTable({
               ))}
               {!rows.length ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="py-8 text-center text-muted-foreground">
                     No rows.
                   </td>
                 </tr>
               ) : null}
             </tbody>
           </table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RebalanceProgress({
+  progress,
+}: {
+  progress: {
+    status: "running" | "done" | "error";
+    processed: number;
+    total: number;
+    progressPercent: number | null;
+    etaSeconds: number | null;
+    message: string | null;
+  };
+}) {
+  const pct = progress.progressPercent;
+  const determinate = pct != null && Number.isFinite(pct);
+  return (
+    <Card className="border-primary/30 bg-primary/5 shadow-sm">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <span
+            aria-hidden
+            className="mt-0.5 inline-block h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-primary/30 border-t-primary"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-sm font-semibold text-foreground">Rebalancing your portfolio…</div>
+              <div className="text-xs font-medium tabular-nums text-foreground">
+                {determinate ? `${Math.round(pct)}%` : "starting…"}
+              </div>
+            </div>
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+              {determinate ? (
+                <div
+                  className="h-full rounded-full bg-primary transition-[width] duration-500 ease-out"
+                  style={{ width: `${Math.min(100, Math.max(3, pct))}%` }}
+                />
+              ) : (
+                <div className="h-full w-1/3 animate-pulse rounded-full bg-primary" />
+              )}
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">{progress.message || "Working…"}</span>
+              {progress.total ? (
+                <span className="tabular-nums">
+                  {progress.processed}/{progress.total} symbols
+                </span>
+              ) : null}
+              {progress.etaSeconds != null ? (
+                <span className="tabular-nums">~{Math.round(progress.etaSeconds)}s remaining</span>
+              ) : null}
+            </div>
+            <div className="mt-1 text-[11px] text-muted-foreground">
+              Fetching prices and ranking the universe — this can take a minute for large universes.
+              Stay on this page; the preview opens automatically when it&apos;s ready.
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -725,6 +807,12 @@ export default function PortfolioHoldingsPage() {
         ) : null
       }
     >
+      {progress?.status === "running" ? (
+        <div className="mb-4">
+          <RebalanceProgress progress={progress} />
+        </div>
+      ) : null}
+
       {loading ? (
         <div className="rounded-xl border bg-card p-10 text-center text-base text-muted-foreground">Loading…</div>
       ) : error ? (
@@ -851,6 +939,7 @@ export default function PortfolioHoldingsPage() {
               title="Degree of Improvement watchlist"
               rows={view.last_snapshot.degree_of_improvement_watchlist || []}
               onSymbolClick={onSymbolClick}
+              heldSymbols={heldSymbols}
             />
           ) : null}
         </div>
