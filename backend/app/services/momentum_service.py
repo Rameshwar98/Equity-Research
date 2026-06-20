@@ -10,7 +10,12 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from app.schemas.momentum import MomentumComputedRow, MomentumPreview, MomentumSnapshot
+from app.schemas.momentum import (
+    MomentumComputedRow,
+    MomentumPreview,
+    MomentumScreenRow,
+    MomentumSnapshot,
+)
 from app.schemas.portfolio import PortfolioParams
 from app.services.cache_service import CacheService
 from app.services.data_provider import DataProvider
@@ -637,6 +642,44 @@ class MomentumIQService:
             else:
                 row.rank_change_vs_last_month = None
 
+        # DEBUG screen: full return-ranked pipeline (every universe name). `metrics` is in
+        # return-rank order; the top `momentum_screen_size` also carry sd_rank/combined_*.
+        proposed_set = set(proposed)
+
+        def _fin(v: Any) -> float | None:
+            try:
+                f = float(v)
+            except (TypeError, ValueError):
+                return None
+            return f if np.isfinite(f) else None
+
+        screen_debug: list[MomentumScreenRow] = []
+        for r in metrics:
+            sym = str(r.get("symbol") or "")
+            if not sym:
+                continue
+            c = by_sym.get(sym)
+            nm = (c.name if c else None) or meta_by.get(sym, {}).get("name")
+            sector = c.sector if c else None
+            in_screen = "sd_rank" in r
+            screen_debug.append(
+                MomentumScreenRow(
+                    symbol=sym,
+                    name=str(nm) if nm is not None else None,
+                    sector=sector,
+                    last_price=_fin(r.get("last_price")),
+                    return_1y=_fin(r.get("return_1y")),
+                    annualized_sd=_fin(r.get("annualized_sd")),
+                    score_3=_fin(r.get("score_3")),
+                    return_rank=int(r["return_rank"]),
+                    sd_rank=int(r["sd_rank"]) if in_screen else None,
+                    combined_score=int(r["combined_score"]) if "combined_score" in r else None,
+                    combined_rank=int(r["combined_rank"]) if "combined_rank" in r else None,
+                    in_screen=in_screen,
+                    in_portfolio=sym in proposed_set,
+                )
+            )
+
         snapshot = MomentumSnapshot(
             snapshot_id=uuid.uuid4().hex,
             portfolio_id=portfolio_id,
@@ -658,6 +701,7 @@ class MomentumIQService:
                 if sym in top100_set
             ],
             on_deck=on_deck_rows,
+            screen_debug=screen_debug,
         )
 
         preview = MomentumPreview(

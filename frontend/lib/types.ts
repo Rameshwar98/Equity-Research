@@ -479,3 +479,29 @@ export type PortfolioPriceHistoryResponse = {
   rebalance_dates: string[];
 };
 
+export type ScreenDebugRow = {
+  symbol: string;
+  name?: string | null;
+  sector?: string | null;
+  last_price?: number | null;
+  return_1y?: number | null;
+  annualized_sd?: number | null;
+  score_3?: number | null;
+  return_rank: number;
+  sd_rank?: number | null;
+  combined_score?: number | null;
+  combined_rank?: number | null;
+  in_screen: boolean;
+  in_portfolio: boolean;
+};
+
+export type PortfolioDebugScreenResponse = {
+  portfolio_id: string;
+  snapshot_id?: string | null;
+  created_at?: string | null;
+  screen_size: number;
+  final_portfolio_size: number;
+  universe_count: number;
+  rows: ScreenDebugRow[];
+};
+

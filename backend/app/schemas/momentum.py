@@ -59,6 +59,32 @@ class MomentumComputedRow(BaseModel):
     rank_change_vs_last_month: Optional[int] = None
 
 
+class MomentumScreenRow(BaseModel):
+    """One row of the full ranking pipeline, for the DEBUG tab.
+
+    Every universe name appears with a `return_rank`. Names that made the
+    return screen (top `momentum_screen_size`) also carry `sd_rank`,
+    `combined_score`, and `combined_rank`.
+    """
+
+    symbol: str
+    name: Optional[str] = None
+    sector: Optional[str] = None
+
+    last_price: float | None = None
+    return_1y: float | None = None
+    annualized_sd: float | None = None
+    score_3: float | None = None
+
+    return_rank: int
+    sd_rank: Optional[int] = None
+    combined_score: Optional[int] = None
+    combined_rank: Optional[int] = None
+
+    in_screen: bool = False  # survived the return screen (ranked by SD)
+    in_portfolio: bool = False  # selected into the final portfolio
+
+
 class MomentumSnapshot(BaseModel):
     snapshot_id: str
     portfolio_id: str
@@ -81,6 +107,10 @@ class MomentumSnapshot(BaseModel):
 
     # Ranks 26–50 by combined rank (static "next up" list), excluding current holdings.
     on_deck: List[MomentumComputedRow] = Field(default_factory=list)
+
+    # Full ranking pipeline (all universe names by return) for the DEBUG tab.
+    # Populated on new rebalances only; older snapshots have an empty list.
+    screen_debug: List[MomentumScreenRow] = Field(default_factory=list)
 
 
 class MomentumPreview(BaseModel):
@@ -105,4 +135,16 @@ class HoldingsView(BaseModel):
     incoming: List[MomentumComputedRow] = Field(default_factory=list)
     outgoing: List[MomentumComputedRow] = Field(default_factory=list)
     degree_of_improvement_watchlist: List[dict] = Field(default_factory=list)
+
+
+class PortfolioDebugScreenResponse(BaseModel):
+    """Latest snapshot's full ranking pipeline for the DEBUG tab."""
+
+    portfolio_id: str
+    snapshot_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+    screen_size: int = 0  # momentum_screen_size (return-screen cutoff)
+    final_portfolio_size: int = 0
+    universe_count: int = 0  # total names ranked by return
+    rows: List[MomentumScreenRow] = Field(default_factory=list)
 
