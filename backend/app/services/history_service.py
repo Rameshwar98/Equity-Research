@@ -182,24 +182,41 @@ class HistoryService:
         stable_rows = stable_rows[: self.config.stable_leaderboard_size]
 
         # Rank evolution heatmap (symbol rows, time columns)
-        # Choose symbols that appear most frequently in top100_ranks across timeline.
+        # Always include the current holdings (latest snapshot) so every name the
+        # portfolio holds right now is visible — even if it entered recently and has a
+        # low historical top-100 frequency. Then fill remaining capacity with the
+        # most-frequent top-100 names across the timeline.
         freq: Dict[str, int] = {}
         for s in snaps:
             for sym in (s.top100_ranks or {}).keys():
                 freq[sym] = freq.get(sym, 0) + 1
-        candidates = sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))
-        symbols = [sym for sym, _ in candidates[: self.config.heatmap_max_symbols]]
+
+        latest_ranks = latest.top100_ranks or {}
+        current_syms = list(_row_meta(latest.holdings or []).keys())
+        # Current holdings first, ordered by their latest rank (best first).
+        current_sorted = sorted(current_syms, key=lambda s: (latest_ranks.get(s, 10_000), s))
+        seen = set(current_sorted)
+        # Most-frequent remaining names (excluding ones already pinned as current).
+        remaining = [
+            sym
+            for sym, _ in sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))
+            if sym not in seen
+        ]
+        # Never truncate below the count of current holdings.
+        cap = max(self.config.heatmap_max_symbols, len(current_sorted))
+        symbols = (current_sorted + remaining)[:cap]
         cols = [
             HeatmapColumn(key=s.snapshot_id, label=_effective_date(s))
             for s in snaps
             if s.snapshot_id
         ]
 
-        # meta for heatmap: latest top100_rows is best source
+        # meta for heatmap: prefer latest top100_rows, fall back to latest holdings.
         meta2 = _row_meta(latest.top100_rows or [])
+        meta_h = _row_meta(latest.holdings or [])
         heat_rows: List[RankHeatmapRow] = []
         for sym in symbols:
-            m = meta2.get(sym)
+            m = meta2.get(sym) or meta_h.get(sym)
             ranks_by_snapshot: Dict[str, Optional[int]] = {}
             for s in snaps:
                 r = (s.top100_ranks or {}).get(sym)

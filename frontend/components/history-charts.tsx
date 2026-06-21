@@ -130,6 +130,14 @@ function latestRank(r: HeatRow, columns: { key: string }[]): number {
   return Number.POSITIVE_INFINITY;
 }
 
+function fmtColLabel(label: string): { year: string; bottom: string } {
+  // label = YYYY-MM-DD
+  const d = new Date(label + "T00:00:00");
+  const mon = d.toLocaleDateString("en-US", { month: "short" });
+  const day = d.getDate();
+  return { year: `'${label.slice(2, 4)}`, bottom: `${mon} ${day}` };
+}
+
 export function RankHeatmap({
   columns,
   rows,
@@ -142,6 +150,9 @@ export function RankHeatmap({
   const [query, setQuery] = React.useState("");
   const [sector, setSector] = React.useState("all");
   const [sort, setSort] = React.useState<HeatSort>("avg");
+
+  // Newest snapshot first (latest date directly after the Symbol column).
+  const displayCols = React.useMemo(() => [...columns].reverse(), [columns]);
 
   const sectors = React.useMemo(
     () => Array.from(new Set(rows.map((r) => r.sector).filter((s): s is string => !!s))).sort(),
@@ -217,20 +228,32 @@ export function RankHeatmap({
           <div className="min-w-[900px]">
             <div
               className="grid"
-              style={{ gridTemplateColumns: `220px repeat(${columns.length}, minmax(40px, 1fr))` }}
+              style={{ gridTemplateColumns: `220px repeat(${displayCols.length}, minmax(44px, 1fr))` }}
             >
               <div className="sticky left-0 z-10 border-b border-border bg-background px-2 py-1 text-[11px] font-semibold text-muted-foreground">
                 Symbol
               </div>
-              {columns.map((c, colIdx) => (
-                <div
-                  key={`${c.key}-${colIdx}`}
-                  className="border-b border-border px-1 py-1 text-center text-[10px] text-muted-foreground"
-                  title={c.label}
-                >
-                  {c.label.slice(5)}
-                </div>
-              ))}
+              {displayCols.map((c, colIdx) => {
+                const prevCol = colIdx > 0 ? displayCols[colIdx - 1] : null;
+                const yearChanged = prevCol != null && c.label.slice(0, 4) !== prevCol.label.slice(0, 4);
+                const { year, bottom } = fmtColLabel(c.label);
+                return (
+                  <div
+                    key={`${c.key}-${colIdx}`}
+                    className={[
+                      "border-b border-border px-1 py-1 text-center text-[10px]",
+                      yearChanged ? "border-l-2 border-l-primary/20" : "",
+                    ].join(" ")}
+                    title={c.label}
+                  >
+                    <div className={[
+                      "text-[9px] font-medium",
+                      yearChanged ? "text-primary/80" : "text-muted-foreground/50",
+                    ].join(" ")}>{year}</div>
+                    <div className="text-muted-foreground">{bottom}</div>
+                  </div>
+                );
+              })}
 
               {visibleRows.map((r) => (
                 <React.Fragment key={r.symbol}>
@@ -238,7 +261,7 @@ export function RankHeatmap({
                     <div className="font-semibold text-foreground">{r.symbol}</div>
                     {r.sector ? <div className="text-[10px] text-muted-foreground">{r.sector}</div> : null}
                   </div>
-                  {columns.map((c, colIdx) => {
+                  {displayCols.map((c, colIdx) => {
                     const rank = r.ranks_by_snapshot[c.key] ?? null;
                     return (
                       <div
