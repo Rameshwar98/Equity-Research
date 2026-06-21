@@ -11,6 +11,7 @@ import { getPortfolioDebugScreen } from "@/lib/api";
 import type { PortfolioDebugScreenResponse, ScreenDebugRow } from "@/lib/types";
 
 type Stage = "return" | "sd" | "rank";
+type Score3Signal = "BUY" | "HOLD" | "SELL";
 
 function fmtPct(v?: number | null) {
   if (v == null || Number.isNaN(v)) return "—";
@@ -22,6 +23,20 @@ function fmtNum(v?: number | null, digits = 2) {
   if (v == null || Number.isNaN(v)) return "—";
   return v.toFixed(digits);
 }
+
+// Thresholds match analysis_service._classify and holdings page score3Color.
+function score3Signal(v?: number | null): Score3Signal | null {
+  if (v == null || Number.isNaN(v)) return null;
+  if (v > 1.08) return "BUY";
+  if (v < 0.95) return "SELL";
+  return "HOLD";
+}
+
+const SIGNAL_CLASSES: Record<Score3Signal, string> = {
+  BUY: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  HOLD: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
+  SELL: "bg-rose-500/15 text-rose-700 dark:text-rose-300",
+};
 
 export default function PortfolioDebugPage() {
   const params = useParams<{ id: string | string[] | undefined }>();
@@ -54,22 +69,78 @@ export default function PortfolioDebugPage() {
     };
   }, [portfolioId]);
 
+  const [signalFilter, setSignalFilter] = React.useState<"all" | Score3Signal>("all");
+  const [manualSort, setManualSort] = React.useState<{ col: string; dir: "asc" | "desc" } | null>(null);
+
   const rows = React.useMemo(() => data?.rows || [], [data]);
   const screenRows = React.useMemo(() => rows.filter((r) => r.in_screen), [rows]);
+
+  const signalCounts = React.useMemo(() => {
+    const base = stage === "return" ? rows : screenRows;
+    let buy = 0, hold = 0, sell = 0;
+    for (const r of base) {
+      const s = score3Signal(r.score_3);
+      if (s === "BUY") buy++;
+      else if (s === "SELL") sell++;
+      else if (s === "HOLD") hold++;
+    }
+    return { buy, hold, sell };
+  }, [rows, screenRows, stage]);
+
+  function toggleSort(col: string) {
+    setManualSort((prev) =>
+      prev?.col === col
+        ? { col, dir: prev.dir === "asc" ? "desc" : "asc" }
+        : { col, dir: col === "symbol" ? "asc" : "desc" }
+    );
+  }
 
   const visible = React.useMemo(() => {
     const base =
       stage === "return"
-        ? [...rows].sort((a, b) => a.return_rank - b.return_rank)
-        : stage === "sd"
-          ? [...screenRows].sort((a, b) => (a.sd_rank ?? 1e9) - (b.sd_rank ?? 1e9))
-          : [...screenRows].sort((a, b) => (a.combined_rank ?? 1e9) - (b.combined_rank ?? 1e9));
+        ? [...rows]
+        : [...screenRows];
+
+    // Apply signal filter
+    const filtered = signalFilter === "all"
+      ? base
+      : base.filter((r) => score3Signal(r.score_3) === signalFilter);
+
     const q = query.trim().toLowerCase();
-    if (!q) return base;
-    return base.filter(
-      (r) => r.symbol.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q)
-    );
-  }, [rows, screenRows, stage, query]);
+    const queried = !q
+      ? filtered
+      : filtered.filter((r) => r.symbol.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q));
+
+    // Sort: manual column sort overrides stage default
+    const sorted = [...queried];
+    if (manualSort) {
+      const { col, dir } = manualSort;
+      const mul = dir === "asc" ? 1 : -1;
+      sorted.sort((a, b) => {
+        let av: number | string | null | undefined;
+        let bv: number | string | null | undefined;
+        if (col === "symbol") { av = a.symbol; bv = b.symbol; }
+        else if (col === "return_1y") { av = a.return_1y; bv = b.return_1y; }
+        else if (col === "sd") { av = a.annualized_sd; bv = b.annualized_sd; }
+        else if (col === "score_3") { av = a.score_3; bv = b.score_3; }
+        else if (col === "ret_rank") { av = a.return_rank; bv = b.return_rank; }
+        else if (col === "sd_rank") { av = a.sd_rank; bv = b.sd_rank; }
+        else if (col === "comb_score") { av = a.combined_score; bv = b.combined_score; }
+        else if (col === "comb_rank") { av = a.combined_rank; bv = b.combined_rank; }
+        if (av == null && bv == null) return 0;
+        if (av == null) return 1;
+        if (bv == null) return -1;
+        if (typeof av === "string" && typeof bv === "string") return mul * av.localeCompare(bv);
+        return mul * ((av as number) - (bv as number));
+      });
+    } else {
+      // stage default sort
+      if (stage === "return") sorted.sort((a, b) => a.return_rank - b.return_rank);
+      else if (stage === "sd") sorted.sort((a, b) => (a.sd_rank ?? 1e9) - (b.sd_rank ?? 1e9));
+      else sorted.sort((a, b) => (a.combined_rank ?? 1e9) - (b.combined_rank ?? 1e9));
+    }
+    return sorted;
+  }, [rows, screenRows, stage, query, signalFilter, manualSort]);
 
   const tabs: { id: Stage; label: string; hint: string }[] = [
     { id: "return", label: `Return (${data?.universe_count ?? rows.length})`, hint: "All universe names ranked by 1Y return" },
@@ -102,7 +173,7 @@ export default function PortfolioDebugPage() {
                 <button
                   key={t.id}
                   type="button"
-                  onClick={() => setStage(t.id)}
+                  onClick={() => { setStage(t.id); setManualSort(null); }}
                   className={cn(
                     "rounded-md border px-3 py-1.5 text-xs font-medium",
                     stage === t.id
@@ -113,6 +184,26 @@ export default function PortfolioDebugPage() {
                   {t.label}
                 </button>
               ))}
+              <div className="flex rounded-md border border-border overflow-hidden text-xs">
+                {(["all", "BUY", "HOLD", "SELL"] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setSignalFilter(f)}
+                    className={cn(
+                      "px-2.5 py-1.5",
+                      signalFilter === f
+                        ? f === "BUY" ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-medium"
+                          : f === "SELL" ? "bg-rose-500/20 text-rose-700 dark:text-rose-300 font-medium"
+                          : f === "HOLD" ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 font-medium"
+                          : "bg-primary/10 text-foreground font-medium"
+                        : "bg-background text-muted-foreground hover:bg-muted/40"
+                    )}
+                  >
+                    {f === "all" ? "All" : f}
+                  </button>
+                ))}
+              </div>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -140,8 +231,19 @@ export default function PortfolioDebugPage() {
         ) : (
           <Card className="shadow-sm">
             <CardContent className="p-4">
-              <div className="mb-2 flex items-center justify-between">
-                <Badge variant="secondary">{visible.length} rows</Badge>
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">{visible.length} rows</Badge>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                    B {signalCounts.buy}
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
+                    H {signalCounts.hold}
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-medium text-rose-700 dark:text-rose-300">
+                    S {signalCounts.sell}
+                  </span>
+                </div>
                 <div className="text-[11px] text-muted-foreground">
                   <span className="mr-2 inline-flex items-center gap-1">
                     <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> in portfolio
@@ -152,58 +254,98 @@ export default function PortfolioDebugPage() {
                 </div>
               </div>
               <div className="overflow-auto rounded-md border border-border">
-                <table className="min-w-[820px] w-full text-sm">
+                <table className="min-w-[960px] w-full text-sm">
                   <thead className="bg-muted/40 text-xs text-muted-foreground">
                     <tr>
                       <th className="px-3 py-2 text-right">
                         {stage === "return" ? "Ret #" : stage === "sd" ? "SD #" : "Rank"}
                       </th>
-                      <th className="px-3 py-2 text-left">Symbol</th>
-                      <th className="px-3 py-2 text-left">Name</th>
-                      <th className="px-3 py-2 text-left">Sector</th>
-                      <th className="px-3 py-2 text-right">Return 1Y</th>
-                      <th className="px-3 py-2 text-right">SD</th>
-                      <th className="px-3 py-2 text-right">Ret #</th>
-                      <th className="px-3 py-2 text-right">SD #</th>
-                      <th className="px-3 py-2 text-right">Comb. score</th>
-                      <th className="px-3 py-2 text-right">Comb. rank</th>
+                      {(
+                        [
+                          { col: "symbol", label: "Symbol", align: "left" },
+                          { col: null, label: "Name", align: "left" },
+                          { col: null, label: "Sector", align: "left" },
+                          { col: "return_1y", label: "Return 1Y", align: "right" },
+                          { col: "sd", label: "SD", align: "right" },
+                          { col: "score_3", label: "Score 3", align: "right" },
+                          { col: null, label: "Signal", align: "center" },
+                          { col: "ret_rank", label: "Ret #", align: "right" },
+                          { col: "sd_rank", label: "SD #", align: "right" },
+                          { col: "comb_score", label: "Comb. score", align: "right" },
+                          { col: "comb_rank", label: "Comb. rank", align: "right" },
+                        ] as { col: string | null; label: string; align: string }[]
+                      ).map(({ col, label, align }) => (
+                        <th
+                          key={label}
+                          className={cn(
+                            "px-3 py-2 select-none",
+                            align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left",
+                            col ? "cursor-pointer hover:text-foreground" : ""
+                          )}
+                          onClick={col ? () => toggleSort(col) : undefined}
+                        >
+                          <span className="inline-flex items-center gap-0.5">
+                            {label}
+                            {col && manualSort?.col === col ? (
+                              <span className="text-primary">{manualSort.dir === "asc" ? " ↑" : " ↓"}</span>
+                            ) : col ? (
+                              <span className="opacity-30"> ↕</span>
+                            ) : null}
+                          </span>
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {visible.map((r: ScreenDebugRow) => (
-                      <tr
-                        key={r.symbol}
-                        className={cn(
-                          "border-t border-border",
-                          r.in_portfolio
-                            ? "border-l-[3px] border-l-emerald-500/70"
-                            : r.in_screen
-                              ? "border-l-[3px] border-l-blue-500/40"
-                              : "border-l-[3px] border-l-transparent"
-                        )}
-                      >
-                        <td className="px-3 py-2 text-right tabular-nums font-semibold">
-                          {stage === "return"
-                            ? r.return_rank
-                            : stage === "sd"
-                              ? r.sd_rank ?? "—"
-                              : r.combined_rank ?? "—"}
-                        </td>
-                        <td className="px-3 py-2 font-semibold text-foreground">{r.symbol}</td>
-                        <td className="px-3 py-2 text-muted-foreground">
-                          <div className="max-w-[200px] truncate" title={r.name || ""}>
-                            {r.name || "—"}
-                          </div>
-                        </td>
-                        <td className="px-3 py-2 text-muted-foreground">{r.sector || "—"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums">{fmtPct(r.return_1y)}</td>
-                        <td className="px-3 py-2 text-right tabular-nums">{fmtPct(r.annualized_sd)}</td>
-                        <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.return_rank}</td>
-                        <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.sd_rank ?? "—"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.combined_score ?? "—"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.combined_rank ?? "—"}</td>
-                      </tr>
-                    ))}
+                    {visible.map((r: ScreenDebugRow) => {
+                      const sig = score3Signal(r.score_3);
+                      return (
+                        <tr
+                          key={r.symbol}
+                          className={cn(
+                            "border-t border-border",
+                            r.in_portfolio
+                              ? "border-l-[3px] border-l-emerald-500/70"
+                              : r.in_screen
+                                ? "border-l-[3px] border-l-blue-500/40"
+                                : "border-l-[3px] border-l-transparent"
+                          )}
+                        >
+                          <td className="px-3 py-2 text-right tabular-nums font-semibold">
+                            {stage === "return"
+                              ? r.return_rank
+                              : stage === "sd"
+                                ? r.sd_rank ?? "—"
+                                : r.combined_rank ?? "—"}
+                          </td>
+                          <td className="px-3 py-2 font-semibold text-foreground">{r.symbol}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            <div className="max-w-[200px] truncate" title={r.name || ""}>
+                              {r.name || "—"}
+                            </div>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{r.sector || "—"}</td>
+                          <td className="px-3 py-2 text-right tabular-nums">{fmtPct(r.return_1y)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums">{fmtPct(r.annualized_sd)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums">
+                            {r.score_3 != null ? fmtNum(r.score_3, 3) : "—"}
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            {sig ? (
+                              <span className={cn("inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium", SIGNAL_CLASSES[sig])}>
+                                {sig}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.return_rank}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.sd_rank ?? "—"}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.combined_score ?? "—"}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{r.combined_rank ?? "—"}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
