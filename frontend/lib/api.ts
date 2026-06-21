@@ -8,6 +8,7 @@ import type {
   PortfolioAnalyticsResponse,
   PortfolioHistoryResponse,
   PortfolioPriceHistoryResponse,
+  PortfolioDebugScreenResponse,
   PortfolioScheduleResponse,
   Portfolio,
   PortfolioListItem,
@@ -301,6 +302,12 @@ export function getPortfolioAnalytics(portfolioId: string) {
 export function getPortfolioHistory(portfolioId: string) {
   return http<PortfolioHistoryResponse>(
     `/api/portfolios/${encodeURIComponent(portfolioId)}/history`
+  );
+}
+
+export function getPortfolioDebugScreen(portfolioId: string) {
+  return http<PortfolioDebugScreenResponse>(
+    `/api/portfolios/${encodeURIComponent(portfolioId)}/debug-screen`
   );
 }
 

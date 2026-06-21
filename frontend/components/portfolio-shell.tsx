@@ -15,6 +15,7 @@ const TABS: { key: string; label: string }[] = [
   { key: "analytics", label: "Analytics" },
   { key: "history", label: "History" },
   { key: "settings", label: "Settings" },
+  { key: "debug", label: "DEBUG" },
 ];
 
 export function PortfolioShell({

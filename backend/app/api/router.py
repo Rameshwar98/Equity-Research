@@ -10,6 +10,7 @@ from app.api.routes.portfolio_analytics import router as portfolio_analytics_rou
 from app.api.routes.portfolio_history import router as portfolio_history_router
 from app.api.routes.portfolio_schedule import router as portfolio_schedule_router
 from app.api.routes.portfolio_price_history import router as portfolio_price_history_router
+from app.api.routes.portfolio_debug import router as portfolio_debug_router
 from app.api.routes.portfolio_dev import router as portfolio_dev_router
 from app.api.routes.rebalance import router as rebalance_router
 
@@ -24,6 +25,7 @@ api_router.include_router(portfolio_analytics_router, tags=["portfolios"])
 api_router.include_router(portfolio_history_router, tags=["portfolios"])
 api_router.include_router(portfolio_schedule_router, tags=["portfolios"])
 api_router.include_router(portfolio_price_history_router, tags=["portfolios"])
+api_router.include_router(portfolio_debug_router, tags=["portfolios"])
 api_router.include_router(rebalance_router, tags=["portfolios"])
 api_router.include_router(dev_router)
 

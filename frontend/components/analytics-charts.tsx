@@ -33,6 +33,7 @@ export function TwoLineIndexedChart({
   markers,
   onHide,
   benchmarkLabel,
+  percent,
 }: {
   title: string;
   subtitle?: string;
@@ -40,7 +41,11 @@ export function TwoLineIndexedChart({
   markers?: string[];
   onHide?: () => void;
   benchmarkLabel?: string | null;
+  /** When true, format Y axis + tooltip as % and draw a 0 baseline (values are fractions). */
+  percent?: boolean;
 }) {
+  const fmtY = (v: number | string) =>
+    percent ? fmtPct(Number(v)) : `${v}`;
   return (
     <Card className="shadow-sm">
       <CardContent className="p-4">
@@ -60,9 +65,13 @@ export function TwoLineIndexedChart({
             <LineChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-              <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-              <Tooltip />
+              <YAxis
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                tickFormatter={percent ? (v) => fmtY(v) : undefined}
+              />
+              <Tooltip formatter={percent ? (v) => fmtY(Number(v)) : undefined} />
               <Legend />
+              {percent ? <ReferenceLine y={0} stroke="hsl(var(--muted-foreground))" opacity={0.5} /> : null}
               {(markers || []).map((d) => (
                 <ReferenceLine
                   key={d}
@@ -72,13 +81,14 @@ export function TwoLineIndexedChart({
                   opacity={0.35}
                 />
               ))}
-              <Line type="monotone" dataKey="portfolio" stroke="hsl(var(--primary))" dot={false} name="Portfolio" />
+              <Line type="monotone" dataKey="portfolio" stroke="hsl(var(--primary))" dot={false} name="Portfolio" connectNulls />
               <Line
                 type="monotone"
                 dataKey="benchmark"
                 stroke="#94a3b8"
                 dot={false}
                 name={benchmarkLabel ? `Benchmark (${benchmarkLabel})` : "Benchmark"}
+                connectNulls
               />
             </LineChart>
           </ResponsiveContainer>

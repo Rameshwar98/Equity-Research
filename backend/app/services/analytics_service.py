@@ -113,7 +113,98 @@ def _annualized_sortino(monthly_returns: List[float], rf_annual: float = 0.05) -
 class AnalyticsConfig:
     fmp_period: str = "5y"
     fmp_interval: str = "1d"
-    rf_annual: float = 0.05
+    # Client "Dashboard" assumptions: 4.5% risk-free, 0% target (MAR), 12 periods/yr.
+    rf_annual: float = 0.045
+    mar_annual: float = 0.0
+    periods_per_year: int = 12
+
+
+def _dashboard_metrics(
+    port: List[float],
+    bench: List[float],
+    *,
+    rf_annual: float,
+    mar_annual: float,
+    ppy: int,
+    dd_values: List[float],
+) -> Dict[str, Optional[float]]:
+    """Return/risk/risk-adjusted metrics on monthly periods, matching the client's Excel.
+
+    All formulas use sample stats (ddof=1) and annualize with sqrt(ppy); CAGR/alpha
+    use geometric annualized returns. RF and MAR are annual, converted to per-period.
+    """
+    out: Dict[str, Optional[float]] = {}
+    n = len(port)
+    if n < 1:
+        return out
+    p = np.asarray(port, dtype=float)
+    b = np.asarray(bench, dtype=float)
+    rf_p = (1.0 + rf_annual) ** (1.0 / ppy) - 1.0
+    mar_p = (1.0 + mar_annual) ** (1.0 / ppy) - 1.0
+
+    def f(x: float) -> Optional[float]:
+        return float(x) if np.isfinite(x) else None
+
+    # Return metrics
+    cum = float(np.prod(1.0 + p) - 1.0)
+    bcum = float(np.prod(1.0 + b) - 1.0)
+    out["cumulative_return"] = f(cum)
+    out["benchmark_cumulative"] = f(bcum)
+    out["excess_return_cum"] = f(cum - bcum)
+    out["avg_periodic_return"] = f(float(np.mean(p)))
+    out["best_period"] = f(float(np.max(p)))
+    out["worst_period"] = f(float(np.min(p)))
+    out["win_rate"] = f(float(np.mean(p > 0)))
+    cagr = (1.0 + cum) ** (ppy / n) - 1.0 if (1.0 + cum) > 0 else None
+    bcagr = (1.0 + bcum) ** (ppy / n) - 1.0 if (1.0 + bcum) > 0 else None
+    out["cagr"] = f(cagr) if cagr is not None else None
+
+    # Max drawdown (from indexed value path)
+    out["max_drawdown"] = f(float(min(dd_values))) if dd_values else None
+    # VaR 95: 5th-percentile periodic return
+    out["var_95"] = f(float(np.percentile(p, 5))) if n >= 2 else None
+
+    if n >= 2:
+        sd = float(np.std(p, ddof=1))
+        out["volatility_annualized"] = f(sd * math.sqrt(ppy))
+        # Downside deviation vs MAR (annualized), population mean of squared shortfalls
+        downs = np.minimum(0.0, p - mar_p)
+        dmonthly = math.sqrt(float(np.mean(downs ** 2)))
+        out["downside_deviation"] = f(dmonthly * math.sqrt(ppy))
+        # Beta + R^2 vs benchmark
+        var_b = float(np.var(b, ddof=1))
+        beta = float(np.cov(p, b, ddof=1)[0, 1] / var_b) if var_b > 0 else None
+        out["beta"] = f(beta) if beta is not None else None
+        if float(np.std(p, ddof=1)) > 0 and float(np.std(b, ddof=1)) > 0:
+            corr = float(np.corrcoef(p, b)[0, 1])
+            out["r_squared"] = f(corr * corr)
+        # Tracking error (annualized std of active return)
+        excess = p - b
+        te = float(np.std(excess, ddof=1)) * math.sqrt(ppy)
+        out["tracking_error"] = f(te)
+
+        # Risk-adjusted
+        ex_rf = p - rf_p
+        sd_exrf = float(np.std(ex_rf, ddof=1))
+        if sd_exrf > 0:
+            out["sharpe"] = f(float(np.mean(ex_rf)) / sd_exrf * math.sqrt(ppy))
+        if dmonthly > 0:
+            # annualized excess return / annualized downside deviation
+            out["sortino"] = f(float(np.mean(ex_rf)) * math.sqrt(ppy) / dmonthly)
+        # Treynor: (annualized return - rf) / beta
+        if beta and cagr is not None:
+            out["treynor"] = f((cagr - rf_annual) / beta)
+        # Information ratio: annualized active return / tracking error
+        if te > 0:
+            out["information_ratio"] = f(float(np.mean(excess)) * ppy / te)
+        # Calmar: CAGR / |max drawdown|
+        mdd = out.get("max_drawdown")
+        if cagr is not None and mdd is not None and mdd < 0:
+            out["calmar"] = f(cagr / abs(mdd))
+        # Jensen's alpha (annualized): CAPM expectation
+        if beta is not None and cagr is not None and bcagr is not None:
+            out["jensens_alpha"] = f(cagr - (rf_annual + beta * (bcagr - rf_annual)))
+    return out
 
 
 class AnalyticsService:
@@ -282,12 +373,47 @@ class AnalyticsService:
             rolling_sharpe=rolling,
         )
 
-        # KPIs (based on monthly returns)
+        # KPIs (based on monthly returns) — full client "Dashboard" metric set.
+        rf = self.config.rf_annual
+        mar = self.config.mar_annual
+        ppy = self.config.periods_per_year
+        rf_label = f"vs {rf * 100:g}% RF"
+        dm = _dashboard_metrics(
+            monthly_port,
+            monthly_bench,
+            rf_annual=rf,
+            mar_annual=mar,
+            ppy=ppy,
+            dd_values=dd_port,
+        )
         out.kpis = AnalyticsKpis(
-            sharpe=_annualized_sharpe(monthly_port, self.config.rf_annual),
-            sortino=_annualized_sortino(monthly_port, self.config.rf_annual),
-            sharpe_rf_assumption="vs 5% RF",
-            sortino_rf_assumption="vs 5% RF",
+            sharpe=dm.get("sharpe") if dm.get("sharpe") is not None else _annualized_sharpe(monthly_port, rf),
+            sortino=dm.get("sortino") if dm.get("sortino") is not None else _annualized_sortino(monthly_port, rf),
+            sharpe_rf_assumption=rf_label,
+            sortino_rf_assumption=rf_label,
+            periods=len(monthly_port),
+            periods_per_year=ppy,
+            rf_annual=rf,
+            mar_annual=mar,
+            cumulative_return=dm.get("cumulative_return"),
+            cagr=dm.get("cagr"),
+            avg_periodic_return=dm.get("avg_periodic_return"),
+            benchmark_cumulative=dm.get("benchmark_cumulative"),
+            excess_return_cum=dm.get("excess_return_cum"),
+            best_period=dm.get("best_period"),
+            worst_period=dm.get("worst_period"),
+            win_rate=dm.get("win_rate"),
+            volatility_annualized=dm.get("volatility_annualized"),
+            downside_deviation=dm.get("downside_deviation"),
+            beta=dm.get("beta"),
+            tracking_error=dm.get("tracking_error"),
+            max_drawdown=dm.get("max_drawdown"),
+            var_95=dm.get("var_95"),
+            r_squared=dm.get("r_squared"),
+            treynor=dm.get("treynor"),
+            information_ratio=dm.get("information_ratio"),
+            calmar=dm.get("calmar"),
+            jensens_alpha=dm.get("jensens_alpha"),
         )
 
         # Current snapshot cross-sectional KPIs

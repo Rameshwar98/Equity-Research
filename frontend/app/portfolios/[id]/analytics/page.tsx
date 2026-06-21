@@ -27,11 +27,62 @@ import {
   setAnalyticsPageBundle,
 } from "@/lib/portfolio-analytics-bundle-cache";
 import { downloadCsv, toCsv } from "@/lib/csv";
+import { cn } from "@/lib/utils";
 import type {
   Portfolio,
   PortfolioAnalyticsResponse,
   PortfolioPriceHistoryResponse,
 } from "@/lib/types";
+
+const NOTIONAL_CAPITAL = 100000;
+
+function fmtP(v?: number | null, digits = 2) {
+  if (v == null || !Number.isFinite(v)) return "—";
+  return `${(v * 100).toFixed(digits)}%`;
+}
+function fmtN(v?: number | null, digits = 2) {
+  if (v == null || !Number.isFinite(v)) return "—";
+  return v.toFixed(digits);
+}
+function fmtMoney(v?: number | null) {
+  if (v == null || !Number.isFinite(v)) return "—";
+  const sign = v < 0 ? "-" : "";
+  return `${sign}$${Math.abs(Math.round(v)).toLocaleString()}`;
+}
+function signClass(v?: number | null) {
+  if (v == null || !Number.isFinite(v) || v === 0) return "text-foreground";
+  return v > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+}
+
+type Metric = { label: string; value: string; desc?: string; valueClass?: string };
+
+function MetricCard({ title, accent, metrics }: { title: string; accent?: string; metrics: Metric[] }) {
+  return (
+    <Card className="shadow-sm">
+      <CardContent className="p-4">
+        <div className="mb-1.5 text-sm font-semibold" style={accent ? { color: accent } : undefined}>
+          {title}
+        </div>
+        <div>
+          {metrics.map((m) => (
+            <div
+              key={m.label}
+              className="flex items-baseline justify-between gap-3 border-b border-border/40 py-1.5 last:border-0"
+            >
+              <div className="min-w-0">
+                <div className="text-[13px] text-foreground">{m.label}</div>
+                {m.desc ? <div className="text-[10.5px] text-muted-foreground">{m.desc}</div> : null}
+              </div>
+              <div className={cn("shrink-0 text-sm font-semibold tabular-nums", m.valueClass || "text-foreground")}>
+                {m.value}
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function PortfolioAnalyticsPage() {
   const params = useParams<{ id: string | string[] | undefined }>();
@@ -133,6 +184,31 @@ export default function PortfolioAnalyticsPage() {
     }));
   }, [priceHistory]);
 
+  // Cumulative return since inception (%), each line rebased to its own first finite value so
+  // both start at 0%. Keeps dailySeries (raw values) intact for the drawdown calc below.
+  const cumulativeSeries = React.useMemo(() => {
+    const firstFinite = (key: "portfolio" | "benchmark") => {
+      for (const d of dailySeries) {
+        const v = d[key];
+        if (typeof v === "number" && Number.isFinite(v) && v !== 0) return v;
+      }
+      return null;
+    };
+    const baseP = firstFinite("portfolio");
+    const baseB = firstFinite("benchmark");
+    return dailySeries.map((d) => ({
+      date: d.date,
+      portfolio:
+        baseP != null && typeof d.portfolio === "number" && Number.isFinite(d.portfolio)
+          ? d.portfolio / baseP - 1
+          : null,
+      benchmark:
+        baseB != null && typeof d.benchmark === "number" && Number.isFinite(d.benchmark)
+          ? d.benchmark / baseB - 1
+          : null,
+    }));
+  }, [dailySeries]);
+
   const drawdownSeries = React.useMemo(() => {
     const pts = dailySeries.filter((d) => typeof d.portfolio === "number" && Number.isFinite(d.portfolio));
     if (!pts.length) return [];
@@ -146,6 +222,29 @@ export default function PortfolioAnalyticsPage() {
       return { ...d, portfolio: dd, benchmark: null };
     });
   }, [dailySeries]);
+
+  // Position P&L on a notional, equal-weight $100k basis (the strategy targets equal weights;
+  // it has no real cash), derived from per-holding entry/current prices in price tracking.
+  // Restricted to CURRENT holdings — the P&L ledger also carries exited positions.
+  const positionPnl = React.useMemo(() => {
+    const rows = (priceHistory?.holdings_pnl || []).filter(
+      (r) => typeof r.entry_price === "number" && r.entry_price > 0 && heldSymbols.has(r.symbol)
+    );
+    const n = rows.length;
+    if (!n) return null;
+    const costEach = NOTIONAL_CAPITAL / n;
+    const mvs = rows.map((r) => {
+      const cur = typeof r.current_price === "number" && r.current_price > 0 ? r.current_price : r.entry_price;
+      const shares = costEach / r.entry_price;
+      return shares * cur;
+    });
+    const totalMV = mvs.reduce((a, b) => a + b, 0);
+    const totalCost = NOTIONAL_CAPITAL;
+    const gl = totalMV - totalCost;
+    const largest = totalMV > 0 ? Math.max(...mvs) / totalMV : 0;
+    const hhi = totalMV > 0 ? mvs.reduce((a, mv) => a + (mv / totalMV) ** 2, 0) : 0;
+    return { totalMV, totalCost, gl, retPct: gl / totalCost, n, largest, hhi };
+  }, [priceHistory, heldSymbols]);
 
   const show = React.useCallback(
     (key: string, defaultValue: boolean = true) => {
@@ -222,67 +321,100 @@ export default function PortfolioAnalyticsPage() {
           </div>
         </div>
 
-        {/* KPI tiles */}
-        <div className="grid gap-3 md:grid-cols-3">
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="text-xs text-muted-foreground">Sharpe ({k?.sharpe_rf_assumption || "vs 5% RF"})</div>
-              <div className="mt-1 text-2xl font-semibold text-foreground">
-                {k?.sharpe == null ? "—" : k.sharpe.toFixed(2)}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="text-xs text-muted-foreground">Sortino ({k?.sortino_rf_assumption || "vs 5% RF"})</div>
-              <div className="mt-1 text-2xl font-semibold text-foreground">
-                {k?.sortino == null ? "—" : k.sortino.toFixed(2)}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="text-xs text-muted-foreground">Quality score</div>
-              <div className="mt-1 text-2xl font-semibold text-foreground">
-                {k?.quality_score == null ? "—" : `${Math.round(k.quality_score * 100)}%`}
-              </div>
-              <div className="mt-1 text-[11px] text-muted-foreground">High-return / low-vol vs top-100 medians</div>
-            </CardContent>
-          </Card>
+        {/* Client "Dashboard" metric set (monthly periods) */}
+        <Card className="shadow-sm">
+          <CardContent className="p-3">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
+              <span className="text-sm font-semibold text-foreground">Performance metrics</span>
+              <span className="rounded-full border border-border px-2 py-0.5">Monthly periods</span>
+              <span className="rounded-full border border-border px-2 py-0.5">{k?.periods ?? 0} months</span>
+              <span className="rounded-full border border-border px-2 py-0.5">RF {fmtP(k?.rf_annual, 1)}</span>
+              <span className="rounded-full border border-border px-2 py-0.5">MAR {fmtP(k?.mar_annual, 0)}</span>
+              {benchmarkLabel ? (
+                <span className="rounded-full border border-border px-2 py-0.5">Benchmark {benchmarkLabel}</span>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            title="Return"
+            accent="#5b8cff"
+            metrics={[
+              { label: "Cumulative Return", value: fmtP(k?.cumulative_return), desc: "Total growth, all periods" },
+              { label: "Annualized (CAGR)", value: fmtP(k?.cagr), desc: "Geometric, annualized" },
+              { label: "Avg Periodic Return", value: fmtP(k?.avg_periodic_return), desc: "Mean monthly return" },
+              { label: "Benchmark Cumulative", value: fmtP(k?.benchmark_cumulative), desc: benchmarkLabel ? `vs ${benchmarkLabel}` : "Benchmark" },
+              { label: "Excess Return (cum.)", value: fmtP(k?.excess_return_cum), desc: "Portfolio − benchmark", valueClass: signClass(k?.excess_return_cum) },
+              { label: "Best Period", value: fmtP(k?.best_period), desc: "Best month", valueClass: "text-emerald-600 dark:text-emerald-400" },
+              { label: "Worst Period", value: fmtP(k?.worst_period), desc: "Worst month", valueClass: "text-rose-600 dark:text-rose-400" },
+              { label: "Win Rate", value: fmtP(k?.win_rate), desc: "% positive months" },
+            ]}
+          />
+          <MetricCard
+            title="Risk"
+            accent="#e0a92e"
+            metrics={[
+              { label: "Volatility (ann.)", value: fmtP(k?.volatility_annualized), desc: "Std dev of returns" },
+              { label: "Downside Deviation", value: fmtP(k?.downside_deviation), desc: "Below target (MAR 0%)" },
+              { label: "Beta", value: fmtN(k?.beta), desc: benchmarkLabel ? `vs ${benchmarkLabel}` : "vs benchmark" },
+              { label: "Tracking Error", value: fmtP(k?.tracking_error), desc: "Std dev of excess" },
+              { label: "Maximum Drawdown", value: fmtP(k?.max_drawdown), desc: "Worst peak-to-trough", valueClass: "text-rose-600 dark:text-rose-400" },
+              { label: "Value at Risk (95%)", value: fmtP(k?.var_95), desc: "5th-pctile month", valueClass: "text-rose-600 dark:text-rose-400" },
+              { label: "R-squared", value: fmtN(k?.r_squared), desc: "Fit vs benchmark" },
+            ]}
+          />
+          <MetricCard
+            title="Risk-adjusted"
+            accent="#a78bfa"
+            metrics={[
+              { label: "Sharpe", value: fmtN(k?.sharpe), desc: k?.sharpe_rf_assumption || "vs RF" },
+              { label: "Sortino", value: fmtN(k?.sortino), desc: "Per downside risk" },
+              { label: "Treynor", value: fmtN(k?.treynor), desc: "Per unit beta" },
+              { label: "Information Ratio", value: fmtN(k?.information_ratio), desc: "Active return / TE" },
+              { label: "Calmar", value: fmtN(k?.calmar), desc: "CAGR / max drawdown" },
+              { label: "Jensen's Alpha", value: fmtP(k?.jensens_alpha), desc: "Above CAPM (ann.)", valueClass: signClass(k?.jensens_alpha) },
+            ]}
+          />
+          <MetricCard
+            title="Position P&L"
+            accent="#2fbf71"
+            metrics={
+              positionPnl
+                ? [
+                    { label: "Total Market Value", value: fmtMoney(positionPnl.totalMV), desc: "Notional $100k equal-weight" },
+                    { label: "Total Cost Basis", value: fmtMoney(positionPnl.totalCost), desc: "Notional" },
+                    { label: "Unrealized Gain/Loss", value: fmtMoney(positionPnl.gl), valueClass: signClass(positionPnl.gl) },
+                    { label: "Unrealized Return %", value: fmtP(positionPnl.retPct), valueClass: signClass(positionPnl.retPct) },
+                    { label: "Number of Holdings", value: String(positionPnl.n) },
+                    { label: "Largest Position", value: fmtP(positionPnl.largest), desc: "Concentration check" },
+                    { label: "Concentration (HHI)", value: fmtN(positionPnl.hhi, 4), desc: "Lower = diversified" },
+                  ]
+                : [{ label: "Position P&L", value: "—", desc: "Needs daily price tracking" }]
+            }
+          />
         </div>
 
-        <div className="grid gap-3 md:grid-cols-3">
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="text-xs text-muted-foreground">Avg 12M return (holdings)</div>
-              <div className="mt-1 text-2xl font-semibold text-foreground">
-                {k?.avg_1y_return == null ? "—" : `${(k.avg_1y_return * 100).toFixed(1)}%`}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="text-xs text-muted-foreground">Avg annualized SD (holdings)</div>
-              <div className="mt-1 text-2xl font-semibold text-foreground">
-                {k?.avg_annualized_sd == null ? "—" : `${(k.avg_annualized_sd * 100).toFixed(1)}%`}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="text-xs text-muted-foreground">Benchmark spread</div>
-              <div className="mt-1 grid grid-cols-2 gap-x-3 gap-y-1 text-[12px] text-muted-foreground">
-                <div>1M</div>
-                <div className="text-right text-foreground">{k?.spread_1m == null ? "—" : `${(k.spread_1m * 100).toFixed(1)}%`}</div>
-                <div>3M</div>
-                <div className="text-right text-foreground">{k?.spread_3m == null ? "—" : `${(k.spread_3m * 100).toFixed(1)}%`}</div>
-                <div>YTD</div>
-                <div className="text-right text-foreground">{k?.spread_ytd == null ? "—" : `${(k.spread_ytd * 100).toFixed(1)}%`}</div>
-                <div>1Y</div>
-                <div className="text-right text-foreground">{k?.spread_1y == null ? "—" : `${(k.spread_1y * 100).toFixed(1)}%`}</div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Extras preserved from the prior view */}
+        <div className="grid gap-3 md:grid-cols-2">
+          <MetricCard
+            title="Holdings snapshot"
+            metrics={[
+              { label: "Quality Score", value: k?.quality_score == null ? "—" : fmtP(k?.quality_score, 0), desc: "High-return / low-vol vs top-100" },
+              { label: "Avg 12M Return (holdings)", value: fmtP(k?.avg_1y_return, 1), desc: "Cross-sectional" },
+              { label: "Avg Annualized SD (holdings)", value: fmtP(k?.avg_annualized_sd, 1) },
+            ]}
+          />
+          <MetricCard
+            title="Benchmark spread (excess return)"
+            metrics={[
+              { label: "1 Month", value: fmtP(k?.spread_1m, 1), valueClass: signClass(k?.spread_1m) },
+              { label: "3 Months", value: fmtP(k?.spread_3m, 1), valueClass: signClass(k?.spread_3m) },
+              { label: "YTD", value: fmtP(k?.spread_ytd, 1), valueClass: signClass(k?.spread_ytd) },
+              { label: "1 Year", value: fmtP(k?.spread_1y, 1), valueClass: signClass(k?.spread_1y) },
+            ]}
+          />
         </div>
 
         {hiddenChips.length ? (
@@ -334,11 +466,12 @@ export default function PortfolioAnalyticsPage() {
 
             {show("analytics_cumulative", true) ? (
               <TwoLineIndexedChart
-                title="Cumulative (indexed)"
-                subtitle="Daily equity curve (indexed to 100 at inception)"
-                data={dailySeries}
+                title="Cumulative return"
+                subtitle="Cumulative % since inception (both start at 0%)"
+                data={cumulativeSeries}
                 markers={priceHistory?.rebalance_dates || []}
                 benchmarkLabel={benchmarkLabel}
+                percent
                 onHide={() => setChartPref("analytics_cumulative", false)}
               />
             ) : null}

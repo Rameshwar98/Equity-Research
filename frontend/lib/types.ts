@@ -336,6 +336,34 @@ export type AnalyticsKpis = {
   spread_3m?: number | null;
   spread_ytd?: number | null;
   spread_1y?: number | null;
+
+  // Client "Dashboard" metric set (monthly periods)
+  periods?: number;
+  periods_per_year?: number;
+  rf_annual?: number | null;
+  mar_annual?: number | null;
+
+  cumulative_return?: number | null;
+  cagr?: number | null;
+  avg_periodic_return?: number | null;
+  benchmark_cumulative?: number | null;
+  excess_return_cum?: number | null;
+  best_period?: number | null;
+  worst_period?: number | null;
+  win_rate?: number | null;
+
+  volatility_annualized?: number | null;
+  downside_deviation?: number | null;
+  beta?: number | null;
+  tracking_error?: number | null;
+  max_drawdown?: number | null;
+  var_95?: number | null;
+  r_squared?: number | null;
+
+  treynor?: number | null;
+  information_ratio?: number | null;
+  calmar?: number | null;
+  jensens_alpha?: number | null;
 };
 
 export type AnalyticsSeriesPoint = {
@@ -477,5 +505,31 @@ export type PortfolioPriceHistoryResponse = {
     days_tracked: number;
   };
   rebalance_dates: string[];
+};
+
+export type ScreenDebugRow = {
+  symbol: string;
+  name?: string | null;
+  sector?: string | null;
+  last_price?: number | null;
+  return_1y?: number | null;
+  annualized_sd?: number | null;
+  score_3?: number | null;
+  return_rank: number;
+  sd_rank?: number | null;
+  combined_score?: number | null;
+  combined_rank?: number | null;
+  in_screen: boolean;
+  in_portfolio: boolean;
+};
+
+export type PortfolioDebugScreenResponse = {
+  portfolio_id: string;
+  snapshot_id?: string | null;
+  created_at?: string | null;
+  screen_size: number;
+  final_portfolio_size: number;
+  universe_count: number;
+  rows: ScreenDebugRow[];
 };
 

@@ -26,7 +26,9 @@ def _services() -> tuple[AnalyticsService, any]:
         config=AnalyticsConfig(
             fmp_period="5y",
             fmp_interval=settings.fmp_interval,
-            rf_annual=0.05,
+            # Client "Dashboard" assumptions: 4.5% risk-free, 0% target (MAR).
+            rf_annual=0.045,
+            mar_annual=0.0,
         ),
     )
     return svc, portfolio_store

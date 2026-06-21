@@ -74,6 +74,11 @@ export default function PortfolioHistoryPage() {
   const [localHidden, setLocalHidden] = React.useState<Record<string, boolean>>({});
   const show = (key: string) => !localHidden[key];
 
+  // Click a monthly-movement row to filter the events panel to that rebalance date.
+  const [selectedMovementDate, setSelectedMovementDate] = React.useState<string>("");
+  // Most-stable holdings filter: "all" | "current"
+  const [stableFilter, setStableFilter] = React.useState<"all" | "current">("all");
+
   const snapshots = data?.snapshots || [];
   const movements = data?.movements || [];
   const events = data?.events || [];
@@ -85,6 +90,13 @@ export default function PortfolioHistoryPage() {
   }, [data, selectedSnapshotId]);
 
   const heatmapColumns = data?.charts?.heatmap_columns || [];
+
+  // Symbols held in the most recent snapshot = the portfolio's current holdings.
+  const currentHeld = React.useMemo(() => {
+    const latestId = snapshots[snapshots.length - 1]?.snapshot_id;
+    const rows = latestId ? data?.holdings_by_snapshot[latestId] || [] : [];
+    return new Set(rows.map((h) => h.symbol));
+  }, [data, snapshots]);
 
   return (
     <PortfolioShell>
@@ -239,7 +251,7 @@ export default function PortfolioHistoryPage() {
                   <Card className="shadow-sm">
                     <CardContent className="p-4">
                       <div className="mb-2 text-sm font-semibold text-foreground">Monthly movement</div>
-                      <div className="overflow-auto rounded-md border border-border">
+                      <div className="max-h-[560px] overflow-auto rounded-md border border-border">
                         <table className="min-w-[520px] w-full text-sm">
                           <thead className="bg-muted/40 text-xs text-muted-foreground">
                             <tr>
@@ -252,20 +264,32 @@ export default function PortfolioHistoryPage() {
                           <tbody>
                             {movements
                               .slice()
-                              .sort((a, b) => a.effective_date.localeCompare(b.effective_date))
-                              .map((m, idx) => (
-                                <tr
-                                  key={`${m.snapshot_id}-${m.effective_date}-${idx}`}
-                                  className="border-t border-border"
-                                >
-                                  <td className="px-3 py-2">{m.effective_date}</td>
-                                  <td className="px-3 py-2 text-right">{m.entries}</td>
-                                  <td className="px-3 py-2 text-right">{m.exits}</td>
-                                  <td className="px-3 py-2 text-right">
-                                    {(m.turnover_pct * 100).toFixed(0)}%
-                                  </td>
-                                </tr>
-                              ))}
+                              .sort((a, b) => b.effective_date.localeCompare(a.effective_date))
+                              .map((m, idx) => {
+                                const active = selectedMovementDate === m.effective_date;
+                                return (
+                                  <tr
+                                    key={`${m.snapshot_id}-${m.effective_date}-${idx}`}
+                                    aria-selected={active}
+                                    onClick={() =>
+                                      setSelectedMovementDate(active ? "" : m.effective_date)
+                                    }
+                                    className={[
+                                      "border-t border-border cursor-pointer select-none",
+                                      active
+                                        ? "bg-primary/10"
+                                        : "hover:bg-muted/40",
+                                    ].join(" ")}
+                                  >
+                                    <td className="px-3 py-2 font-medium">{m.effective_date}</td>
+                                    <td className="px-3 py-2 text-right">{m.entries}</td>
+                                    <td className="px-3 py-2 text-right">{m.exits}</td>
+                                    <td className="px-3 py-2 text-right">
+                                      {(m.turnover_pct * 100).toFixed(0)}%
+                                    </td>
+                                  </tr>
+                                );
+                              })}
                           </tbody>
                         </table>
                       </div>
@@ -274,12 +298,48 @@ export default function PortfolioHistoryPage() {
 
                   <Card className="shadow-sm">
                     <CardContent className="p-4">
-                      <div className="mb-2 text-sm font-semibold text-foreground">Entries & exits</div>
-                      <div className="max-h-[320px] overflow-auto rounded-md border border-border">
+                      <div className="mb-2 flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-semibold text-foreground">Entries & exits</div>
+                          <div className="text-[11px] text-muted-foreground">
+                            {selectedMovementDate
+                              ? `Filtered · ${selectedMovementDate}`
+                              : "Newest first · click a date to filter"}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {selectedMovementDate ? (
+                            <button
+                              onClick={() => setSelectedMovementDate("")}
+                              className="text-xs text-primary hover:underline"
+                            >
+                              Show all
+                            </button>
+                          ) : null}
+                          <Badge variant="secondary">
+                            {selectedMovementDate
+                              ? `${events.filter((e) => e.effective_date === selectedMovementDate).length} events`
+                              : `${events.length} events`}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="max-h-[560px] overflow-auto rounded-md border border-border">
                         <div className="divide-y divide-border">
                           {events
                             .slice()
-                            .sort((a, b) => a.created_at.localeCompare(b.created_at))
+                            .filter((e) =>
+                              selectedMovementDate ? e.effective_date === selectedMovementDate : true
+                            )
+                            .sort(
+                              (a, b) =>
+                                b.created_at.localeCompare(a.created_at) ||
+                                b.effective_date.localeCompare(a.effective_date) ||
+                                (a.type === b.type
+                                  ? a.symbol.localeCompare(b.symbol)
+                                  : a.type === "entry"
+                                  ? -1
+                                  : 1)
+                            )
                             .map((e, idx) => (
                               <div key={`${e.created_at}-${e.symbol}-${idx}`} className="p-3 text-sm">
                                 <div className="flex items-center justify-between">
@@ -326,12 +386,30 @@ export default function PortfolioHistoryPage() {
                   <CardContent className="p-4">
                     <div className="mb-2 flex items-center justify-between">
                       <div className="text-sm font-semibold text-foreground">Most stable holdings</div>
-                      <button
-                        className="text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => hide("stable")}
-                      >
-                        Hide
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <div className="flex rounded-md border border-border overflow-hidden text-xs">
+                          {(["all", "current"] as const).map((f) => (
+                            <button
+                              key={f}
+                              onClick={() => setStableFilter(f)}
+                              className={[
+                                "px-2.5 py-1",
+                                stableFilter === f
+                                  ? "bg-primary/10 text-foreground font-medium"
+                                  : "bg-background text-muted-foreground hover:bg-muted/40",
+                              ].join(" ")}
+                            >
+                              {f === "all" ? "All" : "Current only"}
+                            </button>
+                          ))}
+                        </div>
+                        <button
+                          className="text-xs text-muted-foreground hover:text-foreground"
+                          onClick={() => hide("stable")}
+                        >
+                          Hide
+                        </button>
+                      </div>
                     </div>
                     <div className="overflow-auto rounded-md border border-border">
                       <table className="min-w-[640px] w-full text-sm">
@@ -339,19 +417,34 @@ export default function PortfolioHistoryPage() {
                           <tr>
                             <th className="px-3 py-2 text-left">Symbol</th>
                             <th className="px-3 py-2 text-left">Sector</th>
+                            <th className="px-3 py-2 text-center">Current holding</th>
                             <th className="px-3 py-2 text-right">Total held</th>
                             <th className="px-3 py-2 text-right">Longest streak</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {(charts?.most_stable_holdings || []).map((r) => (
-                            <tr key={r.symbol} className="border-t border-border">
-                              <td className="px-3 py-2 font-semibold text-foreground">{r.symbol}</td>
-                              <td className="px-3 py-2 text-muted-foreground">{r.sector || ""}</td>
-                              <td className="px-3 py-2 text-right">{r.total_snapshots_held}</td>
-                              <td className="px-3 py-2 text-right">{r.longest_streak}</td>
-                            </tr>
-                          ))}
+                          {(charts?.most_stable_holdings || [])
+                            .filter((r) => stableFilter === "all" || currentHeld.has(r.symbol))
+                            .map((r) => {
+                              const held = currentHeld.has(r.symbol);
+                              return (
+                                <tr key={r.symbol} className="border-t border-border">
+                                  <td className="px-3 py-2 font-semibold text-foreground">{r.symbol}</td>
+                                  <td className="px-3 py-2 text-muted-foreground">{r.sector || ""}</td>
+                                  <td className="px-3 py-2 text-center">
+                                    {held ? (
+                                      <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                                        ✓ Current
+                                      </span>
+                                    ) : (
+                                      <span className="text-muted-foreground">—</span>
+                                    )}
+                                  </td>
+                                  <td className="px-3 py-2 text-right">{r.total_snapshots_held}</td>
+                                  <td className="px-3 py-2 text-right">{r.longest_streak}</td>
+                                </tr>
+                              );
+                            })}
                         </tbody>
                       </table>
                     </div>
