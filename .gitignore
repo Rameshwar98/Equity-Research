@@ -33,3 +33,19 @@ Thumbs.db
 
 # Assets/images saved by cursor
 assets/
+
+# Claude Code local config
+.claude/
+
+# Local debug dumps / scratch output
+backend/h.json
+backend/holdings.out
+backend/holdings_body.bin
+*-screenshot.png
+
+# Unrelated local tooling (GFPGAN model weights, ~186MB)
+gfpgan/
+
+# Client-provided spec artifacts (kept local, not committed)
+portfolio_analytics_dashboard_1.xlsx
+portfolio module spec.txt
