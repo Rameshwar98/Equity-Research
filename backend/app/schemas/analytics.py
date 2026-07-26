@@ -29,6 +29,15 @@ class AnalyticsKpis(BaseModel):
     rf_annual: Optional[float] = None  # risk-free rate (annual) used
     mar_annual: Optional[float] = None  # target / minimum acceptable return (annual)
 
+    # Window the metrics actually cover (first → last snapshot effective date). The
+    # cumulative CHART is daily and runs to today, so it can extend past period_end.
+    period_start: Optional[str] = None
+    period_end: Optional[str] = None
+    years_elapsed: Optional[float] = None  # true calendar span used to annualize
+    # Fraction of holdings that had usable prices: 1.0 = every name priced every period.
+    price_coverage: Optional[float] = None
+    min_price_coverage: Optional[float] = None  # worst single period
+
     # Return metrics
     cumulative_return: Optional[float] = None
     cagr: Optional[float] = None  # annualized (geometric)

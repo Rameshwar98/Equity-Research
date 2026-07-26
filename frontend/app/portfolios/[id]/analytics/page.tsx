@@ -339,10 +339,15 @@ export default function PortfolioAnalyticsPage() {
 
   // Position P&L on a notional, equal-weight capital basis (the strategy targets equal
   // weights; it has no real cash), derived from per-holding entry/current prices.
-  // Restricted to CURRENT holdings — the P&L ledger also carries exited positions.
+  // Restricted to OPEN legs of current holdings — the ledger carries one row per
+  // entry→exit leg, so a re-entered symbol also has closed legs that must not count.
   const positionPnl = React.useMemo(() => {
     const rows = (priceHistory?.holdings_pnl || []).filter(
-      (r) => typeof r.entry_price === "number" && r.entry_price > 0 && heldSymbols.has(r.symbol)
+      (r) =>
+        typeof r.entry_price === "number" &&
+        r.entry_price > 0 &&
+        (r.status ?? "open") === "open" &&
+        heldSymbols.has(r.symbol)
     );
     const n = rows.length;
     if (!n) return null;
@@ -446,6 +451,23 @@ export default function PortfolioAnalyticsPage() {
               <span className="rounded-full border border-border px-2 py-0.5">MAR {fmtP(k?.mar_annual, 0)}</span>
               {benchmarkLabel ? (
                 <span className="rounded-full border border-border px-2 py-0.5">Benchmark {benchmarkLabel}</span>
+              ) : null}
+              {k?.period_start && k?.period_end ? (
+                <span
+                  className="rounded-full border border-border px-2 py-0.5"
+                  title="Metrics cover snapshot-to-snapshot returns over this window; the cumulative chart is daily and runs to the latest close."
+                >
+                  {k.period_start} → {k.period_end}
+                  {k.years_elapsed ? ` (${k.years_elapsed.toFixed(2)} yr)` : ""}
+                </span>
+              ) : null}
+              {k?.min_price_coverage != null && k.min_price_coverage < 0.999 ? (
+                <span
+                  className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-amber-700 dark:text-amber-300"
+                  title="Some holdings had no cached price history and were excluded from a period's equal-weight average."
+                >
+                  Price coverage {fmtP(k.min_price_coverage, 0)} worst period
+                </span>
               ) : null}
             </div>
           </CardContent>

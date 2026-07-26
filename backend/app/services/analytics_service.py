@@ -127,11 +127,16 @@ def _dashboard_metrics(
     mar_annual: float,
     ppy: int,
     dd_values: List[float],
+    years_elapsed: Optional[float] = None,
 ) -> Dict[str, Optional[float]]:
     """Return/risk/risk-adjusted metrics on monthly periods, matching the client's Excel.
 
     All formulas use sample stats (ddof=1) and annualize with sqrt(ppy); CAGR/alpha
     use geometric annualized returns. RF and MAR are annual, converted to per-period.
+
+    `years_elapsed` is the true calendar span of the series. Snapshot dates are not
+    exactly one month apart (a manual rebalance can land days after the previous one),
+    so n/ppy would misstate the horizon; CAGR uses the real elapsed time when given.
     """
     out: Dict[str, Optional[float]] = {}
     n = len(port)
@@ -141,6 +146,7 @@ def _dashboard_metrics(
     b = np.asarray(bench, dtype=float)
     rf_p = (1.0 + rf_annual) ** (1.0 / ppy) - 1.0
     mar_p = (1.0 + mar_annual) ** (1.0 / ppy) - 1.0
+    years = years_elapsed if (years_elapsed and years_elapsed > 0) else (n / ppy)
 
     def f(x: float) -> Optional[float]:
         return float(x) if np.isfinite(x) else None
@@ -155,8 +161,8 @@ def _dashboard_metrics(
     out["best_period"] = f(float(np.max(p)))
     out["worst_period"] = f(float(np.min(p)))
     out["win_rate"] = f(float(np.mean(p > 0)))
-    cagr = (1.0 + cum) ** (ppy / n) - 1.0 if (1.0 + cum) > 0 else None
-    bcagr = (1.0 + bcum) ** (ppy / n) - 1.0 if (1.0 + bcum) > 0 else None
+    cagr = (1.0 + cum) ** (1.0 / years) - 1.0 if (1.0 + cum) > 0 else None
+    bcagr = (1.0 + bcum) ** (1.0 / years) - 1.0 if (1.0 + bcum) > 0 else None
     out["cagr"] = f(cagr) if cagr is not None else None
 
     # Max drawdown (from indexed value path)
@@ -305,6 +311,13 @@ class AnalyticsService:
         monthly_port: List[float] = []
         monthly_bench: List[float] = []
 
+        # Price coverage: a symbol with no cached history is skipped from the equal-weight
+        # average, so a period can be computed on fewer names than the portfolio holds.
+        # Track the worst case so the UI can flag a low-confidence series.
+        priced_total = 0
+        expected_total = 0
+        min_coverage: Optional[float] = None
+
         # Use the snapshot holdings as the holdings "in effect" until next snapshot.
         for prev, cur in zip(snapshots[:-1], snapshots[1:]):
             d0 = prev.holdings[0].price_date if prev.holdings else prev.created_at.date().isoformat()
@@ -320,6 +333,12 @@ class AnalyticsService:
                     continue
                 rets.append((p1 / p0) - 1.0)
             r_port = float(np.mean(rets)) if rets else 0.0
+            want = len(prev.holdings)
+            if want:
+                priced_total += len(rets)
+                expected_total += want
+                cov = len(rets) / want
+                min_coverage = cov if min_coverage is None else min(min_coverage, cov)
 
             px_b = await self._adj_close_series(bench)
             b0 = _nearest_price_on_or_before(px_b, d0)
@@ -378,6 +397,18 @@ class AnalyticsService:
         mar = self.config.mar_annual
         ppy = self.config.periods_per_year
         rf_label = f"vs {rf * 100:g}% RF"
+        # True calendar span of the return series — snapshot dates are not exactly a
+        # month apart, so annualizing by n/ppy would misstate the horizon.
+        years_elapsed: Optional[float] = None
+        try:
+            d_start = date.fromisoformat(points[0].date)
+            d_end = date.fromisoformat(points[-1].date)
+            days = (d_end - d_start).days
+            if days > 0:
+                years_elapsed = days / 365.25
+        except Exception:
+            years_elapsed = None
+
         dm = _dashboard_metrics(
             monthly_port,
             monthly_bench,
@@ -385,6 +416,7 @@ class AnalyticsService:
             mar_annual=mar,
             ppy=ppy,
             dd_values=dd_port,
+            years_elapsed=years_elapsed,
         )
         # Same metric set computed ON the benchmark itself (bench vs bench). Relative-only
         # metrics degenerate as expected: beta=1, TE=0, alpha=0 — the UI ignores those.
@@ -395,6 +427,7 @@ class AnalyticsService:
             mar_annual=mar,
             ppy=ppy,
             dd_values=dd_bench,
+            years_elapsed=years_elapsed,
         )
         out.kpis = AnalyticsKpis(
             sharpe=dm.get("sharpe") if dm.get("sharpe") is not None else _annualized_sharpe(monthly_port, rf),
@@ -405,6 +438,11 @@ class AnalyticsService:
             periods_per_year=ppy,
             rf_annual=rf,
             mar_annual=mar,
+            period_start=points[0].date if points else None,
+            period_end=points[-1].date if points else None,
+            years_elapsed=years_elapsed,
+            price_coverage=(priced_total / expected_total) if expected_total else None,
+            min_price_coverage=min_coverage,
             cumulative_return=dm.get("cumulative_return"),
             cagr=dm.get("cagr"),
             avg_periodic_return=dm.get("avg_periodic_return"),

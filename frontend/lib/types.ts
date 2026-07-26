@@ -368,6 +368,13 @@ export type AnalyticsKpis = {
   jensens_alpha?: number | null;
   /** Benchmark-side values of the same metric set (keys mirror the portfolio fields). */
   benchmark_metrics?: Record<string, number | null>;
+  /** Window the metrics cover (first → last snapshot). The daily chart may run later. */
+  period_start?: string | null;
+  period_end?: string | null;
+  years_elapsed?: number | null;
+  /** 1.0 = every holding priced in every period; lower means names were skipped. */
+  price_coverage?: number | null;
+  min_price_coverage?: number | null;
 };
 
 export type AnalyticsSeriesPoint = {
