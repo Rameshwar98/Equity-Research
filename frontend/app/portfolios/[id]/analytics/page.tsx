@@ -69,8 +69,10 @@ type Metric = { label: string; value: string; desc?: string; valueClass?: string
 /**
  * One row of the Portfolio | Benchmark | Diff metric tables.
  * - Normal rows: diff = portfolio − benchmark, colored by `diffGood` direction.
- * - `relativeOnly` rows (Beta, TE, R², IR, alpha): the metric IS the relationship, so the
- *   value renders in the Diff column and Portfolio/Benchmark stay blank.
+ * - `relativeOnly` rows (Beta, TE, R², IR, alpha): the metric already measures the
+ *   portfolio AGAINST the benchmark, so it has no separate benchmark value. The number
+ *   belongs in the Portfolio column; Benchmark/Diff read "n/a" (rendering it under Diff
+ *   made a beta of 0.95 look like a difference, and the row look empty).
  */
 type TriMetric = {
   label: string;
@@ -133,11 +135,22 @@ function MetricTable({
                   </td>
                   {m.relativeOnly ? (
                     <>
-                      <td className="py-1.5 text-right text-muted-foreground/50">—</td>
-                      <td className="py-1.5 text-right text-muted-foreground/50">—</td>
-                      <td className={cn("py-1.5 text-right font-semibold tabular-nums", m.relClass || "text-foreground")}>
+                      <td
+                        className={cn(
+                          "py-1.5 text-right font-semibold tabular-nums",
+                          m.relClass || "text-foreground"
+                        )}
+                      >
                         {m.fmt(m.port)}
+                        <span
+                          className="ml-1 cursor-help text-[9px] font-normal text-muted-foreground"
+                          title={`Already measured against ${benchmarkLabel || "the benchmark"}, so there is no separate benchmark value.`}
+                        >
+                          rel.
+                        </span>
                       </td>
+                      <td className="py-1.5 text-right text-[11px] text-muted-foreground/60">n/a</td>
+                      <td className="py-1.5 text-right text-[11px] text-muted-foreground/60">n/a</td>
                     </>
                   ) : (
                     <>
@@ -160,6 +173,13 @@ function MetricTable({
             })}
           </tbody>
         </table>
+        {rows.some((m) => m.relativeOnly) ? (
+          <div className="mt-2 border-t border-border/40 pt-2 text-[10.5px] leading-relaxed text-muted-foreground">
+            <span className="font-medium">rel.</span> = relative measure. These already compare the
+            portfolio to {benchmarkLabel || "the benchmark"}, so a separate benchmark value and a
+            difference are not defined (n/a).
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );
