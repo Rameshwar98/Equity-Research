@@ -70,9 +70,13 @@ async def get_price_history(portfolio_id: str) -> PortfolioPriceHistoryResponse:
             )
         )
 
-    # Open first (by % P&L desc), then exited (by % P&L desc).
+    # Open first (by % P&L desc), then exited (most recent exit first).
     holdings_rows.sort(
-        key=lambda r: (r.status != "open", r.pnl_pct is None, -(r.pnl_pct or 0.0))
+        key=lambda r: (
+            r.status != "open",
+            r.pnl_pct is None,
+            -(r.pnl_pct or 0.0),
+        )
     )
 
     inception = entries and min((e.entry_date for e in entries), default=None) or None

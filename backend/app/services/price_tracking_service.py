@@ -184,7 +184,7 @@ class PriceTrackingService:
                 return
 
             entries = await self.store.get_entries(portfolio_id=portfolio_id)
-            symbols = [e.symbol for e in entries]
+            symbols = sorted({e.symbol for e in entries})
             if not symbols:
                 logger.warning("backfill_from_inception no symbols portfolio_id=%s", portfolio_id)
                 return
@@ -207,9 +207,6 @@ class PriceTrackingService:
             if benchmark_symbol:
                 bench_df = await self._ensure_history_cached(symbol=benchmark_symbol, start=inception, end=today)
 
-            # Entry price map
-            entry_px = {e.symbol: float(e.entry_price) for e in entries if e.entry_price}
-
             # Benchmark inception close
             bench0: float | None = None
             if bench_df is not None and not bench_df.empty:
@@ -219,30 +216,51 @@ class PriceTrackingService:
                 except Exception:
                     bench0 = None
 
+            def px_on(sym: str, day: str) -> float | None:
+                df = history_by.get(sym)
+                if df is None or df.empty:
+                    return None
+                try:
+                    row = df.loc[pd.Timestamp(day)]
+                except Exception:
+                    return None
+                try:
+                    return float(row["Adj Close"] if "Adj Close" in row else row["Close"])
+                except Exception:
+                    return None
+
+            # Each distinct entry date is a rebalance: the basket is re-weighted equally
+            # at that close and then held (weights drift with prices) until the next one.
+            # A leg earns returns from the day AFTER its entry through its exit day, so
+            # the forward basket at rebalance r excludes legs exiting at r.
+            rebal_dates = {e.entry_date for e in entries}
+
+            def forward_basket(day: str) -> list[str]:
+                out: list[str] = []
+                for e in entries:
+                    if e.entry_date > day:
+                        continue
+                    if e.status == "exited" and e.exit_date and e.exit_date <= day:
+                        continue
+                    out.append(e.symbol)
+                return sorted(set(out))
+
+            # Equal-weight, monthly-rebalanced index — same convention the analytics
+            # monthly series uses, so the chart ties out to the metric table. (The old
+            # code averaged every symbol ever held on every day, which distorted the
+            # whole curve; a daily-rebalanced variant drifts from the monthly metrics.)
             wrote_prices = 0
             wrote_series = 0
+            port_val = 100.0
+            shares: dict[str, float] = {}
+            last_px: dict[str, float] = {}
             for d in trading_days:
                 closes: list[tuple[str, float]] = []
-                ratios: list[float] = []
                 for sym in symbols:
-                    df = history_by.get(sym)
-                    if df is None or df.empty:
-                        continue
-                    try:
-                        row = df.loc[pd.Timestamp(d)]
-                    except Exception:
-                        continue
-                    px = None
-                    try:
-                        px = float(row["Adj Close"] if "Adj Close" in row else row["Close"])
-                    except Exception:
-                        px = None
-                    if px is None:
-                        continue
-                    closes.append((sym, px))
-                    ep = entry_px.get(sym)
-                    if ep and ep > 0:
-                        ratios.append(px / ep)
+                    px = px_on(sym, d)
+                    if px is not None:
+                        last_px[sym] = px
+                        closes.append((sym, px))
 
                 bench_px: float | None = None
                 if benchmark_symbol and bench_df is not None and not bench_df.empty:
@@ -258,10 +276,22 @@ class PriceTrackingService:
                     await self.store.upsert_daily_prices(portfolio_id=portfolio_id, date=d, closes=closes)
                     wrote_prices += len(closes)
 
-                if ratios:
-                    port_val = 100.0 * (sum(ratios) / len(ratios))
-                else:
-                    port_val = 100.0
+                # Mark the held basket to today's closes (last known price if a bar is missing).
+                if shares:
+                    mv = 0.0
+                    for sym, sh in shares.items():
+                        px = last_px.get(sym)
+                        if px:
+                            mv += sh * px
+                    if mv > 0:
+                        port_val = mv
+
+                # Rebalance: re-split the current value equally across the forward basket.
+                if d in rebal_dates:
+                    basket = [s for s in forward_basket(d) if last_px.get(s)]
+                    if basket:
+                        each = port_val / len(basket)
+                        shares = {s: each / last_px[s] for s in basket}
 
                 bench_val = 100.0
                 if bench_px is not None and bench0 and bench0 > 0:
