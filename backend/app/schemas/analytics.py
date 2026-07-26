@@ -54,6 +54,12 @@ class AnalyticsKpis(BaseModel):
     calmar: Optional[float] = None
     jensens_alpha: Optional[float] = None  # annualized
 
+    # Benchmark-side values of the same metric set (keys mirror _dashboard_metrics
+    # output: cumulative_return, cagr, avg_periodic_return, best_period, worst_period,
+    # win_rate, volatility_annualized, downside_deviation, max_drawdown, var_95,
+    # sharpe, sortino, calmar, treynor). Lets the UI render Portfolio | Benchmark | Diff.
+    benchmark_metrics: Dict[str, Optional[float]] = Field(default_factory=dict)
+
 
 class SeriesPoint(BaseModel):
     date: str  # ISO yyyy-mm-dd (snapshot effective date)

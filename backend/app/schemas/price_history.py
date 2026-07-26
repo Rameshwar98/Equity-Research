@@ -21,6 +21,11 @@ class HoldingPnlRow(BaseModel):
     pnl_pct: Optional[float] = None
     pnl_abs: Optional[float] = None
     days_held: int = 0
+    # Exit tracking: 'open' rows mark-to-market at the latest close; 'exited' rows
+    # freeze P&L at the exit price (realized).
+    status: str = "open"  # 'open' | 'exited'
+    exit_date: Optional[str] = None
+    exit_price: Optional[float] = None
 
 
 class PriceHistorySummary(BaseModel):
@@ -31,6 +36,11 @@ class PriceHistorySummary(BaseModel):
     worst_performer: Optional[str] = None
     inception_date: Optional[str] = None
     days_tracked: int = 0
+    # Realized (exited) vs unrealized (open) split — equal-weight average returns.
+    open_positions: int = 0
+    exited_positions: int = 0
+    avg_unrealized_pct: Optional[float] = None  # mean % P&L across open rows
+    avg_realized_pct: Optional[float] = None  # mean % P&L across exited rows
 
 
 class PortfolioPriceHistoryResponse(BaseModel):

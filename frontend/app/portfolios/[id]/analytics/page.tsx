@@ -34,11 +34,21 @@ import type {
   PortfolioPriceHistoryResponse,
 } from "@/lib/types";
 
-const NOTIONAL_CAPITAL = 100000;
+const DEFAULT_CAPITAL = 100000;
 
 function fmtP(v?: number | null, digits = 2) {
   if (v == null || !Number.isFinite(v)) return "—";
   return `${(v * 100).toFixed(digits)}%`;
+}
+function fmtPSigned(v?: number | null, digits = 2) {
+  if (v == null || !Number.isFinite(v)) return "—";
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${(v * 100).toFixed(digits)}%`;
+}
+function fmtNSigned(v?: number | null, digits = 2) {
+  if (v == null || !Number.isFinite(v)) return "—";
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${v.toFixed(digits)}`;
 }
 function fmtN(v?: number | null, digits = 2) {
   if (v == null || !Number.isFinite(v)) return "—";
@@ -55,6 +65,105 @@ function signClass(v?: number | null) {
 }
 
 type Metric = { label: string; value: string; desc?: string; valueClass?: string };
+
+/**
+ * One row of the Portfolio | Benchmark | Diff metric tables.
+ * - Normal rows: diff = portfolio − benchmark, colored by `diffGood` direction.
+ * - `relativeOnly` rows (Beta, TE, R², IR, alpha): the metric IS the relationship, so the
+ *   value renders in the Diff column and Portfolio/Benchmark stay blank.
+ */
+type TriMetric = {
+  label: string;
+  desc?: string;
+  port?: number | null;
+  bench?: number | null;
+  fmt: (v?: number | null) => string;
+  fmtDiff?: (v?: number | null) => string;
+  diffGood?: "up" | "down" | "none";
+  relativeOnly?: boolean;
+  relClass?: string;
+};
+
+function diffClass(diff: number | null, good: "up" | "down" | "none") {
+  if (diff == null || !Number.isFinite(diff) || diff === 0 || good === "none") return "text-foreground";
+  const positive = good === "up" ? diff > 0 : diff < 0;
+  return positive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+}
+
+function MetricTable({
+  title,
+  accent,
+  benchmarkLabel,
+  rows,
+}: {
+  title: string;
+  accent?: string;
+  benchmarkLabel?: string | null;
+  rows: TriMetric[];
+}) {
+  return (
+    <Card className="shadow-sm">
+      <CardContent className="p-4">
+        <div className="mb-1.5 text-sm font-semibold" style={accent ? { color: accent } : undefined}>
+          {title}
+        </div>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-[10.5px] uppercase tracking-wide text-muted-foreground">
+              <th className="py-1 text-left font-medium">Metric</th>
+              <th className="py-1 text-right font-medium">Portfolio</th>
+              <th className="py-1 text-right font-medium" title={benchmarkLabel || undefined}>
+                Benchmark
+              </th>
+              <th className="py-1 text-right font-medium">Diff</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((m) => {
+              const diff =
+                m.port != null && m.bench != null && Number.isFinite(m.port) && Number.isFinite(m.bench)
+                  ? m.port - m.bench
+                  : null;
+              const fmtDiff = m.fmtDiff || m.fmt;
+              return (
+                <tr key={m.label} className="border-t border-border/40">
+                  <td className="py-1.5 pr-2">
+                    <div className="text-[13px] text-foreground">{m.label}</div>
+                    {m.desc ? <div className="text-[10.5px] text-muted-foreground">{m.desc}</div> : null}
+                  </td>
+                  {m.relativeOnly ? (
+                    <>
+                      <td className="py-1.5 text-right text-muted-foreground/50">—</td>
+                      <td className="py-1.5 text-right text-muted-foreground/50">—</td>
+                      <td className={cn("py-1.5 text-right font-semibold tabular-nums", m.relClass || "text-foreground")}>
+                        {m.fmt(m.port)}
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="py-1.5 text-right font-semibold tabular-nums text-foreground">
+                        {m.fmt(m.port)}
+                      </td>
+                      <td className="py-1.5 text-right tabular-nums text-muted-foreground">{m.fmt(m.bench)}</td>
+                      <td
+                        className={cn(
+                          "py-1.5 text-right font-semibold tabular-nums",
+                          diffClass(diff, m.diffGood ?? "up")
+                        )}
+                      >
+                        {fmtDiff(diff)}
+                      </td>
+                    </>
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
 
 function MetricCard({ title, accent, metrics }: { title: string; accent?: string; metrics: Metric[] }) {
   return (
@@ -223,8 +332,13 @@ export default function PortfolioAnalyticsPage() {
     });
   }, [dailySeries]);
 
-  // Position P&L on a notional, equal-weight $100k basis (the strategy targets equal weights;
-  // it has no real cash), derived from per-holding entry/current prices in price tracking.
+  // Fund size: per-portfolio capital (set at creation / Settings), default $100k.
+  const capital = portfolio?.params.capital && portfolio.params.capital > 0
+    ? portfolio.params.capital
+    : DEFAULT_CAPITAL;
+
+  // Position P&L on a notional, equal-weight capital basis (the strategy targets equal
+  // weights; it has no real cash), derived from per-holding entry/current prices.
   // Restricted to CURRENT holdings — the P&L ledger also carries exited positions.
   const positionPnl = React.useMemo(() => {
     const rows = (priceHistory?.holdings_pnl || []).filter(
@@ -232,19 +346,19 @@ export default function PortfolioAnalyticsPage() {
     );
     const n = rows.length;
     if (!n) return null;
-    const costEach = NOTIONAL_CAPITAL / n;
+    const costEach = capital / n;
     const mvs = rows.map((r) => {
       const cur = typeof r.current_price === "number" && r.current_price > 0 ? r.current_price : r.entry_price;
       const shares = costEach / r.entry_price;
       return shares * cur;
     });
     const totalMV = mvs.reduce((a, b) => a + b, 0);
-    const totalCost = NOTIONAL_CAPITAL;
+    const totalCost = capital;
     const gl = totalMV - totalCost;
     const largest = totalMV > 0 ? Math.max(...mvs) / totalMV : 0;
     const hhi = totalMV > 0 ? mvs.reduce((a, mv) => a + (mv / totalMV) ** 2, 0) : 0;
     return { totalMV, totalCost, gl, retPct: gl / totalCost, n, largest, hhi };
-  }, [priceHistory, heldSymbols]);
+  }, [priceHistory, heldSymbols, capital]);
 
   const show = React.useCallback(
     (key: string, defaultValue: boolean = true) => {
@@ -337,54 +451,63 @@ export default function PortfolioAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
-          <MetricCard
-            title="Return"
-            accent="#5b8cff"
-            metrics={[
-              { label: "Cumulative Return", value: fmtP(k?.cumulative_return), desc: "Total growth, all periods" },
-              { label: "Annualized (CAGR)", value: fmtP(k?.cagr), desc: "Geometric, annualized" },
-              { label: "Avg Periodic Return", value: fmtP(k?.avg_periodic_return), desc: "Mean monthly return" },
-              { label: "Benchmark Cumulative", value: fmtP(k?.benchmark_cumulative), desc: benchmarkLabel ? `vs ${benchmarkLabel}` : "Benchmark" },
-              { label: "Excess Return (cum.)", value: fmtP(k?.excess_return_cum), desc: "Portfolio − benchmark", valueClass: signClass(k?.excess_return_cum) },
-              { label: "Best Period", value: fmtP(k?.best_period), desc: "Best month", valueClass: "text-emerald-600 dark:text-emerald-400" },
-              { label: "Worst Period", value: fmtP(k?.worst_period), desc: "Worst month", valueClass: "text-rose-600 dark:text-rose-400" },
-              { label: "Win Rate", value: fmtP(k?.win_rate), desc: "% positive months" },
-            ]}
-          />
-          <MetricCard
-            title="Risk"
-            accent="#e0a92e"
-            metrics={[
-              { label: "Volatility (ann.)", value: fmtP(k?.volatility_annualized), desc: "Std dev of returns" },
-              { label: "Downside Deviation", value: fmtP(k?.downside_deviation), desc: "Below target (MAR 0%)" },
-              { label: "Beta", value: fmtN(k?.beta), desc: benchmarkLabel ? `vs ${benchmarkLabel}` : "vs benchmark" },
-              { label: "Tracking Error", value: fmtP(k?.tracking_error), desc: "Std dev of excess" },
-              { label: "Maximum Drawdown", value: fmtP(k?.max_drawdown), desc: "Worst peak-to-trough", valueClass: "text-rose-600 dark:text-rose-400" },
-              { label: "Value at Risk (95%)", value: fmtP(k?.var_95), desc: "5th-pctile month", valueClass: "text-rose-600 dark:text-rose-400" },
-              { label: "R-squared", value: fmtN(k?.r_squared), desc: "Fit vs benchmark" },
-            ]}
-          />
-          <MetricCard
-            title="Risk-adjusted"
-            accent="#a78bfa"
-            metrics={[
-              { label: "Sharpe", value: fmtN(k?.sharpe), desc: k?.sharpe_rf_assumption || "vs RF" },
-              { label: "Sortino", value: fmtN(k?.sortino), desc: "Per downside risk" },
-              { label: "Treynor", value: fmtN(k?.treynor), desc: "Per unit beta" },
-              { label: "Information Ratio", value: fmtN(k?.information_ratio), desc: "Active return / TE" },
-              { label: "Calmar", value: fmtN(k?.calmar), desc: "CAGR / max drawdown" },
-              { label: "Jensen's Alpha", value: fmtP(k?.jensens_alpha), desc: "Above CAPM (ann.)", valueClass: signClass(k?.jensens_alpha) },
-            ]}
-          />
+        {(() => {
+          const bm = k?.benchmark_metrics || {};
+          return (
+            <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+              <MetricTable
+                title="Return"
+                accent="#5b8cff"
+                benchmarkLabel={benchmarkLabel}
+                rows={[
+                  { label: "Cumulative Return", desc: "Total growth, all periods", port: k?.cumulative_return, bench: bm.cumulative_return, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Annualized (CAGR)", desc: "Geometric, annualized", port: k?.cagr, bench: bm.cagr, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Avg Periodic Return", desc: "Mean monthly return", port: k?.avg_periodic_return, bench: bm.avg_periodic_return, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Best Period", desc: "Best month", port: k?.best_period, bench: bm.best_period, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Worst Period", desc: "Worst month", port: k?.worst_period, bench: bm.worst_period, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Win Rate", desc: "% positive months", port: k?.win_rate, bench: bm.win_rate, fmt: fmtP, fmtDiff: fmtPSigned },
+                ]}
+              />
+              <MetricTable
+                title="Risk"
+                accent="#e0a92e"
+                benchmarkLabel={benchmarkLabel}
+                rows={[
+                  { label: "Volatility (ann.)", desc: "Std dev of returns", port: k?.volatility_annualized, bench: bm.volatility_annualized, fmt: fmtP, fmtDiff: fmtPSigned, diffGood: "down" },
+                  { label: "Downside Deviation", desc: "Below target (MAR 0%)", port: k?.downside_deviation, bench: bm.downside_deviation, fmt: fmtP, fmtDiff: fmtPSigned, diffGood: "down" },
+                  { label: "Maximum Drawdown", desc: "Worst peak-to-trough", port: k?.max_drawdown, bench: bm.max_drawdown, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Value at Risk (95%)", desc: "5th-pctile month", port: k?.var_95, bench: bm.var_95, fmt: fmtP, fmtDiff: fmtPSigned },
+                  { label: "Beta", desc: benchmarkLabel ? `vs ${benchmarkLabel}` : "vs benchmark", port: k?.beta, fmt: fmtN, relativeOnly: true },
+                  { label: "Tracking Error", desc: "Std dev of excess", port: k?.tracking_error, fmt: fmtP, relativeOnly: true },
+                  { label: "R-squared", desc: "Fit vs benchmark", port: k?.r_squared, fmt: fmtN, relativeOnly: true },
+                ]}
+              />
+              <MetricTable
+                title="Risk-adjusted"
+                accent="#a78bfa"
+                benchmarkLabel={benchmarkLabel}
+                rows={[
+                  { label: "Sharpe", desc: k?.sharpe_rf_assumption || "vs RF", port: k?.sharpe, bench: bm.sharpe, fmt: fmtN, fmtDiff: fmtNSigned },
+                  { label: "Sortino", desc: "Per downside risk", port: k?.sortino, bench: bm.sortino, fmt: fmtN, fmtDiff: fmtNSigned },
+                  { label: "Treynor", desc: "Per unit beta", port: k?.treynor, bench: bm.treynor, fmt: fmtN, fmtDiff: fmtNSigned },
+                  { label: "Calmar", desc: "CAGR / max drawdown", port: k?.calmar, bench: bm.calmar, fmt: fmtN, fmtDiff: fmtNSigned },
+                  { label: "Information Ratio", desc: "Active return / TE", port: k?.information_ratio, fmt: fmtN, relativeOnly: true },
+                  { label: "Jensen's Alpha", desc: "Above CAPM (ann.)", port: k?.jensens_alpha, fmt: fmtP, relativeOnly: true, relClass: signClass(k?.jensens_alpha) },
+                ]}
+              />
+            </div>
+          );
+        })()}
+
+        <div className="grid gap-3 md:grid-cols-2">
           <MetricCard
             title="Position P&L"
             accent="#2fbf71"
             metrics={
               positionPnl
                 ? [
-                    { label: "Total Market Value", value: fmtMoney(positionPnl.totalMV), desc: "Notional $100k equal-weight" },
-                    { label: "Total Cost Basis", value: fmtMoney(positionPnl.totalCost), desc: "Notional" },
+                    { label: "Total Market Value", value: fmtMoney(positionPnl.totalMV), desc: `Notional ${fmtMoney(capital)} equal-weight` },
+                    { label: "Total Cost Basis", value: fmtMoney(positionPnl.totalCost), desc: "Fund size (Settings → Capital)" },
                     { label: "Unrealized Gain/Loss", value: fmtMoney(positionPnl.gl), valueClass: signClass(positionPnl.gl) },
                     { label: "Unrealized Return %", value: fmtP(positionPnl.retPct), valueClass: signClass(positionPnl.retPct) },
                     { label: "Number of Holdings", value: String(positionPnl.n) },
@@ -394,25 +517,12 @@ export default function PortfolioAnalyticsPage() {
                 : [{ label: "Position P&L", value: "—", desc: "Needs daily price tracking" }]
             }
           />
-        </div>
-
-        {/* Extras preserved from the prior view */}
-        <div className="grid gap-3 md:grid-cols-2">
           <MetricCard
             title="Holdings snapshot"
             metrics={[
-              { label: "Quality Score", value: k?.quality_score == null ? "—" : fmtP(k?.quality_score, 0), desc: "High-return / low-vol vs top-100" },
+              { label: "Quality Score", value: k?.quality_score == null ? "—" : fmtP(k?.quality_score, 0), desc: "% holdings beating top-100 medians (return ↑, vol ↓)" },
               { label: "Avg 12M Return (holdings)", value: fmtP(k?.avg_1y_return, 1), desc: "Cross-sectional" },
               { label: "Avg Annualized SD (holdings)", value: fmtP(k?.avg_annualized_sd, 1) },
-            ]}
-          />
-          <MetricCard
-            title="Benchmark spread (excess return)"
-            metrics={[
-              { label: "1 Month", value: fmtP(k?.spread_1m, 1), valueClass: signClass(k?.spread_1m) },
-              { label: "3 Months", value: fmtP(k?.spread_3m, 1), valueClass: signClass(k?.spread_3m) },
-              { label: "YTD", value: fmtP(k?.spread_ytd, 1), valueClass: signClass(k?.spread_ytd) },
-              { label: "1 Year", value: fmtP(k?.spread_1y, 1), valueClass: signClass(k?.spread_1y) },
             ]}
           />
         </div>

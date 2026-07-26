@@ -7,6 +7,7 @@ import { PortfolioShell } from "@/components/portfolio-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SortableTh, sortRows, useTableSort } from "@/components/sortable-th";
 import { getPortfolioHistory, updatePortfolioPrefs } from "@/lib/api";
 import { downloadCsv, toCsv } from "@/lib/csv";
 import type { PortfolioHistoryResponse } from "@/lib/types";
@@ -78,6 +79,11 @@ export default function PortfolioHistoryPage() {
   const [selectedMovementDate, setSelectedMovementDate] = React.useState<string>("");
   // Most-stable holdings filter: "all" | "current"
   const [stableFilter, setStableFilter] = React.useState<"all" | "current">("all");
+
+  // Column-header sorting for the three tables on this page.
+  const holdingsSort = useTableSort<"symbol" | "name" | "sector" | "rank" | "ret" | "sd">({ key: "rank", dir: "asc" });
+  const movementSort = useTableSort<"date" | "entries" | "exits" | "turnover">({ key: "date", dir: "desc" });
+  const stableSort = useTableSort<"symbol" | "sector" | "held" | "total" | "streak">({ key: "total", dir: "desc" });
 
   const snapshots = data?.snapshots || [];
   const movements = data?.movements || [];
@@ -212,18 +218,25 @@ export default function PortfolioHistoryPage() {
                   <table className="min-w-[760px] w-full text-sm">
                     <thead className="bg-muted/40 text-xs text-muted-foreground">
                       <tr>
-                        <th className="px-3 py-2 text-left">Symbol</th>
-                        <th className="px-3 py-2 text-left">Name</th>
-                        <th className="px-3 py-2 text-left">Sector</th>
-                        <th className="px-3 py-2 text-right">Rank</th>
-                        <th className="px-3 py-2 text-right">12M</th>
-                        <th className="px-3 py-2 text-right">SD</th>
+                        <SortableTh label="Symbol" sortKey="symbol" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
+                        <SortableTh label="Name" sortKey="name" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
+                        <SortableTh label="Sector" sortKey="sector" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
+                        <SortableTh label="Rank" sortKey="rank" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" align="right" className="px-3 py-2" />
+                        <SortableTh label="12M" sortKey="ret" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} align="right" className="px-3 py-2" />
+                        <SortableTh label="SD" sortKey="sd" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} align="right" className="px-3 py-2" />
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedHoldings
-                        .slice()
-                        .sort((a, b) => a.combined_rank - b.combined_rank)
+                      {sortRows(selectedHoldings, holdingsSort.sort, (h, key) => {
+                        switch (key) {
+                          case "symbol": return h.symbol;
+                          case "name": return h.name ?? null;
+                          case "sector": return h.sector ?? null;
+                          case "rank": return h.combined_rank;
+                          case "ret": return h.return_1y;
+                          case "sd": return h.annualized_sd;
+                        }
+                      })
                         .map((h) => (
                           <tr key={h.symbol} className="border-t border-border">
                             <td className="px-3 py-2 font-semibold text-foreground">{h.symbol}</td>
@@ -255,16 +268,21 @@ export default function PortfolioHistoryPage() {
                         <table className="min-w-[520px] w-full text-sm">
                           <thead className="bg-muted/40 text-xs text-muted-foreground">
                             <tr>
-                              <th className="px-3 py-2 text-left">Date</th>
-                              <th className="px-3 py-2 text-right">Entries</th>
-                              <th className="px-3 py-2 text-right">Exits</th>
-                              <th className="px-3 py-2 text-right">Turnover</th>
+                              <SortableTh label="Date" sortKey="date" sort={movementSort.sort} onToggle={movementSort.toggle} className="px-3 py-2" />
+                              <SortableTh label="Entries" sortKey="entries" sort={movementSort.sort} onToggle={movementSort.toggle} align="right" className="px-3 py-2" />
+                              <SortableTh label="Exits" sortKey="exits" sort={movementSort.sort} onToggle={movementSort.toggle} align="right" className="px-3 py-2" />
+                              <SortableTh label="Turnover" sortKey="turnover" sort={movementSort.sort} onToggle={movementSort.toggle} align="right" className="px-3 py-2" />
                             </tr>
                           </thead>
                           <tbody>
-                            {movements
-                              .slice()
-                              .sort((a, b) => b.effective_date.localeCompare(a.effective_date))
+                            {sortRows(movements, movementSort.sort, (m, key) => {
+                              switch (key) {
+                                case "date": return m.effective_date;
+                                case "entries": return m.entries;
+                                case "exits": return m.exits;
+                                case "turnover": return m.turnover_pct;
+                              }
+                            })
                               .map((m, idx) => {
                                 const active = selectedMovementDate === m.effective_date;
                                 return (
@@ -415,16 +433,29 @@ export default function PortfolioHistoryPage() {
                       <table className="min-w-[640px] w-full text-sm">
                         <thead className="bg-muted/40 text-xs text-muted-foreground">
                           <tr>
-                            <th className="px-3 py-2 text-left">Symbol</th>
-                            <th className="px-3 py-2 text-left">Sector</th>
-                            <th className="px-3 py-2 text-center">Current holding</th>
-                            <th className="px-3 py-2 text-right">Total held</th>
-                            <th className="px-3 py-2 text-right">Longest streak</th>
+                            <SortableTh label="Symbol" sortKey="symbol" sort={stableSort.sort} onToggle={stableSort.toggle} defaultDir="asc" className="px-3 py-2" />
+                            <SortableTh label="Sector" sortKey="sector" sort={stableSort.sort} onToggle={stableSort.toggle} defaultDir="asc" className="px-3 py-2" />
+                            <SortableTh label="Current holding" sortKey="held" sort={stableSort.sort} onToggle={stableSort.toggle} align="center" className="px-3 py-2" />
+                            <SortableTh label="Total held" sortKey="total" sort={stableSort.sort} onToggle={stableSort.toggle} align="right" className="px-3 py-2" />
+                            <SortableTh label="Longest streak" sortKey="streak" sort={stableSort.sort} onToggle={stableSort.toggle} align="right" className="px-3 py-2" />
                           </tr>
                         </thead>
                         <tbody>
-                          {(charts?.most_stable_holdings || [])
-                            .filter((r) => stableFilter === "all" || currentHeld.has(r.symbol))
+                          {sortRows(
+                            (charts?.most_stable_holdings || []).filter(
+                              (r) => stableFilter === "all" || currentHeld.has(r.symbol)
+                            ),
+                            stableSort.sort,
+                            (r, key) => {
+                              switch (key) {
+                                case "symbol": return r.symbol;
+                                case "sector": return r.sector ?? null;
+                                case "held": return currentHeld.has(r.symbol) ? 1 : 0;
+                                case "total": return r.total_snapshots_held;
+                                case "streak": return r.longest_streak;
+                              }
+                            }
+                          )
                             .map((r) => {
                               const held = currentHeld.has(r.symbol);
                               return (

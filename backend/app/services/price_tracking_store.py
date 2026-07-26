@@ -17,6 +17,9 @@ class EntryRow:
     entry_price: float
     name: str | None
     sector: str | None
+    status: str = "open"  # 'open' | 'exited'
+    exit_date: str | None = None  # YYYY-MM-DD when the position left the portfolio
+    exit_price: float | None = None  # close on/near exit_date
 
 
 @dataclass(frozen=True)
@@ -76,10 +79,23 @@ class PriceTrackingStore:
                       entry_price REAL NOT NULL,
                       name TEXT,
                       sector TEXT,
+                      status TEXT NOT NULL DEFAULT 'open',
+                      exit_date TEXT,
+                      exit_price REAL,
                       PRIMARY KEY (portfolio_id, symbol)
                     );
                     """
                 )
+                # Migration for DBs created before exit tracking existed.
+                for ddl in (
+                    "ALTER TABLE portfolio_entries ADD COLUMN status TEXT NOT NULL DEFAULT 'open'",
+                    "ALTER TABLE portfolio_entries ADD COLUMN exit_date TEXT",
+                    "ALTER TABLE portfolio_entries ADD COLUMN exit_price REAL",
+                ):
+                    try:
+                        await db.execute(ddl)
+                    except Exception:
+                        pass  # column already exists
                 await db.commit()
             self._initialized = True
 
@@ -103,11 +119,13 @@ class PriceTrackingStore:
         rows = [(sym, d, float(px), nm, sec, act) for sym, d, px, nm, sec, act in entries]
         if not rows:
             return
+        # BUY resets the row entirely — including status back to 'open' (re-entry after exit).
         sql_replace = """
                 INSERT OR REPLACE INTO portfolio_entries(
-                  portfolio_id, symbol, entry_date, entry_price, name, sector
+                  portfolio_id, symbol, entry_date, entry_price, name, sector,
+                  status, exit_date, exit_price
                 )
-                VALUES(?,?,?,?,?,?)
+                VALUES(?,?,?,?,?,?,'open',NULL,NULL)
                 """
         sql_ignore = """
                 INSERT OR IGNORE INTO portfolio_entries(
@@ -122,6 +140,41 @@ class PriceTrackingStore:
                     await db.execute(sql_replace, params)
                 else:
                     await db.execute(sql_ignore, params)
+                    # A held symbol must be open even if a stale row marked it exited.
+                    await db.execute(
+                        """
+                        UPDATE portfolio_entries
+                        SET status='open', exit_date=NULL, exit_price=NULL
+                        WHERE portfolio_id=? AND symbol=? AND status!='open'
+                        """,
+                        (portfolio_id, sym),
+                    )
+            await db.commit()
+
+    async def mark_exited(
+        self,
+        *,
+        portfolio_id: str,
+        exits: Iterable[tuple[str, str, Optional[float]]],
+    ) -> None:
+        """Mark positions as exited. Each tuple is (symbol, exit_date, exit_price|None).
+
+        Only flips rows that are currently open — an already-exited row keeps its
+        original exit (first exit wins until a BUY re-opens the symbol).
+        """
+        await self.ensure_schema()
+        rows = [(d, px, portfolio_id, sym) for sym, d, px in exits]
+        if not rows:
+            return
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.executemany(
+                """
+                UPDATE portfolio_entries
+                SET status='exited', exit_date=?, exit_price=?
+                WHERE portfolio_id=? AND symbol=? AND status='open'
+                """,
+                rows,
+            )
             await db.commit()
 
     async def get_entries(self, *, portfolio_id: str) -> list[EntryRow]:
@@ -130,7 +183,8 @@ class PriceTrackingStore:
             db.row_factory = aiosqlite.Row
             cur = await db.execute(
                 """
-                SELECT portfolio_id, symbol, entry_date, entry_price, name, sector
+                SELECT portfolio_id, symbol, entry_date, entry_price, name, sector,
+                       status, exit_date, exit_price
                 FROM portfolio_entries
                 WHERE portfolio_id = ?
                 ORDER BY symbol ASC
@@ -146,6 +200,9 @@ class PriceTrackingStore:
                 entry_price=float(r["entry_price"]),
                 name=r["name"],
                 sector=r["sector"],
+                status=r["status"] or "open",
+                exit_date=r["exit_date"],
+                exit_price=float(r["exit_price"]) if r["exit_price"] is not None else None,
             )
             for r in rows
         ]

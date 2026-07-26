@@ -37,16 +37,20 @@ async def get_price_history(portfolio_id: str) -> PortfolioPriceHistoryResponse:
     last_date = series[-1].date if series else None
     holdings_rows: list[HoldingPnlRow] = []
     for e in entries:
-        cur = closes.get(e.symbol)
+        exited = e.status == "exited"
+        # Open positions mark to the latest close; exited positions freeze at the exit price.
+        cur = e.exit_price if (exited and e.exit_price) else closes.get(e.symbol)
         pnl_pct = None
         pnl_abs = None
         if cur is not None and e.entry_price and e.entry_price > 0:
             pnl_pct = (cur / e.entry_price - 1.0) * 100.0
             pnl_abs = (cur - e.entry_price)
+        # Days held: entry → exit for closed positions, entry → latest tracked day for open.
+        end_date = e.exit_date if (exited and e.exit_date) else last_date
         days_held = 0
-        if last_date:
+        if end_date:
             try:
-                days_held = (Date.fromisoformat(last_date) - Date.fromisoformat(e.entry_date)).days
+                days_held = (Date.fromisoformat(end_date) - Date.fromisoformat(e.entry_date)).days
             except Exception:
                 days_held = 0
         holdings_rows.append(
@@ -60,10 +64,16 @@ async def get_price_history(portfolio_id: str) -> PortfolioPriceHistoryResponse:
                 pnl_pct=pnl_pct,
                 pnl_abs=pnl_abs,
                 days_held=max(0, int(days_held)),
+                status=e.status,
+                exit_date=e.exit_date,
+                exit_price=e.exit_price,
             )
         )
 
-    holdings_rows.sort(key=lambda r: (r.pnl_pct is None, -(r.pnl_pct or 0.0)))
+    # Open first (by % P&L desc), then exited (by % P&L desc).
+    holdings_rows.sort(
+        key=lambda r: (r.status != "open", r.pnl_pct is None, -(r.pnl_pct or 0.0))
+    )
 
     inception = entries and min((e.entry_date for e in entries), default=None) or None
 
@@ -88,6 +98,11 @@ async def get_price_history(portfolio_id: str) -> PortfolioPriceHistoryResponse:
     if scored:
         best = max(scored, key=lambda r: r.pnl_pct or -1e9).symbol
         worst = min(scored, key=lambda r: r.pnl_pct or 1e9).symbol
+
+    open_scored = [r.pnl_pct for r in scored if r.status == "open" and r.pnl_pct is not None]
+    exited_scored = [r.pnl_pct for r in scored if r.status == "exited" and r.pnl_pct is not None]
+    open_count = sum(1 for r in holdings_rows if r.status == "open")
+    exited_count = sum(1 for r in holdings_rows if r.status == "exited")
 
     # Rebalance markers from snapshots (monthly commits)
     snaps = await portfolio_store.list_snapshots(portfolio_id)
@@ -115,6 +130,10 @@ async def get_price_history(portfolio_id: str) -> PortfolioPriceHistoryResponse:
         worst_performer=worst,
         inception_date=inception,
         days_tracked=len(series),
+        open_positions=open_count,
+        exited_positions=exited_count,
+        avg_unrealized_pct=(sum(open_scored) / len(open_scored)) if open_scored else None,
+        avg_realized_pct=(sum(exited_scored) / len(exited_scored)) if exited_scored else None,
     )
 
     return PortfolioPriceHistoryResponse(

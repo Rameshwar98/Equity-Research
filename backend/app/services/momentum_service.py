@@ -537,7 +537,12 @@ class MomentumIQService:
         proposed.sort(key=lambda s: (row_by_sym.get(s, {}).get("combined_rank", 10**9), s))
         proposed = proposed[: params.final_portfolio_size]
 
-        # On Deck: ranks 26–50 (by combined_rank), excluding current holdings.
+        # On Deck: the next N names after the portfolio (ranks N+1 .. 2N by combined_rank,
+        # where N = final_portfolio_size), excluding current holdings. E.g. size 25 → 26–50,
+        # size 15 → 16–30.
+        n_size = int(params.final_portfolio_size)
+        deck_lo = n_size + 1
+        deck_hi = n_size * 2
         on_deck_syms: list[str] = []
         for r in combined_sorted:
             try:
@@ -549,9 +554,9 @@ class MomentumIQService:
                 continue
             if sym in proposed:
                 continue
-            if 26 <= cr <= 50:
+            if deck_lo <= cr <= deck_hi:
                 on_deck_syms.append(sym)
-        on_deck_syms = list(dict.fromkeys(on_deck_syms))[:25]
+        on_deck_syms = list(dict.fromkeys(on_deck_syms))[:n_size]
 
         on_deck_rows: list[MomentumComputedRow] = [
             computed_row_for_symbol(sym, action="BUY", band_override="WATCH") for sym in on_deck_syms

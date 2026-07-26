@@ -912,7 +912,11 @@ export default function PortfolioHoldingsPage() {
 
           {activeTab === "on_deck" ? (
             <RowTable
-              title="On Deck (Ranks 26–50)"
+              title={(() => {
+                // Next-N names after the portfolio (size N → ranks N+1..2N).
+                const n = portfolio?.params.final_portfolio_size ?? filteredOnDeck.length;
+                return `On Deck — next ${n} (Ranks ${n + 1}–${n * 2})`;
+              })()}
               rows={filteredOnDeck}
               onSymbolClick={onSymbolClick}
               prevScoreBySymbol={prevScoreBySymbol}

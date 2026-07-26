@@ -27,6 +27,7 @@ const DEFAULTS = {
   ma_exit_override: true,
   rebalance_mode: "manual" as RebalanceMode,
   benchmark: "",
+  capital: "100000" as string,
 };
 
 export default function NewPortfolioPage() {
@@ -45,6 +46,7 @@ export default function NewPortfolioPage() {
   const [maOverride, setMaOverride] = React.useState(DEFAULTS.ma_exit_override);
   const [rebalanceMode, setRebalanceMode] = React.useState<RebalanceMode>(DEFAULTS.rebalance_mode);
   const [benchmark, setBenchmark] = React.useState(DEFAULTS.benchmark);
+  const [capital, setCapital] = React.useState(DEFAULTS.capital);
 
   const benchmarkSuggestions = React.useMemo(() => getBenchmarkSuggestions(universe), [universe]);
 
@@ -66,8 +68,12 @@ export default function NewPortfolioPage() {
     if (universeSizeCap.trim() && (!Number.isFinite(cap) || (cap as number) <= 0)) {
       issues.push("Universe size cap must be a positive number.");
     }
-    return { ok: issues.length === 0, issues, cap };
-  }, [name, universe, finalSize, momentumScreenSize, universeSizeCap]);
+    const cash = capital.trim() ? Number(capital.replace(/[,$\s]/g, "")) : null;
+    if (!cash || !Number.isFinite(cash) || cash <= 0) {
+      issues.push("Portfolio capital must be a positive amount.");
+    }
+    return { ok: issues.length === 0, issues, cap, cash };
+  }, [name, universe, finalSize, momentumScreenSize, universeSizeCap, capital]);
 
   async function onSave() {
     setError(null);
@@ -88,6 +94,7 @@ export default function NewPortfolioPage() {
           ma_exit_override: maOverride,
           rebalance_mode: rebalanceMode,
           benchmark: benchmark.trim() ? benchmark.trim() : null,
+          capital: validation.cash,
         },
       });
       router.push("/portfolios");
@@ -193,6 +200,19 @@ export default function NewPortfolioPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="capital">Portfolio capital (fund size)</Label>
+              <Input
+                id="capital"
+                value={capital}
+                onChange={(e) => setCapital(e.target.value)}
+                inputMode="numeric"
+                placeholder="e.g., 100000"
+              />
+              <div className="text-xs text-muted-foreground">
+                Equal-weight notional allotted to this portfolio (used for Position P&L).
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="screen">Momentum screen size</Label>
               <Input

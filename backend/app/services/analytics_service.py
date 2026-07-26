@@ -386,6 +386,16 @@ class AnalyticsService:
             ppy=ppy,
             dd_values=dd_port,
         )
+        # Same metric set computed ON the benchmark itself (bench vs bench). Relative-only
+        # metrics degenerate as expected: beta=1, TE=0, alpha=0 — the UI ignores those.
+        bm = _dashboard_metrics(
+            monthly_bench,
+            monthly_bench,
+            rf_annual=rf,
+            mar_annual=mar,
+            ppy=ppy,
+            dd_values=dd_bench,
+        )
         out.kpis = AnalyticsKpis(
             sharpe=dm.get("sharpe") if dm.get("sharpe") is not None else _annualized_sharpe(monthly_port, rf),
             sortino=dm.get("sortino") if dm.get("sortino") is not None else _annualized_sortino(monthly_port, rf),
@@ -414,6 +424,25 @@ class AnalyticsService:
             information_ratio=dm.get("information_ratio"),
             calmar=dm.get("calmar"),
             jensens_alpha=dm.get("jensens_alpha"),
+            benchmark_metrics={
+                k: bm.get(k)
+                for k in (
+                    "cumulative_return",
+                    "cagr",
+                    "avg_periodic_return",
+                    "best_period",
+                    "worst_period",
+                    "win_rate",
+                    "volatility_annualized",
+                    "downside_deviation",
+                    "max_drawdown",
+                    "var_95",
+                    "sharpe",
+                    "sortino",
+                    "calmar",
+                    "treynor",
+                )
+            },
         )
 
         # Current snapshot cross-sectional KPIs

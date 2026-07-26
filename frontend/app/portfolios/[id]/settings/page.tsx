@@ -69,6 +69,7 @@ export default function PortfolioSettingsPage() {
   const [maOverride, setMaOverride] = React.useState(true);
   const [rebalanceMode, setRebalanceMode] = React.useState<RebalanceMode>("manual");
   const [benchmark, setBenchmark] = React.useState("");
+  const [capital, setCapital] = React.useState<string>("100000");
 
   const benchmarkSuggestions = React.useMemo(() => getBenchmarkSuggestions(universe), [universe]);
 
@@ -82,6 +83,7 @@ export default function PortfolioSettingsPage() {
     setMaOverride(p.params.ma_exit_override);
     setRebalanceMode(p.params.rebalance_mode);
     setBenchmark(p.params.benchmark || "");
+    setCapital(p.params.capital ? String(p.params.capital) : "100000");
   }, [p]);
 
   const validation = React.useMemo(() => {
@@ -95,8 +97,12 @@ export default function PortfolioSettingsPage() {
     if (universeSizeCap.trim() && (!Number.isFinite(cap) || (cap as number) <= 0)) {
       issues.push("Universe size cap must be a positive number.");
     }
-    return { ok: issues.length === 0, issues, cap };
-  }, [name, universe, finalSize, momentumScreenSize, universeSizeCap]);
+    const cash = capital.trim() ? Number(capital.replace(/[,$\s]/g, "")) : null;
+    if (!cash || !Number.isFinite(cash) || cash <= 0) {
+      issues.push("Portfolio capital must be a positive amount.");
+    }
+    return { ok: issues.length === 0, issues, cap, cash };
+  }, [name, universe, finalSize, momentumScreenSize, universeSizeCap, capital]);
 
   async function onSave() {
     if (!id) return;
@@ -117,6 +123,7 @@ export default function PortfolioSettingsPage() {
           ma_exit_override: maOverride,
           rebalance_mode: rebalanceMode,
           benchmark: benchmark.trim() ? benchmark.trim() : null,
+          capital: validation.cash,
         },
       });
       setP(next);
@@ -253,6 +260,20 @@ export default function PortfolioSettingsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="capital">Portfolio capital (fund size)</Label>
+              <Input
+                id="capital"
+                value={capital}
+                onChange={(e) => setCapital(e.target.value)}
+                disabled={loading}
+                inputMode="numeric"
+                placeholder="e.g., 100000"
+              />
+              <div className="text-xs text-muted-foreground">
+                Equal-weight notional used for Position P&L on the Analytics page.
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="screen">Momentum screen size</Label>
               <Input

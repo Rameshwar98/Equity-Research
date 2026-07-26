@@ -47,7 +47,47 @@ class PriceTrackingService:
             if not h.symbol or not h.price_date:
                 continue
             entries.append((h.symbol, h.price_date, float(h.last_price), h.name, h.sector, h.action))
+
+        # Exit detection BEFORE upserting: any open entry not present in this snapshot's
+        # holdings has been rotated out — freeze its P&L at the rebalance date.
+        held_now = {h.symbol for h in (snapshot.holdings or []) if h.symbol}
+        effective_date = (
+            snapshot.holdings[0].price_date
+            if snapshot.holdings and snapshot.holdings[0].price_date
+            else snapshot.created_at.date().isoformat()
+        )
+        prior = await self.store.get_entries(portfolio_id=portfolio_id)
+        exiting = [e for e in prior if e.status == "open" and e.symbol not in held_now]
+        if exiting:
+            # Prefer the snapshot's own top-100 quote for the exit price; fall back to
+            # the cached close on/before the rebalance date.
+            top100_px: dict[str, float] = {}
+            for r in snapshot.top100_rows or []:
+                if r.symbol and r.last_price:
+                    top100_px[r.symbol] = float(r.last_price)
+            exits: list[tuple[str, str, float | None]] = []
+            for e in exiting:
+                px: float | None = top100_px.get(e.symbol)
+                if px is None:
+                    px = await self._close_on_or_before(symbol=e.symbol, date_iso=effective_date)
+                exits.append((e.symbol, effective_date, px))
+            await self.store.mark_exited(portfolio_id=portfolio_id, exits=exits)
+
         await self.store.upsert_entries_from_snapshot(portfolio_id=portfolio_id, entries=entries)
+
+    async def _close_on_or_before(self, *, symbol: str, date_iso: str) -> float | None:
+        """Latest cached adj close on/before the given date (None if no history cached)."""
+        try:
+            df = await self.cache.get_price_history(symbol, limit_days=0)
+            if df is None or df.empty:
+                return None
+            sub = df.loc[: pd.Timestamp(date_iso)]
+            if sub.empty:
+                return None
+            row = sub.iloc[-1]
+            return float(row["Adj Close"] if "Adj Close" in sub.columns else row["Close"])
+        except Exception:
+            return None
 
     def _calendar_for_market(self, market: Market):
         if market == "IN":

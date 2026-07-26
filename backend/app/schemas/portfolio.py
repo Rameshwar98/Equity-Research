@@ -22,6 +22,11 @@ class PortfolioParams(BaseModel):
     ma_exit_override: bool = Field(default=True)
     rebalance_mode: RebalanceMode = Field(default="manual")
     benchmark: Optional[str] = Field(default=None, description="Benchmark symbol (e.g. SPY)")
+    capital: Optional[float] = Field(
+        default=100_000,
+        gt=0,
+        description="Fund size / notional capital allotted to the portfolio (equal-weight basis for P&L)",
+    )
 
 
 class Portfolio(BaseModel):
