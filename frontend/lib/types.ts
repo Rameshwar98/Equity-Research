@@ -186,6 +186,8 @@ export type PortfolioParams = {
   ma_exit_override: boolean;
   rebalance_mode: RebalanceMode;
   benchmark?: string | null;
+  /** Fund size / notional capital allotted to the portfolio (equal-weight P&L basis). */
+  capital?: number | null;
 };
 
 export type Portfolio = {
@@ -364,6 +366,8 @@ export type AnalyticsKpis = {
   information_ratio?: number | null;
   calmar?: number | null;
   jensens_alpha?: number | null;
+  /** Benchmark-side values of the same metric set (keys mirror the portfolio fields). */
+  benchmark_metrics?: Record<string, number | null>;
 };
 
 export type AnalyticsSeriesPoint = {
@@ -490,6 +494,10 @@ export type HoldingsPnlRow = {
   pnl_pct?: number | null;
   pnl_abs?: number | null;
   days_held: number;
+  /** 'open' rows mark-to-market at latest close; 'exited' rows freeze at exit price (realized). */
+  status?: "open" | "exited";
+  exit_date?: string | null;
+  exit_price?: number | null;
 };
 
 export type PortfolioPriceHistoryResponse = {
@@ -503,6 +511,10 @@ export type PortfolioPriceHistoryResponse = {
     worst_performer?: string | null;
     inception_date?: string | null;
     days_tracked: number;
+    open_positions?: number;
+    exited_positions?: number;
+    avg_unrealized_pct?: number | null;
+    avg_realized_pct?: number | null;
   };
   rebalance_dates: string[];
 };

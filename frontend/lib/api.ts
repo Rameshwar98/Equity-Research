@@ -240,6 +240,7 @@ export function createPortfolio(body: {
     ma_exit_override: boolean;
     rebalance_mode: "manual" | "auto" | "both";
     benchmark?: string | null;
+    capital?: number | null;
   };
 }) {
   return http<Portfolio>("/api/portfolios", {
