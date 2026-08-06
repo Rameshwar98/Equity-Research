@@ -156,13 +156,13 @@ export function SectorDonut({
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  <th className="py-1 px-2 text-center font-semibold">Sector</th>
-                  <th className="py-1 px-2 text-center font-semibold">#</th>
-                  <th className="py-1 px-2 text-center font-semibold">Port.</th>
+                  <th className="py-1 px-2 text-center font-bold text-foreground">Sector</th>
+                  <th className="py-1 px-2 text-center font-bold text-foreground">#</th>
+                  <th className="py-1 px-2 text-center font-bold text-foreground">Port.</th>
                   {hasBench ? (
                     <>
-                      <th className="py-1 px-2 text-center font-semibold">{benchmarkLabel || "Bench"}</th>
-                      <th className="py-1 text-center font-semibold">Diff</th>
+                      <th className="py-1 px-2 text-center font-bold text-foreground">{benchmarkLabel || "Bench"}</th>
+                      <th className="py-1 text-center font-bold text-foreground">Diff</th>
                     </>
                   ) : null}
                 </tr>

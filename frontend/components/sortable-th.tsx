@@ -64,7 +64,9 @@ export function SortableTh<K extends string = string>({
   return (
     <th
       className={cn(
-        "cursor-pointer select-none font-semibold hover:text-foreground",
+        // Full-contrast + bold: headers inherit a muted grey from thead/tr, which makes
+        // even semibold read as light. text-foreground on the cell wins over inheritance.
+        "cursor-pointer select-none font-bold text-foreground hover:text-primary",
         align === "right" ? "text-right" : align === "left" ? "text-left" : "text-center",
         className
       )}

@@ -118,7 +118,7 @@ export function HoldingsPnlTable({ rows }: { rows: HoldingsPnlRow[] }) {
             <thead className="sticky top-0 bg-card">
               <tr className="border-b border-border text-[11px] text-muted-foreground">
                 <SortableTh label="Symbol" sortKey="symbol" sort={sort} onToggle={toggle} defaultDir="asc" className="px-2 py-2" />
-                <th className="px-2 py-2 text-center font-semibold">Name</th>
+                <th className="px-2 py-2 text-center font-bold text-foreground">Name</th>
                 <SortableTh label="Sector" sortKey="sector" sort={sort} onToggle={toggle} defaultDir="asc" className="px-2 py-2" />
                 <SortableTh label="Status" sortKey="status" sort={sort} onToggle={toggle} defaultDir="asc" className="px-2 py-2" />
                 <SortableTh label="Entry" sortKey="entry_price" sort={sort} onToggle={toggle} className="px-2 py-2" />

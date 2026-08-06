@@ -111,12 +111,12 @@ function MetricTable({
         <table className="w-full text-sm">
           <thead>
             <tr className="text-[10.5px] uppercase tracking-wide text-muted-foreground">
-              <th className="py-1 text-center font-semibold">Metric</th>
-              <th className="py-1 text-center font-semibold">Portfolio</th>
-              <th className="py-1 text-center font-semibold" title={benchmarkLabel || undefined}>
+              <th className="py-1 text-center font-bold text-foreground">Metric</th>
+              <th className="py-1 text-center font-bold text-foreground">Portfolio</th>
+              <th className="py-1 text-center font-bold text-foreground" title={benchmarkLabel || undefined}>
                 Benchmark
               </th>
-              <th className="py-1 text-center font-semibold">Diff</th>
+              <th className="py-1 text-center font-bold text-foreground">Diff</th>
             </tr>
           </thead>
           <tbody>
