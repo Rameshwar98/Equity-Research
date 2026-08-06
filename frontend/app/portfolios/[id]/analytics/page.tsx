@@ -111,12 +111,12 @@ function MetricTable({
         <table className="w-full text-sm">
           <thead>
             <tr className="text-[10.5px] uppercase tracking-wide text-muted-foreground">
-              <th className="py-1 text-left font-medium">Metric</th>
-              <th className="py-1 text-right font-medium">Portfolio</th>
-              <th className="py-1 text-right font-medium" title={benchmarkLabel || undefined}>
+              <th className="py-1 text-center font-semibold">Metric</th>
+              <th className="py-1 text-center font-semibold">Portfolio</th>
+              <th className="py-1 text-center font-semibold" title={benchmarkLabel || undefined}>
                 Benchmark
               </th>
-              <th className="py-1 text-right font-medium">Diff</th>
+              <th className="py-1 text-center font-semibold">Diff</th>
             </tr>
           </thead>
           <tbody>
@@ -631,33 +631,6 @@ export default function PortfolioAnalyticsPage() {
               ) : null}
             </div>
 
-            <Card className="shadow-sm">
-              <CardContent className="p-4">
-                <div className="text-sm font-semibold text-foreground">Concentration</div>
-                <div className="mt-2 grid gap-2 sm:grid-cols-3 text-sm">
-                  <div className="rounded-md border border-border p-3">
-                    <div className="text-xs text-muted-foreground">Herfindahl (sectors)</div>
-                    <div className="mt-1 font-semibold text-foreground">
-                      {charts?.concentration?.herfindahl == null ? "—" : charts.concentration.herfindahl.toFixed(2)}
-                    </div>
-                  </div>
-                  <div className="rounded-md border border-border p-3">
-                    <div className="text-xs text-muted-foreground">Max sector weight</div>
-                    <div className="mt-1 font-semibold text-foreground">
-                      {charts?.concentration?.max_sector_weight == null
-                        ? "—"
-                        : `${(charts.concentration.max_sector_weight * 100).toFixed(0)}%`}
-                    </div>
-                  </div>
-                  <div className="rounded-md border border-border p-3">
-                    <div className="text-xs text-muted-foreground">Distinct sectors</div>
-                    <div className="mt-1 font-semibold text-foreground">
-                      {charts?.concentration?.distinct_sectors ?? "—"}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
       </div>
