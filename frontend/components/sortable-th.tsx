@@ -45,7 +45,9 @@ export function SortableTh<K extends string = string>({
   sort,
   onToggle,
   defaultDir = "desc",
-  align = "left",
+  /** Header labels are centred everywhere for a symmetrical grid; body cells keep their
+   *  own alignment (numbers right) so figures stay comparable down a column. */
+  align = "center",
   className,
   title,
 }: {
@@ -62,8 +64,8 @@ export function SortableTh<K extends string = string>({
   return (
     <th
       className={cn(
-        "cursor-pointer select-none hover:text-foreground",
-        align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left",
+        "cursor-pointer select-none font-semibold hover:text-foreground",
+        align === "right" ? "text-right" : align === "left" ? "text-left" : "text-center",
         className
       )}
       onClick={() => onToggle(sortKey, defaultDir)}

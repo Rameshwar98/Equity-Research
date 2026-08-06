@@ -257,29 +257,28 @@ export default function PortfolioDebugPage() {
                 <table className="min-w-[960px] w-full text-sm">
                   <thead className="bg-muted/40 text-xs text-muted-foreground">
                     <tr>
-                      <th className="px-3 py-2 text-right">
+                      <th className="px-3 py-2 text-center font-semibold">
                         {stage === "return" ? "Ret #" : stage === "sd" ? "SD #" : "Rank"}
                       </th>
                       {(
                         [
-                          { col: "symbol", label: "Symbol", align: "left" },
-                          { col: null, label: "Name", align: "left" },
-                          { col: null, label: "Sector", align: "left" },
-                          { col: "return_1y", label: "Return 1Y", align: "right" },
-                          { col: "sd", label: "SD", align: "right" },
-                          { col: "score_3", label: "Score 3", align: "right" },
-                          { col: null, label: "Signal", align: "center" },
-                          { col: "ret_rank", label: "Ret #", align: "right" },
-                          { col: "sd_rank", label: "SD #", align: "right" },
-                          { col: "comb_score", label: "Comb. score", align: "right" },
-                          { col: "comb_rank", label: "Comb. rank", align: "right" },
-                        ] as { col: string | null; label: string; align: string }[]
-                      ).map(({ col, label, align }) => (
+                          { col: "symbol", label: "Symbol" },
+                          { col: null, label: "Name" },
+                          { col: null, label: "Sector" },
+                          { col: "return_1y", label: "Return 1Y" },
+                          { col: "sd", label: "SD" },
+                          { col: "score_3", label: "Score 3" },
+                          { col: null, label: "Signal" },
+                          { col: "ret_rank", label: "Ret #" },
+                          { col: "sd_rank", label: "SD #" },
+                          { col: "comb_score", label: "Comb. score" },
+                          { col: "comb_rank", label: "Comb. rank" },
+                        ] as { col: string | null; label: string }[]
+                      ).map(({ col, label }) => (
                         <th
                           key={label}
                           className={cn(
-                            "px-3 py-2 select-none",
-                            align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left",
+                            "px-3 py-2 select-none text-center font-semibold",
                             col ? "cursor-pointer hover:text-foreground" : ""
                           )}
                           onClick={col ? () => toggleSort(col) : undefined}

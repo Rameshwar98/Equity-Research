@@ -221,9 +221,9 @@ export default function PortfolioHistoryPage() {
                         <SortableTh label="Symbol" sortKey="symbol" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
                         <SortableTh label="Name" sortKey="name" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
                         <SortableTh label="Sector" sortKey="sector" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
-                        <SortableTh label="Rank" sortKey="rank" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" align="right" className="px-3 py-2" />
-                        <SortableTh label="12M" sortKey="ret" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} align="right" className="px-3 py-2" />
-                        <SortableTh label="SD" sortKey="sd" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} align="right" className="px-3 py-2" />
+                        <SortableTh label="Rank" sortKey="rank" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} defaultDir="asc" className="px-3 py-2" />
+                        <SortableTh label="12M" sortKey="ret" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} className="px-3 py-2" />
+                        <SortableTh label="SD" sortKey="sd" sort={holdingsSort.sort} onToggle={holdingsSort.toggle} className="px-3 py-2" />
                       </tr>
                     </thead>
                     <tbody>
@@ -269,9 +269,9 @@ export default function PortfolioHistoryPage() {
                           <thead className="bg-muted/40 text-xs text-muted-foreground">
                             <tr>
                               <SortableTh label="Date" sortKey="date" sort={movementSort.sort} onToggle={movementSort.toggle} className="px-3 py-2" />
-                              <SortableTh label="Entries" sortKey="entries" sort={movementSort.sort} onToggle={movementSort.toggle} align="right" className="px-3 py-2" />
-                              <SortableTh label="Exits" sortKey="exits" sort={movementSort.sort} onToggle={movementSort.toggle} align="right" className="px-3 py-2" />
-                              <SortableTh label="Turnover" sortKey="turnover" sort={movementSort.sort} onToggle={movementSort.toggle} align="right" className="px-3 py-2" />
+                              <SortableTh label="Entries" sortKey="entries" sort={movementSort.sort} onToggle={movementSort.toggle} className="px-3 py-2" />
+                              <SortableTh label="Exits" sortKey="exits" sort={movementSort.sort} onToggle={movementSort.toggle} className="px-3 py-2" />
+                              <SortableTh label="Turnover" sortKey="turnover" sort={movementSort.sort} onToggle={movementSort.toggle} className="px-3 py-2" />
                             </tr>
                           </thead>
                           <tbody>
@@ -299,7 +299,7 @@ export default function PortfolioHistoryPage() {
                                         : "hover:bg-muted/40",
                                     ].join(" ")}
                                   >
-                                    <td className="px-3 py-2 font-medium">{m.effective_date}</td>
+                                    <td className="px-3 py-2">{m.effective_date}</td>
                                     <td className="px-3 py-2 text-right">{m.entries}</td>
                                     <td className="px-3 py-2 text-right">{m.exits}</td>
                                     <td className="px-3 py-2 text-right">
@@ -435,9 +435,9 @@ export default function PortfolioHistoryPage() {
                           <tr>
                             <SortableTh label="Symbol" sortKey="symbol" sort={stableSort.sort} onToggle={stableSort.toggle} defaultDir="asc" className="px-3 py-2" />
                             <SortableTh label="Sector" sortKey="sector" sort={stableSort.sort} onToggle={stableSort.toggle} defaultDir="asc" className="px-3 py-2" />
-                            <SortableTh label="Current holding" sortKey="held" sort={stableSort.sort} onToggle={stableSort.toggle} align="center" className="px-3 py-2" />
-                            <SortableTh label="Total held" sortKey="total" sort={stableSort.sort} onToggle={stableSort.toggle} align="right" className="px-3 py-2" />
-                            <SortableTh label="Longest streak" sortKey="streak" sort={stableSort.sort} onToggle={stableSort.toggle} align="right" className="px-3 py-2" />
+                            <SortableTh label="Current holding" sortKey="held" sort={stableSort.sort} onToggle={stableSort.toggle} className="px-3 py-2" />
+                            <SortableTh label="Total held" sortKey="total" sort={stableSort.sort} onToggle={stableSort.toggle} className="px-3 py-2" />
+                            <SortableTh label="Longest streak" sortKey="streak" sort={stableSort.sort} onToggle={stableSort.toggle} className="px-3 py-2" />
                           </tr>
                         </thead>
                         <tbody>

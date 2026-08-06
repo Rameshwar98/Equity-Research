@@ -246,40 +246,40 @@ function RowTable({
             <thead>
               <tr className="text-muted-foreground">
                 <th
-                  className="sticky top-0 w-[46px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium"
+                  className="sticky top-0 w-[46px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold"
                 >
                   #
                 </th>
                 <th
-                  className="sticky top-0 w-[78px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium"
+                  className="sticky top-0 w-[78px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold"
                 >
                   Symbol
                 </th>
-                <th className="sticky top-0 w-[180px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium">
+                <th className="sticky top-0 w-[180px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">
                   Name
                 </th>
-                <th className="sticky top-0 w-[84px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Last</th>
-                <th className="sticky top-0 w-[76px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Mkt Cap</th>
-                <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Score 3</th>
-                <th className="sticky top-0 w-[64px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Score</th>
+                <th className="sticky top-0 w-[84px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">Last</th>
+                <th className="sticky top-0 w-[76px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">Mkt Cap</th>
+                <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">Score 3</th>
+                <th className="sticky top-0 w-[64px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">Score</th>
                 {showPrev ? (
                   <th
-                    className="sticky top-0 w-[96px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium"
+                    className="sticky top-0 w-[96px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold"
                     title="Previous month combined Score (↑ = improved / lower score)"
                   >
                     Prev (Δ)
                   </th>
                 ) : null}
-                <th className="sticky top-0 w-[82px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium">Band</th>
-                <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">MA50</th>
-                <th className="sticky top-0 w-[140px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium">Sector</th>
-                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">1Y</th>
-                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">1W%</th>
-                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">1M%</th>
-                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">3M%</th>
-                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">YTD%</th>
-                <th className="sticky top-0 w-[160px] bg-card/95 backdrop-blur py-2 pr-2 text-center font-medium">52W</th>
-                <th className="sticky top-0 w-[120px] bg-card/95 backdrop-blur py-2 text-left font-medium">Heatmap</th>
+                <th className="sticky top-0 w-[82px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">Band</th>
+                <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">MA50</th>
+                <th className="sticky top-0 w-[140px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">Sector</th>
+                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">1Y</th>
+                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">1W%</th>
+                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">1M%</th>
+                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">3M%</th>
+                <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">YTD%</th>
+                <th className="sticky top-0 w-[160px] bg-card/95 backdrop-blur py-2 px-2 text-center font-semibold">52W</th>
+                <th className="sticky top-0 w-[120px] bg-card/95 backdrop-blur py-2 text-center font-semibold">Heatmap</th>
               </tr>
             </thead>
             <tbody>
@@ -439,14 +439,14 @@ function ImprovementTable({
           <table className="w-full border-separate border-spacing-0 text-xs">
             <thead>
               <tr className="text-muted-foreground">
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-left py-2 pr-3">Symbol</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-left py-2 pr-3">Name</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-left py-2 pr-3">Sector</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 pr-3">Held</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2 pr-3">Δ rank</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2 pr-3">Prev</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2 pr-3">Now</th>
-                <th className="sticky top-0 bg-card/95 backdrop-blur text-right py-2">Score</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Symbol</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Name</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Sector</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Held</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Δ rank</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Prev</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 px-3 font-semibold">Now</th>
+                <th className="sticky top-0 bg-card/95 backdrop-blur text-center py-2 font-semibold">Score</th>
               </tr>
             </thead>
             <tbody>
