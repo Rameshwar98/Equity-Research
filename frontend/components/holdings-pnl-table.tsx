@@ -165,17 +165,17 @@ export function HoldingsPnlTable({ rows }: { rows: HoldingsPnlRow[] }) {
                           </span>
                         )}
                       </td>
-                      <td className="px-2 py-2 text-right tabular-nums">{fmtMoney(r.entry_price)}</td>
+                      <td className="px-2 py-2 text-left tabular-nums">{fmtMoney(r.entry_price)}</td>
                       <td className="px-2 py-2">{r.entry_date}</td>
-                      <td className="px-2 py-2 text-right tabular-nums">{fmtMoney(r.current_price)}</td>
+                      <td className="px-2 py-2 text-left tabular-nums">{fmtMoney(r.current_price)}</td>
                       <td className="px-2 py-2">{r.exit_date || "—"}</td>
-                      <td className={cn("px-2 py-2 text-right tabular-nums font-medium", pctColor(r.pnl_pct))}>
+                      <td className={cn("px-2 py-2 text-left tabular-nums font-medium", pctColor(r.pnl_pct))}>
                         {fmtPct(r.pnl_pct)}
                       </td>
-                      <td className={cn("px-2 py-2 text-right tabular-nums", pctColor(r.pnl_pct))}>
+                      <td className={cn("px-2 py-2 text-left tabular-nums", pctColor(r.pnl_pct))}>
                         {fmtMoney(r.pnl_abs)}
                       </td>
-                      <td className="px-2 py-2 text-right tabular-nums">{r.days_held ?? 0}</td>
+                      <td className="px-2 py-2 text-left tabular-nums">{r.days_held ?? 0}</td>
                     </tr>
                   );
                 })
