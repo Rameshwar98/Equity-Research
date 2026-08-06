@@ -117,17 +117,17 @@ export function HoldingsPnlTable({ rows }: { rows: HoldingsPnlRow[] }) {
           <table className="w-full min-w-[1020px] border-collapse text-xs">
             <thead className="sticky top-0 bg-card">
               <tr className="border-b border-border text-[11px] text-muted-foreground">
-                <SortableTh label="Symbol" sortKey="symbol" sort={sort} onToggle={toggle} defaultDir="asc" className="px-2 py-2" />
-                <th className="px-2 py-2 text-center font-bold text-foreground">Name</th>
-                <SortableTh label="Sector" sortKey="sector" sort={sort} onToggle={toggle} defaultDir="asc" className="px-2 py-2" />
-                <SortableTh label="Status" sortKey="status" sort={sort} onToggle={toggle} defaultDir="asc" className="px-2 py-2" />
-                <SortableTh label="Entry" sortKey="entry_price" sort={sort} onToggle={toggle} className="px-2 py-2" />
-                <SortableTh label="Entry date" sortKey="entry_date" sort={sort} onToggle={toggle} className="px-2 py-2" />
-                <SortableTh label="Current / Exit" sortKey="current_price" sort={sort} onToggle={toggle} className="px-2 py-2" title="Latest close for open positions; exit price for exited" />
-                <SortableTh label="Exit date" sortKey="exit_date" sort={sort} onToggle={toggle} className="px-2 py-2" />
-                <SortableTh label="% P&L" sortKey="pnl_pct" sort={sort} onToggle={toggle} className="px-2 py-2" />
-                <SortableTh label="Abs" sortKey="pnl_abs" sort={sort} onToggle={toggle} className="px-2 py-2" />
-                <SortableTh label="Days" sortKey="days_held" sort={sort} onToggle={toggle} className="px-2 py-2" />
+                <SortableTh label="Symbol" sortKey="symbol" sort={sort} onToggle={toggle} defaultDir="asc" align="left" className="px-2 py-2 text-[13px]" />
+                <th className="px-2 py-2 text-left font-bold text-foreground text-[13px]">Name</th>
+                <SortableTh label="Sector" sortKey="sector" sort={sort} onToggle={toggle} defaultDir="asc" align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="Status" sortKey="status" sort={sort} onToggle={toggle} defaultDir="asc" align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="Entry" sortKey="entry_price" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="Entry date" sortKey="entry_date" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="Current / Exit" sortKey="current_price" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" title="Latest close for open positions; exit price for exited" />
+                <SortableTh label="Exit date" sortKey="exit_date" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="% P&L" sortKey="pnl_pct" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="Abs" sortKey="pnl_abs" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" />
+                <SortableTh label="Days" sortKey="days_held" sort={sort} onToggle={toggle} align="left" className="px-2 py-2 text-[13px]" />
               </tr>
             </thead>
             <tbody>
