@@ -142,7 +142,8 @@ export function HoldingsPnlTable({ rows }: { rows: HoldingsPnlRow[] }) {
                   const exited = r.status === "exited";
                   return (
                     <tr
-                      key={r.symbol}
+                      // A symbol can appear multiple times (one row per entry→exit leg).
+                      key={`${r.symbol}-${r.entry_date}`}
                       className={cn(
                         "border-b border-border hover:bg-muted/30",
                         exited ? "text-muted-foreground" : ""

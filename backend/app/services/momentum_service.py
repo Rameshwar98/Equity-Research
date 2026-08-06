@@ -537,26 +537,16 @@ class MomentumIQService:
         proposed.sort(key=lambda s: (row_by_sym.get(s, {}).get("combined_rank", 10**9), s))
         proposed = proposed[: params.final_portfolio_size]
 
-        # On Deck: the next N names after the portfolio (ranks N+1 .. 2N by combined_rank,
-        # where N = final_portfolio_size), excluding current holdings. E.g. size 25 → 26–50,
-        # size 15 → 16–30.
-        n_size = int(params.final_portfolio_size)
-        deck_lo = n_size + 1
-        deck_hi = n_size * 2
+        # On Deck: every screened candidate that did NOT make the portfolio, ordered by
+        # combined_rank. Previously capped to the next N names (ranks N+1..2N), which hid
+        # most of the screen; the UI filters/sorts instead of the backend truncating.
         on_deck_syms: list[str] = []
         for r in combined_sorted:
-            try:
-                cr = int(r.get("combined_rank") or 10**9)
-            except Exception:
-                cr = 10**9
             sym = str(r.get("symbol") or "")
-            if not sym:
+            if not sym or sym in proposed:
                 continue
-            if sym in proposed:
-                continue
-            if deck_lo <= cr <= deck_hi:
-                on_deck_syms.append(sym)
-        on_deck_syms = list(dict.fromkeys(on_deck_syms))[:n_size]
+            on_deck_syms.append(sym)
+        on_deck_syms = list(dict.fromkeys(on_deck_syms))
 
         on_deck_rows: list[MomentumComputedRow] = [
             computed_row_for_symbol(sym, action="BUY", band_override="WATCH") for sym in on_deck_syms

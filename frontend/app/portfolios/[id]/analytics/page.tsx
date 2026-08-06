@@ -4,12 +4,11 @@ import * as React from "react";
 import { useParams } from "next/navigation";
 
 import {
-  AnalyticsScatter,
   RollingSharpeChart,
   TwoLineDrawdownChart,
   TwoLineIndexedChart,
 } from "@/components/analytics-charts";
-import { RankDistributionChart, ReturnVolScatter, SectorDonut } from "@/components/holdings-charts";
+import { SectorDonut } from "@/components/holdings-charts";
 import { PortfolioShell } from "@/components/portfolio-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,8 +68,10 @@ type Metric = { label: string; value: string; desc?: string; valueClass?: string
 /**
  * One row of the Portfolio | Benchmark | Diff metric tables.
  * - Normal rows: diff = portfolio − benchmark, colored by `diffGood` direction.
- * - `relativeOnly` rows (Beta, TE, R², IR, alpha): the metric IS the relationship, so the
- *   value renders in the Diff column and Portfolio/Benchmark stay blank.
+ * - `relativeOnly` rows (Beta, TE, R², IR, alpha): the metric already measures the
+ *   portfolio AGAINST the benchmark, so it has no separate benchmark value. The number
+ *   belongs in the Portfolio column; Benchmark/Diff read "n/a" (rendering it under Diff
+ *   made a beta of 0.95 look like a difference, and the row look empty).
  */
 type TriMetric = {
   label: string;
@@ -133,11 +134,22 @@ function MetricTable({
                   </td>
                   {m.relativeOnly ? (
                     <>
-                      <td className="py-1.5 text-right text-muted-foreground/50">—</td>
-                      <td className="py-1.5 text-right text-muted-foreground/50">—</td>
-                      <td className={cn("py-1.5 text-right font-semibold tabular-nums", m.relClass || "text-foreground")}>
+                      <td
+                        className={cn(
+                          "py-1.5 text-right font-semibold tabular-nums",
+                          m.relClass || "text-foreground"
+                        )}
+                      >
                         {m.fmt(m.port)}
+                        <span
+                          className="ml-1 cursor-help text-[9px] font-normal text-muted-foreground"
+                          title={`Already measured against ${benchmarkLabel || "the benchmark"}, so there is no separate benchmark value.`}
+                        >
+                          rel.
+                        </span>
                       </td>
+                      <td className="py-1.5 text-right text-[11px] text-muted-foreground/60">n/a</td>
+                      <td className="py-1.5 text-right text-[11px] text-muted-foreground/60">n/a</td>
                     </>
                   ) : (
                     <>
@@ -160,6 +172,13 @@ function MetricTable({
             })}
           </tbody>
         </table>
+        {rows.some((m) => m.relativeOnly) ? (
+          <div className="mt-2 border-t border-border/40 pt-2 text-[10.5px] leading-relaxed text-muted-foreground">
+            <span className="font-medium">rel.</span> = relative measure. These already compare the
+            portfolio to {benchmarkLabel || "the benchmark"}, so a separate benchmark value and a
+            difference are not defined (n/a).
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );
@@ -281,8 +300,6 @@ export default function PortfolioAnalyticsPage() {
   const charts = a?.charts;
   const benchmarkLabel = a?.benchmark_symbol || portfolio?.params.benchmark || null;
   const holdings = charts?.scatter_holdings || [];
-  const onDeck = charts?.on_deck || [];
-  const top100 = charts?.scatter_top100 || [];
   const heldSymbols = React.useMemo(() => new Set(holdings.map((h) => h.symbol)), [holdings]);
   const dailySeries = React.useMemo(() => {
     const pts = priceHistory?.daily_series || [];
@@ -339,10 +356,15 @@ export default function PortfolioAnalyticsPage() {
 
   // Position P&L on a notional, equal-weight capital basis (the strategy targets equal
   // weights; it has no real cash), derived from per-holding entry/current prices.
-  // Restricted to CURRENT holdings — the P&L ledger also carries exited positions.
+  // Restricted to OPEN legs of current holdings — the ledger carries one row per
+  // entry→exit leg, so a re-entered symbol also has closed legs that must not count.
   const positionPnl = React.useMemo(() => {
     const rows = (priceHistory?.holdings_pnl || []).filter(
-      (r) => typeof r.entry_price === "number" && r.entry_price > 0 && heldSymbols.has(r.symbol)
+      (r) =>
+        typeof r.entry_price === "number" &&
+        r.entry_price > 0 &&
+        (r.status ?? "open") === "open" &&
+        heldSymbols.has(r.symbol)
     );
     const n = rows.length;
     if (!n) return null;
@@ -373,10 +395,7 @@ export default function PortfolioAnalyticsPage() {
       { key: "analytics_cumulative", label: "Cumulative" },
       { key: "analytics_drawdown", label: "Drawdown" },
       { key: "analytics_rolling_sharpe", label: "Rolling Sharpe" },
-      { key: "analytics_scatter", label: "Return vs Vol" },
       { key: "analytics_sector_donut", label: "Sector exposure" },
-      { key: "analytics_rank_distribution", label: "Rank distribution" },
-      { key: "analytics_return_vol_scatter", label: "Return vs volatility" },
     ];
     return chips.filter((c) => !show(c.key, true));
   }, [show]);
@@ -446,6 +465,23 @@ export default function PortfolioAnalyticsPage() {
               <span className="rounded-full border border-border px-2 py-0.5">MAR {fmtP(k?.mar_annual, 0)}</span>
               {benchmarkLabel ? (
                 <span className="rounded-full border border-border px-2 py-0.5">Benchmark {benchmarkLabel}</span>
+              ) : null}
+              {k?.period_start && k?.period_end ? (
+                <span
+                  className="rounded-full border border-border px-2 py-0.5"
+                  title="Metrics cover snapshot-to-snapshot returns over this window; the cumulative chart is daily and runs to the latest close."
+                >
+                  {k.period_start} → {k.period_end}
+                  {k.years_elapsed ? ` (${k.years_elapsed.toFixed(2)} yr)` : ""}
+                </span>
+              ) : null}
+              {k?.min_price_coverage != null && k.min_price_coverage < 0.999 ? (
+                <span
+                  className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-amber-700 dark:text-amber-300"
+                  title="Some holdings had no cached price history and were excluded from a period's equal-weight average."
+                >
+                  Price coverage {fmtP(k.min_price_coverage, 0)} worst period
+                </span>
               ) : null}
             </div>
           </CardContent>
@@ -553,26 +589,16 @@ export default function PortfolioAnalyticsPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Holdings overview (moved from Holdings page) */}
-            <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-              {show("analytics_sector_donut", true) ? (
-                <SectorDonut holdings={holdings} onHide={() => setChartPref("analytics_sector_donut", false)} />
-              ) : null}
-              {show("analytics_rank_distribution", true) ? (
-                <RankDistributionChart
-                  holdings={holdings}
-                  onDeck={onDeck}
-                  onHide={() => setChartPref("analytics_rank_distribution", false)}
-                />
-              ) : null}
-              {show("analytics_return_vol_scatter", true) ? (
-                <ReturnVolScatter
-                  top100={top100}
-                  heldSymbols={heldSymbols}
-                  onHide={() => setChartPref("analytics_return_vol_scatter", false)}
-                />
-              ) : null}
-            </div>
+            {show("analytics_sector_donut", true) ? (
+              <SectorDonut
+                holdings={holdings}
+                benchmarkSectors={charts?.benchmark_sectors}
+                benchmarkSectorLabel={charts?.benchmark_sector_label}
+                benchmarkSectorBasis={charts?.benchmark_sector_basis}
+                benchmarkLabel={benchmarkLabel}
+                onHide={() => setChartPref("analytics_sector_donut", false)}
+              />
+            ) : null}
 
             {show("analytics_cumulative", true) ? (
               <TwoLineIndexedChart
@@ -604,17 +630,6 @@ export default function PortfolioAnalyticsPage() {
                 />
               ) : null}
             </div>
-
-            {show("analytics_scatter", true) ? (
-              <AnalyticsScatter
-                title="Return vs Vol (holdings vs top-100)"
-                holdings={charts?.scatter_holdings || []}
-                top100={charts?.scatter_top100 || []}
-                medianReturn={charts?.scatter_median_return_1y}
-                medianSd={charts?.scatter_median_sd}
-                onHide={() => setChartPref("analytics_scatter", false)}
-              />
-            ) : null}
 
             <Card className="shadow-sm">
               <CardContent className="p-4">

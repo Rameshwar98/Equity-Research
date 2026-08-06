@@ -41,33 +41,87 @@ const SECTOR_COLORS = [
 
 export function SectorDonut({
   holdings,
+  benchmarkSectors,
+  benchmarkSectorLabel,
+  benchmarkSectorBasis,
+  benchmarkLabel,
   onHide,
 }: {
   holdings: MomentumComputedRow[];
+  /** sector -> weight 0..1 for the index constituent mix (optional). */
+  benchmarkSectors?: Record<string, number> | null;
+  benchmarkSectorLabel?: string | null;
+  /** "cap" = market-cap weighted (matches the ETF); "count" = equal-weight fallback. */
+  benchmarkSectorBasis?: "cap" | "count" | null;
+  benchmarkLabel?: string | null;
   onHide?: () => void;
 }) {
+  const hasBench = !!benchmarkSectors && Object.keys(benchmarkSectors).length > 0;
+
+  // Union of portfolio + benchmark sectors, so a sector the portfolio holds none of
+  // still shows as a full underweight instead of vanishing.
   const data = React.useMemo(() => {
-    const m = new Map<string, number>();
+    const counts = new Map<string, number>();
     for (const h of holdings) {
       const key = (h.sector || "Unknown").trim() || "Unknown";
-      m.set(key, (m.get(key) || 0) + 1);
+      counts.set(key, (counts.get(key) || 0) + 1);
     }
-    const out = Array.from(m.entries()).map(([sector, count]) => ({
-      sector,
-      count,
-      weightPct: (count / Math.max(1, holdings.length)) * 100,
-    }));
-    out.sort((a, b) => b.count - a.count || a.sector.localeCompare(b.sector));
+    const n = Math.max(1, holdings.length);
+    const sectors = new Set<string>([...counts.keys(), ...Object.keys(benchmarkSectors || {})]);
+    const out = Array.from(sectors).map((sector) => {
+      const count = counts.get(sector) || 0;
+      const port = count / n;
+      const bench = benchmarkSectors?.[sector];
+      return {
+        sector,
+        count,
+        port,
+        bench: typeof bench === "number" ? bench : null,
+        diff: typeof bench === "number" ? port - bench : null,
+      };
+    });
+    out.sort((a, b) => b.port - a.port || (b.bench ?? 0) - (a.bench ?? 0) || a.sector.localeCompare(b.sector));
     return out;
-  }, [holdings]);
+  }, [holdings, benchmarkSectors]);
+
+  // Only sectors actually held can be slices of the donut.
+  const pieData = React.useMemo(() => data.filter((d) => d.count > 0), [data]);
+  const colorFor = React.useCallback(
+    (sector: string) => {
+      const idx = pieData.findIndex((p) => p.sector === sector);
+      return idx >= 0 ? SECTOR_COLORS[idx % SECTOR_COLORS.length]! : "#cbd5e1";
+    },
+    [pieData]
+  );
+
+  const fmtW = (v?: number | null) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
+  const fmtDiff = (v?: number | null) => {
+    if (v == null) return "—";
+    const sign = v > 0 ? "+" : "";
+    return `${sign}${(v * 100).toFixed(1)}%`;
+  };
+  const diffClass = (v?: number | null) => {
+    if (v == null || Math.abs(v) < 0.0005) return "text-muted-foreground";
+    return v > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+  };
 
   return (
     <Card className="shadow-sm">
       <CardContent className="p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="text-sm font-semibold text-foreground">Sector exposure</div>
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-sm font-semibold text-foreground">Sector exposure</div>
+            {hasBench ? (
+              <div className="truncate text-[11px] text-muted-foreground" title={benchmarkSectorLabel || ""}>
+                vs {benchmarkSectorLabel || benchmarkLabel || "benchmark"}
+              </div>
+            ) : null}
+          </div>
           {onHide ? (
-            <button className="text-xs text-muted-foreground hover:text-foreground" onClick={onHide}>
+            <button
+              className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
+              onClick={onHide}
+            >
               Hide
             </button>
           ) : null}
@@ -83,37 +137,91 @@ export function SectorDonut({
                   }}
                 />
                 <Pie
-                  data={data}
+                  data={pieData}
                   dataKey="count"
                   nameKey="sector"
                   innerRadius={55}
                   outerRadius={85}
                   paddingAngle={1}
                 >
-                  {data.map((_, idx) => (
-                    <Cell key={idx} fill={SECTOR_COLORS[idx % SECTOR_COLORS.length]} />
+                  {pieData.map((d) => (
+                    <Cell key={d.sector} fill={colorFor(d.sector)} />
                   ))}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-1.5">
-            {data.map((d, idx) => (
-              <div key={d.sector} className="flex items-center justify-between gap-3 text-xs">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{ background: SECTOR_COLORS[idx % SECTOR_COLORS.length] }}
-                  />
-                  <span className="truncate text-muted-foreground">{d.sector}</span>
-                </div>
-                <div className="shrink-0 tabular-nums text-foreground">
-                  {d.count} · {pct(d.count, holdings.length)}
-                </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  <th className="py-1 pr-2 text-left font-medium">Sector</th>
+                  <th className="py-1 pr-2 text-right font-medium">#</th>
+                  <th className="py-1 pr-2 text-right font-medium">Port.</th>
+                  {hasBench ? (
+                    <>
+                      <th className="py-1 pr-2 text-right font-medium">{benchmarkLabel || "Bench"}</th>
+                      <th className="py-1 text-right font-medium">Diff</th>
+                    </>
+                  ) : null}
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((d) => (
+                  <tr key={d.sector} className="border-t border-border/40">
+                    <td className="py-1 pr-2">
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ background: d.count > 0 ? colorFor(d.sector) : "transparent", border: d.count > 0 ? undefined : "1px dashed hsl(var(--border))" }}
+                        />
+                        <span className="truncate text-muted-foreground" title={d.sector}>
+                          {d.sector}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-1 pr-2 text-right tabular-nums text-muted-foreground">{d.count}</td>
+                    <td className="py-1 pr-2 text-right font-medium tabular-nums text-foreground">
+                      {fmtW(d.port)}
+                    </td>
+                    {hasBench ? (
+                      <>
+                        <td className="py-1 pr-2 text-right tabular-nums text-muted-foreground">
+                          {fmtW(d.bench)}
+                        </td>
+                        <td className={`py-1 text-right font-medium tabular-nums ${diffClass(d.diff)}`}>
+                          {fmtDiff(d.diff)}
+                        </td>
+                      </>
+                    ) : null}
+                  </tr>
+                ))}
+                {!data.length ? (
+                  <tr>
+                    <td className="py-2 text-muted-foreground" colSpan={hasBench ? 5 : 3}>
+                      No sector data.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+            {hasBench ? (
+              <div className="mt-2 border-t border-border/40 pt-1.5 text-[10px] leading-relaxed text-muted-foreground">
+                Diff = portfolio − index. Green = overweight, red = underweight.{" "}
+                {benchmarkSectorBasis === "count" ? (
+                  <>
+                    Index mix is equal-weight by constituent count — market caps were
+                    unavailable, so these are not {benchmarkLabel || "the ETF"}&apos;s true weights.
+                  </>
+                ) : (
+                  <>
+                    Index mix is market-cap weighted, matching {benchmarkLabel || "the ETF"}&apos;s
+                    actual composition. The portfolio itself is equal-weighted, so large-cap-heavy
+                    sectors will read as underweight by construction.
+                  </>
+                )}
               </div>
-            ))}
-            {!data.length ? (
-              <div className="text-xs text-muted-foreground">No sector data.</div>
             ) : null}
           </div>
         </div>

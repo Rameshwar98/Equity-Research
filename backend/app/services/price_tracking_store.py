@@ -82,11 +82,11 @@ class PriceTrackingStore:
                       status TEXT NOT NULL DEFAULT 'open',
                       exit_date TEXT,
                       exit_price REAL,
-                      PRIMARY KEY (portfolio_id, symbol)
+                      PRIMARY KEY (portfolio_id, symbol, entry_date)
                     );
                     """
                 )
-                # Migration for DBs created before exit tracking existed.
+                # Migration 1: DBs created before exit tracking existed.
                 for ddl in (
                     "ALTER TABLE portfolio_entries ADD COLUMN status TEXT NOT NULL DEFAULT 'open'",
                     "ALTER TABLE portfolio_entries ADD COLUMN exit_date TEXT",
@@ -96,6 +96,42 @@ class PriceTrackingStore:
                         await db.execute(ddl)
                     except Exception:
                         pass  # column already exists
+                # Migration 2: single-row-per-symbol → per-leg rows. Old PK was
+                # (portfolio_id, symbol), which made a re-entry overwrite the prior
+                # round-trip. Rebuild with entry_date in the PK so each entry→exit
+                # leg is its own row.
+                cur = await db.execute(
+                    "SELECT sql FROM sqlite_master WHERE type='table' AND name='portfolio_entries'"
+                )
+                row = await cur.fetchone()
+                ddl_sql = (row[0] or "") if row else ""
+                if "entry_date" not in ddl_sql.split("PRIMARY KEY", 1)[-1]:
+                    await db.execute("ALTER TABLE portfolio_entries RENAME TO portfolio_entries_old")
+                    await db.execute(
+                        """
+                        CREATE TABLE portfolio_entries (
+                          portfolio_id TEXT NOT NULL,
+                          symbol TEXT NOT NULL,
+                          entry_date TEXT NOT NULL,
+                          entry_price REAL NOT NULL,
+                          name TEXT,
+                          sector TEXT,
+                          status TEXT NOT NULL DEFAULT 'open',
+                          exit_date TEXT,
+                          exit_price REAL,
+                          PRIMARY KEY (portfolio_id, symbol, entry_date)
+                        );
+                        """
+                    )
+                    await db.execute(
+                        """
+                        INSERT OR IGNORE INTO portfolio_entries
+                        SELECT portfolio_id, symbol, entry_date, entry_price, name, sector,
+                               status, exit_date, exit_price
+                        FROM portfolio_entries_old
+                        """
+                    )
+                    await db.execute("DROP TABLE portfolio_entries_old")
                 await db.commit()
             self._initialized = True
 
@@ -106,49 +142,33 @@ class PriceTrackingStore:
         entries: Iterable[tuple[str, str, float, str | None, str | None, str]],
     ) -> None:
         """
-        Maintain per-symbol entry basis for P&L.
+        Maintain per-LEG entry basis for P&L (one row per entry→exit round-trip).
 
         Each tuple is (symbol, entry_date, entry_price, name, sector, action).
 
-        - action == 'BUY': INSERT OR REPLACE — new position or re-entry after exit; reset
-          entry_date / entry_price to this snapshot row.
-        - action != 'BUY' (HOLD, HOLD_WITH_WATCH, …): INSERT OR IGNORE — keep the original
-          entry for positions still held (full holding-period return).
+        A new leg is inserted only when the symbol has no OPEN leg — a held symbol
+        keeps its original basis (full holding-period return), while a re-entry after
+        an exit naturally creates a fresh leg because exit detection already closed
+        the previous one. The action flag no longer matters for storage.
         """
         await self.ensure_schema()
-        rows = [(sym, d, float(px), nm, sec, act) for sym, d, px, nm, sec, act in entries]
+        rows = [(sym, d, float(px), nm, sec) for sym, d, px, nm, sec, _act in entries]
         if not rows:
             return
-        # BUY resets the row entirely — including status back to 'open' (re-entry after exit).
-        sql_replace = """
-                INSERT OR REPLACE INTO portfolio_entries(
+        sql = """
+                INSERT OR IGNORE INTO portfolio_entries(
                   portfolio_id, symbol, entry_date, entry_price, name, sector,
                   status, exit_date, exit_price
                 )
-                VALUES(?,?,?,?,?,?,'open',NULL,NULL)
-                """
-        sql_ignore = """
-                INSERT OR IGNORE INTO portfolio_entries(
-                  portfolio_id, symbol, entry_date, entry_price, name, sector
+                SELECT ?,?,?,?,?,?,'open',NULL,NULL
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM portfolio_entries
+                  WHERE portfolio_id=? AND symbol=? AND status='open'
                 )
-                VALUES(?,?,?,?,?,?)
                 """
         async with aiosqlite.connect(self.db_path) as db:
-            for sym, d, px, nm, sec, action in rows:
-                params = (portfolio_id, sym, d, px, nm, sec)
-                if action == "BUY":
-                    await db.execute(sql_replace, params)
-                else:
-                    await db.execute(sql_ignore, params)
-                    # A held symbol must be open even if a stale row marked it exited.
-                    await db.execute(
-                        """
-                        UPDATE portfolio_entries
-                        SET status='open', exit_date=NULL, exit_price=NULL
-                        WHERE portfolio_id=? AND symbol=? AND status!='open'
-                        """,
-                        (portfolio_id, sym),
-                    )
+            for sym, d, px, nm, sec in rows:
+                await db.execute(sql, (portfolio_id, sym, d, px, nm, sec, portfolio_id, sym))
             await db.commit()
 
     async def mark_exited(
@@ -187,7 +207,7 @@ class PriceTrackingStore:
                        status, exit_date, exit_price
                 FROM portfolio_entries
                 WHERE portfolio_id = ?
-                ORDER BY symbol ASC
+                ORDER BY symbol ASC, entry_date ASC
                 """,
                 (portfolio_id,),
             )
