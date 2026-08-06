@@ -257,7 +257,7 @@ export default function PortfolioDebugPage() {
                 <table className="min-w-[960px] w-full text-sm">
                   <thead className="bg-muted/40 text-xs text-muted-foreground">
                     <tr>
-                      <th className="px-3 py-2 text-center font-semibold">
+                      <th className="px-3 py-2 text-center font-bold text-foreground">
                         {stage === "return" ? "Ret #" : stage === "sd" ? "SD #" : "Rank"}
                       </th>
                       {(
@@ -278,8 +278,8 @@ export default function PortfolioDebugPage() {
                         <th
                           key={label}
                           className={cn(
-                            "px-3 py-2 select-none text-center font-semibold",
-                            col ? "cursor-pointer hover:text-foreground" : ""
+                            "px-3 py-2 select-none text-center font-bold text-foreground",
+                            col ? "cursor-pointer hover:text-primary" : ""
                           )}
                           onClick={col ? () => toggleSort(col) : undefined}
                         >
