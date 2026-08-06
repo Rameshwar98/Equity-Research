@@ -67,7 +67,7 @@ function fmtNum(v: number) {
 
 function fmtScore3(v?: number | null) {
   if (v === null || v === undefined || Number.isNaN(v)) return "—";
-  return v.toFixed(4);
+  return v.toFixed(2);
 }
 
 function holdingsLoadHint(error: string | null): string {
@@ -289,7 +289,7 @@ function RowTable({
                   className={`border-t border-border/60 ${rowAccentClass(r.band)}`}
                 >
                   <td
-                    className="py-2 pr-2 text-right tabular-nums text-muted-foreground"
+                    className="py-2 pr-2 text-left tabular-nums text-muted-foreground"
                   >
                     {idx + 1}
                   </td>
@@ -303,14 +303,14 @@ function RowTable({
                       {r.name || "—"}
                     </div>
                   </td>
-                  <td className="py-2 pr-2 text-right tabular-nums font-semibold">
+                  <td className="py-2 pr-2 text-left tabular-nums font-semibold">
                     {fmtNum(r.last_price)}
                   </td>
-                  <td className="py-2 pr-2 text-right tabular-nums text-muted-foreground">
+                  <td className="py-2 pr-2 text-left tabular-nums text-muted-foreground">
                     {fmtCap(r.mkt_cap ?? null)}
                   </td>
-                  <td className={cn("py-2 pr-2 text-right tabular-nums font-medium", score3Color(r.score_3 ?? null))}>{fmtScore3(r.score_3 ?? null)}</td>
-                  <td className="py-2 pr-2 text-right tabular-nums">{r.combined_score >= 1e9 ? "∞" : r.combined_score}</td>
+                  <td className={cn("py-2 pr-2 text-left tabular-nums font-medium", score3Color(r.score_3 ?? null))}>{fmtScore3(r.score_3 ?? null)}</td>
+                  <td className="py-2 pr-2 text-left tabular-nums">{r.combined_score >= 1e9 ? "∞" : r.combined_score}</td>
                   {showPrev
                     ? (() => {
                         const prev = prevScoreBySymbol!.get(r.symbol);
@@ -319,7 +319,7 @@ function RowTable({
                         const delta =
                           prev != null && cur < 1e9 ? prev - cur : null;
                         return (
-                          <td className="py-2 pr-2 text-right tabular-nums">
+                          <td className="py-2 pr-2 text-left tabular-nums">
                             <span className="text-muted-foreground">{fmtScoreVal(prev)}</span>
                             {delta != null && delta !== 0 ? (
                               <span
@@ -343,7 +343,7 @@ function RowTable({
                   <td className="py-2 pr-2">
                     <BandBadge band={r.band} />
                   </td>
-                  <td className="py-2 pr-2 text-right tabular-nums text-muted-foreground">
+                  <td className="py-2 pr-2 text-left tabular-nums text-muted-foreground">
                     {fmtNum(r.ma50)}
                     <span className="ml-1 text-[10px]">
                       {r.price_vs_50ma === "below" ? "↓" : "↑"}
@@ -355,19 +355,19 @@ function RowTable({
                       {r.sector || "—"}
                     </div>
                   </td>
-                  <td className={cn("py-2 pr-2 text-right tabular-nums", pctColor((r.return_1y ?? 0) * 100))}>
+                  <td className={cn("py-2 pr-2 text-left tabular-nums", pctColor((r.return_1y ?? 0) * 100))}>
                     {fmtPct(r.return_1y)}
                   </td>
-                  <td className={cn("py-2 pr-2 text-right tabular-nums", pctColor(r.return_1w ?? null))}>
+                  <td className={cn("py-2 pr-2 text-left tabular-nums", pctColor(r.return_1w ?? null))}>
                     {fmtPctTable(r.return_1w ?? null)}
                   </td>
-                  <td className={cn("py-2 pr-2 text-right tabular-nums", pctColor(r.return_1m ?? null))}>
+                  <td className={cn("py-2 pr-2 text-left tabular-nums", pctColor(r.return_1m ?? null))}>
                     {fmtPctTable(r.return_1m ?? null)}
                   </td>
-                  <td className={cn("py-2 pr-2 text-right tabular-nums", pctColor(r.return_3m ?? null))}>
+                  <td className={cn("py-2 pr-2 text-left tabular-nums", pctColor(r.return_3m ?? null))}>
                     {fmtPctTable(r.return_3m ?? null)}
                   </td>
-                  <td className={cn("py-2 pr-2 text-right tabular-nums", pctColor(r.return_ytd ?? null))}>
+                  <td className={cn("py-2 pr-2 text-left tabular-nums", pctColor(r.return_ytd ?? null))}>
                     {fmtPctTable(r.return_ytd ?? null)}
                   </td>
                   <td className="py-2 pr-2 text-center">
@@ -468,7 +468,7 @@ function ImprovementTable({
                       <span className="text-muted-foreground">—</span>
                     )}
                   </td>
-                  <td className="py-2 pr-3 text-right tabular-nums">
+                  <td className="py-2 pr-3 text-left tabular-nums">
                     <span className="inline-flex items-center gap-1">
                       <Arrow delta={r.rank_delta} />
                       <span
@@ -484,9 +484,9 @@ function ImprovementTable({
                       </span>
                     </span>
                   </td>
-                  <td className="py-2 pr-3 text-right tabular-nums">{r.previous_rank}</td>
-                  <td className="py-2 pr-3 text-right tabular-nums">{r.current_rank}</td>
-                  <td className="py-2 text-right tabular-nums">{r.combined_score}</td>
+                  <td className="py-2 pr-3 text-left tabular-nums">{r.previous_rank}</td>
+                  <td className="py-2 pr-3 text-left tabular-nums">{r.current_rank}</td>
+                  <td className="py-2 text-left tabular-nums">{r.combined_score}</td>
                 </tr>
               ))}
               {!rows.length ? (
