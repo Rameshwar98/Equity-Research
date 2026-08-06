@@ -419,9 +419,11 @@ export type PortfolioAnalyticsResponse = {
     scatter_median_return_1y?: number | null;
     scatter_median_sd?: number | null;
     sector_over_time: AnalyticsSectorOverTimePoint[];
-    /** Index constituent sector mix (equal-weight by count) for over/under-weight comparison. */
+    /** Index constituent sector mix for over/under-weight comparison. */
     benchmark_sectors?: Record<string, number>;
     benchmark_sector_label?: string | null;
+    /** "cap" = market-cap weighted (matches the ETF); "count" = equal-weight fallback. */
+    benchmark_sector_basis?: "cap" | "count" | null;
     contributors_detractors: {
       contributors: MomentumComputedRow[];
       detractors: MomentumComputedRow[];

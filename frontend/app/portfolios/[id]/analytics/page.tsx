@@ -4,7 +4,6 @@ import * as React from "react";
 import { useParams } from "next/navigation";
 
 import {
-  AnalyticsScatter,
   RollingSharpeChart,
   TwoLineDrawdownChart,
   TwoLineIndexedChart,
@@ -396,7 +395,6 @@ export default function PortfolioAnalyticsPage() {
       { key: "analytics_cumulative", label: "Cumulative" },
       { key: "analytics_drawdown", label: "Drawdown" },
       { key: "analytics_rolling_sharpe", label: "Rolling Sharpe" },
-      { key: "analytics_scatter", label: "Return vs Vol" },
       { key: "analytics_sector_donut", label: "Sector exposure" },
     ];
     return chips.filter((c) => !show(c.key, true));
@@ -596,6 +594,7 @@ export default function PortfolioAnalyticsPage() {
                 holdings={holdings}
                 benchmarkSectors={charts?.benchmark_sectors}
                 benchmarkSectorLabel={charts?.benchmark_sector_label}
+                benchmarkSectorBasis={charts?.benchmark_sector_basis}
                 benchmarkLabel={benchmarkLabel}
                 onHide={() => setChartPref("analytics_sector_donut", false)}
               />
@@ -631,17 +630,6 @@ export default function PortfolioAnalyticsPage() {
                 />
               ) : null}
             </div>
-
-            {show("analytics_scatter", true) ? (
-              <AnalyticsScatter
-                title="Return vs Vol (holdings vs top-100)"
-                holdings={charts?.scatter_holdings || []}
-                top100={charts?.scatter_top100 || []}
-                medianReturn={charts?.scatter_median_return_1y}
-                medianSd={charts?.scatter_median_sd}
-                onHide={() => setChartPref("analytics_scatter", false)}
-              />
-            ) : null}
 
             <Card className="shadow-sm">
               <CardContent className="p-4">

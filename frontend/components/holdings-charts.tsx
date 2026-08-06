@@ -43,6 +43,7 @@ export function SectorDonut({
   holdings,
   benchmarkSectors,
   benchmarkSectorLabel,
+  benchmarkSectorBasis,
   benchmarkLabel,
   onHide,
 }: {
@@ -50,6 +51,8 @@ export function SectorDonut({
   /** sector -> weight 0..1 for the index constituent mix (optional). */
   benchmarkSectors?: Record<string, number> | null;
   benchmarkSectorLabel?: string | null;
+  /** "cap" = market-cap weighted (matches the ETF); "count" = equal-weight fallback. */
+  benchmarkSectorBasis?: "cap" | "count" | null;
   benchmarkLabel?: string | null;
   onHide?: () => void;
 }) {
@@ -205,9 +208,19 @@ export function SectorDonut({
             </table>
             {hasBench ? (
               <div className="mt-2 border-t border-border/40 pt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-                Diff = portfolio − index. Green = overweight, red = underweight. Index mix is
-                equal-weight by constituent count, matching the portfolio&apos;s equal weighting
-                (not {benchmarkLabel || "the ETF"}&apos;s cap weights).
+                Diff = portfolio − index. Green = overweight, red = underweight.{" "}
+                {benchmarkSectorBasis === "count" ? (
+                  <>
+                    Index mix is equal-weight by constituent count — market caps were
+                    unavailable, so these are not {benchmarkLabel || "the ETF"}&apos;s true weights.
+                  </>
+                ) : (
+                  <>
+                    Index mix is market-cap weighted, matching {benchmarkLabel || "the ETF"}&apos;s
+                    actual composition. The portfolio itself is equal-weighted, so large-cap-heavy
+                    sectors will read as underweight by construction.
+                  </>
+                )}
               </div>
             ) : null}
           </div>

@@ -118,11 +118,12 @@ class AnalyticsCharts(BaseModel):
     scatter_median_sd: Optional[float] = None
 
     sector_over_time: List[SectorOverTimePoint] = Field(default_factory=list)
-    # Benchmark sector mix for over/under-weight comparison. Derived from the index
-    # constituent list (equal-weight by count), which is the apples-to-apples basis for
-    # an equal-weighted portfolio — not SPY's cap-weighted sheet.
+    # Benchmark sector mix for over/under-weight comparison, derived from the index
+    # constituent list. Normally market-cap weighted (matching the ETF); falls back to
+    # equal-weight when caps are unavailable — `benchmark_sector_basis` says which.
     benchmark_sectors: Dict[str, float] = Field(default_factory=dict)  # sector -> 0..1
     benchmark_sector_label: Optional[str] = None
+    benchmark_sector_basis: Optional[str] = None  # "cap" | "count"
     contributors_detractors: ContributorsDetractors = Field(default_factory=ContributorsDetractors)
     rank_movement: Dict[str, List[RankMovementItem]] = Field(
         default_factory=lambda: {"improved": [], "deteriorated": []}

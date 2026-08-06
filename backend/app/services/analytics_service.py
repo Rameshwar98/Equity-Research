@@ -567,23 +567,67 @@ class AnalyticsService:
             sector_points.append(SectorOverTimePoint(date=d, sectors=m))
         out.charts.sector_over_time = sector_points
 
-        # Benchmark sector mix, from the index constituent list. The portfolio is
-        # equal-weighted, so an equal-weight (by count) index mix is the like-for-like
-        # comparison; this is deliberately NOT SPY's cap-weighted sheet.
+        # Benchmark sector mix from the index constituent list, weighted by market cap so
+        # it matches the ETF's actual composition. Caps come from the symbol_fmp_meta
+        # cache that rebalances populate, so this normally costs no API calls; missing
+        # ones are fetched once and cached. If cap coverage is too thin to be honest we
+        # fall back to equal-weight and say so via `benchmark_sector_basis`.
         try:
             from app.main import universe_service
 
             uni = universe_service.get_universe(universe)
-            counts: Dict[str, int] = {}
-            for c in uni.constituents:
-                sec = (c.sector or "Unknown").strip() or "Unknown"
-                counts[sec] = counts.get(sec, 0) + 1
-            total = sum(counts.values())
-            if total:
-                out.charts.benchmark_sectors = {s: n / total for s, n in counts.items()}
-                out.charts.benchmark_sector_label = (
-                    f"{uni.label} · {total} constituents (equal-weight)"
-                )
+            sector_by_sym = {
+                c.symbol: ((c.sector or "Unknown").strip() or "Unknown")
+                for c in uni.constituents
+                if c.symbol
+            }
+            symbols = sorted(sector_by_sym)
+            caps: Dict[str, float] = {}
+            if symbols:
+                # ttl_seconds=0 accepts any cached row; caps move slowly enough that a
+                # stale-by-days cap is far better than no cap at all.
+                fresh, missing = await self.cache.get_symbol_fmp_meta_batch(symbols, ttl_seconds=0)
+                for sym, m in fresh.items():
+                    mc = _safe_float(m.get("mkt_cap"))
+                    if mc and mc > 0:
+                        caps[sym] = mc
+                # Top up anything absent from the cache (first load on a fresh install).
+                fetch_fn = getattr(self.provider, "fetch_peer_metadata", None)
+                if missing and callable(fetch_fn):
+                    try:
+                        fetched = await fetch_fn(missing, timeout_seconds=30.0)
+                        await self.cache.put_symbol_fmp_meta_batch(fetched)
+                        for sym, m in (fetched or {}).items():
+                            mc = _safe_float((m or {}).get("mkt_cap"))
+                            if mc and mc > 0:
+                                caps[sym] = mc
+                    except Exception:
+                        pass  # keep whatever the cache gave us
+
+            coverage = (len(caps) / len(symbols)) if symbols else 0.0
+            if symbols and coverage >= 0.90:
+                by_sector: Dict[str, float] = {}
+                for sym, mc in caps.items():
+                    sec = sector_by_sym.get(sym, "Unknown")
+                    by_sector[sec] = by_sector.get(sec, 0.0) + mc
+                total_cap = sum(by_sector.values())
+                if total_cap > 0:
+                    out.charts.benchmark_sectors = {s: v / total_cap for s, v in by_sector.items()}
+                    out.charts.benchmark_sector_basis = "cap"
+                    out.charts.benchmark_sector_label = (
+                        f"{uni.label} · {len(caps)} of {len(symbols)} constituents (market-cap weighted)"
+                    )
+            elif symbols:
+                counts: Dict[str, int] = {}
+                for sec in sector_by_sym.values():
+                    counts[sec] = counts.get(sec, 0) + 1
+                total = sum(counts.values())
+                if total:
+                    out.charts.benchmark_sectors = {s: n / total for s, n in counts.items()}
+                    out.charts.benchmark_sector_basis = "count"
+                    out.charts.benchmark_sector_label = (
+                        f"{uni.label} · {total} constituents (equal-weight — market caps unavailable)"
+                    )
         except Exception:
             pass  # benchmark mix is optional context, never fail analytics for it
 
