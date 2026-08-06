@@ -9,7 +9,7 @@ import {
   TwoLineDrawdownChart,
   TwoLineIndexedChart,
 } from "@/components/analytics-charts";
-import { RankDistributionChart, ReturnVolScatter, SectorDonut } from "@/components/holdings-charts";
+import { SectorDonut } from "@/components/holdings-charts";
 import { PortfolioShell } from "@/components/portfolio-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -301,8 +301,6 @@ export default function PortfolioAnalyticsPage() {
   const charts = a?.charts;
   const benchmarkLabel = a?.benchmark_symbol || portfolio?.params.benchmark || null;
   const holdings = charts?.scatter_holdings || [];
-  const onDeck = charts?.on_deck || [];
-  const top100 = charts?.scatter_top100 || [];
   const heldSymbols = React.useMemo(() => new Set(holdings.map((h) => h.symbol)), [holdings]);
   const dailySeries = React.useMemo(() => {
     const pts = priceHistory?.daily_series || [];
@@ -400,8 +398,6 @@ export default function PortfolioAnalyticsPage() {
       { key: "analytics_rolling_sharpe", label: "Rolling Sharpe" },
       { key: "analytics_scatter", label: "Return vs Vol" },
       { key: "analytics_sector_donut", label: "Sector exposure" },
-      { key: "analytics_rank_distribution", label: "Rank distribution" },
-      { key: "analytics_return_vol_scatter", label: "Return vs volatility" },
     ];
     return chips.filter((c) => !show(c.key, true));
   }, [show]);
@@ -595,26 +591,15 @@ export default function PortfolioAnalyticsPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Holdings overview (moved from Holdings page) */}
-            <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-              {show("analytics_sector_donut", true) ? (
-                <SectorDonut holdings={holdings} onHide={() => setChartPref("analytics_sector_donut", false)} />
-              ) : null}
-              {show("analytics_rank_distribution", true) ? (
-                <RankDistributionChart
-                  holdings={holdings}
-                  onDeck={onDeck}
-                  onHide={() => setChartPref("analytics_rank_distribution", false)}
-                />
-              ) : null}
-              {show("analytics_return_vol_scatter", true) ? (
-                <ReturnVolScatter
-                  top100={top100}
-                  heldSymbols={heldSymbols}
-                  onHide={() => setChartPref("analytics_return_vol_scatter", false)}
-                />
-              ) : null}
-            </div>
+            {show("analytics_sector_donut", true) ? (
+              <SectorDonut
+                holdings={holdings}
+                benchmarkSectors={charts?.benchmark_sectors}
+                benchmarkSectorLabel={charts?.benchmark_sector_label}
+                benchmarkLabel={benchmarkLabel}
+                onHide={() => setChartPref("analytics_sector_donut", false)}
+              />
+            ) : null}
 
             {show("analytics_cumulative", true) ? (
               <TwoLineIndexedChart

@@ -160,6 +160,7 @@ function RowTable({
   onSymbolClick,
   showRanks,
   prevScoreBySymbol,
+  filterable,
 }: {
   title: string;
   rows: MomentumComputedRow[];
@@ -167,14 +168,76 @@ function RowTable({
   showRanks?: boolean;
   /** symbol -> previous-month combined_score. When provided, a "Prev" column is shown. */
   prevScoreBySymbol?: Map<string, number>;
+  /** Show symbol/name search + sector select (used by long lists like On Deck). */
+  filterable?: boolean;
 }) {
   const showPrev = !!prevScoreBySymbol;
+  const [query, setQuery] = React.useState("");
+  const [sector, setSector] = React.useState("all");
+
+  const sectors = React.useMemo(
+    () =>
+      Array.from(
+        new Set(rows.map((r) => (r.sector || "").trim()).filter((s): s is string => !!s))
+      ).sort(),
+    [rows]
+  );
+
+  const visibleRows = React.useMemo(() => {
+    if (!filterable) return rows;
+    const q = query.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (sector !== "all" && (r.sector || "").trim() !== sector) return false;
+      if (!q) return true;
+      return r.symbol.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q);
+    });
+  }, [rows, filterable, query, sector]);
+
+  const filtered = visibleRows.length !== rows.length;
+
   return (
     <Card className="shadow-sm">
       <CardContent className="p-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="text-base font-semibold tracking-tight text-foreground">{title}</div>
-          <div className="text-xs text-muted-foreground">{rows.length} rows</div>
+          <div className="flex items-center gap-2">
+            {filterable ? (
+              <>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Filter symbol / name…"
+                  className="h-7 w-[170px] rounded-md border border-border bg-background px-2 text-xs outline-none focus:ring-1 focus:ring-ring"
+                />
+                <select
+                  value={sector}
+                  onChange={(e) => setSector(e.target.value)}
+                  className="h-7 rounded-md border border-border bg-background px-2 text-xs outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="all">All sectors</option>
+                  {sectors.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+                {filtered ? (
+                  <button
+                    className="text-xs text-primary hover:underline"
+                    onClick={() => {
+                      setQuery("");
+                      setSector("all");
+                    }}
+                  >
+                    Clear
+                  </button>
+                ) : null}
+              </>
+            ) : null}
+            <div className="whitespace-nowrap text-xs text-muted-foreground">
+              {filtered ? `${visibleRows.length} of ${rows.length} rows` : `${rows.length} rows`}
+            </div>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table
@@ -209,7 +272,6 @@ function RowTable({
                 ) : null}
                 <th className="sticky top-0 w-[82px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium">Band</th>
                 <th className="sticky top-0 w-[80px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">MA50</th>
-                <th className="sticky top-0 w-[58px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">Mo</th>
                 <th className="sticky top-0 w-[140px] bg-card/95 backdrop-blur py-2 pr-2 text-left font-medium">Sector</th>
                 <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">1Y</th>
                 <th className="sticky top-0 w-[62px] bg-card/95 backdrop-blur py-2 pr-2 text-right font-medium">1W%</th>
@@ -221,7 +283,7 @@ function RowTable({
               </tr>
             </thead>
             <tbody>
-              {rows.map((r, idx) => (
+              {visibleRows.map((r, idx) => (
                 <tr
                   key={r.symbol}
                   className={`border-t border-border/60 ${rowAccentClass(r.band)}`}
@@ -288,7 +350,6 @@ function RowTable({
                       {r.ma_override_active ? "*" : ""}
                     </span>
                   </td>
-                  <td className="py-2 pr-2 text-right tabular-nums">{r.months_held || 0}</td>
                   <td className="py-2 pr-2 text-muted-foreground">
                     <div className="truncate" title={r.sector || ""}>
                       {r.sector || "—"}
@@ -309,7 +370,7 @@ function RowTable({
                   <td className={cn("py-2 pr-2 text-right tabular-nums", pctColor(r.return_ytd ?? null))}>
                     {fmtPctTable(r.return_ytd ?? null)}
                   </td>
-                  <td className="py-2 pr-2">
+                  <td className="py-2 pr-2 text-center">
                     <Week52RangeBar low={r.low_52w ?? null} high={r.high_52w ?? null} last={r.last_price} />
                   </td>
                   <td className="py-2">
@@ -321,10 +382,10 @@ function RowTable({
                   </td>
                 </tr>
               ))}
-              {!rows.length ? (
+              {!visibleRows.length ? (
                 <tr>
-                  <td colSpan={showPrev ? 19 : 18} className="py-8 text-center text-muted-foreground">
-                    No rows.
+                  <td colSpan={showPrev ? 18 : 17} className="py-8 text-center text-muted-foreground">
+                    {rows.length ? "No rows match the filter." : "No rows."}
                   </td>
                 </tr>
               ) : null}
@@ -913,13 +974,22 @@ export default function PortfolioHoldingsPage() {
           {activeTab === "on_deck" ? (
             <RowTable
               title={(() => {
-                // Next-N names after the portfolio (size N → ranks N+1..2N).
-                const n = portfolio?.params.final_portfolio_size ?? filteredOnDeck.length;
-                return `On Deck — next ${n} (Ranks ${n + 1}–${n * 2})`;
+                // Every screened candidate that missed the portfolio, best rank first.
+                // The rank span is read from the data, not assumed to start at N+1: the
+                // MA-exit override can skip a top-ranked name and pull in a lower one, so
+                // On Deck legitimately overlaps the holdings' rank range.
+                const ranks = filteredOnDeck
+                  .map((r) => r.combined_rank)
+                  .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+                if (!ranks.length) return "On Deck — screened candidates not in the portfolio";
+                return `On Deck — screened candidates not in the portfolio (ranks ${Math.min(
+                  ...ranks
+                )}–${Math.max(...ranks)})`;
               })()}
               rows={filteredOnDeck}
               onSymbolClick={onSymbolClick}
               prevScoreBySymbol={prevScoreBySymbol}
+              filterable
             />
           ) : null}
 

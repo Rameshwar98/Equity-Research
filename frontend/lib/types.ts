@@ -419,6 +419,9 @@ export type PortfolioAnalyticsResponse = {
     scatter_median_return_1y?: number | null;
     scatter_median_sd?: number | null;
     sector_over_time: AnalyticsSectorOverTimePoint[];
+    /** Index constituent sector mix (equal-weight by count) for over/under-weight comparison. */
+    benchmark_sectors?: Record<string, number>;
+    benchmark_sector_label?: string | null;
     contributors_detractors: {
       contributors: MomentumComputedRow[];
       detractors: MomentumComputedRow[];
