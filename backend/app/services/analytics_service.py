@@ -567,6 +567,26 @@ class AnalyticsService:
             sector_points.append(SectorOverTimePoint(date=d, sectors=m))
         out.charts.sector_over_time = sector_points
 
+        # Benchmark sector mix, from the index constituent list. The portfolio is
+        # equal-weighted, so an equal-weight (by count) index mix is the like-for-like
+        # comparison; this is deliberately NOT SPY's cap-weighted sheet.
+        try:
+            from app.main import universe_service
+
+            uni = universe_service.get_universe(universe)
+            counts: Dict[str, int] = {}
+            for c in uni.constituents:
+                sec = (c.sector or "Unknown").strip() or "Unknown"
+                counts[sec] = counts.get(sec, 0) + 1
+            total = sum(counts.values())
+            if total:
+                out.charts.benchmark_sectors = {s: n / total for s, n in counts.items()}
+                out.charts.benchmark_sector_label = (
+                    f"{uni.label} · {total} constituents (equal-weight)"
+                )
+        except Exception:
+            pass  # benchmark mix is optional context, never fail analytics for it
+
         # Contributors / detractors (latest snapshot)
         def ratio(h: MomentumComputedRow) -> float:
             if not np.isfinite(h.return_1y) or not np.isfinite(h.annualized_sd) or h.annualized_sd <= 0:
